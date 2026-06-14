@@ -7,9 +7,11 @@ type TeamBadgeProps = {
   team: Team;
   compact?: boolean;
   linked?: boolean;
+  inverted?: boolean;
 };
 
-export function TeamBadge({ team, compact = false, linked = true }: TeamBadgeProps) {
+export function TeamBadge({ team, compact = false, linked = true, inverted = false }: TeamBadgeProps) {
+  const codeClassName = inverted ? "text-xs text-white/60" : "text-xs text-ink/55";
   const content = (
     <>
       {team.flag_url ? (
@@ -22,7 +24,7 @@ export function TeamBadge({ team, compact = false, linked = true }: TeamBadgePro
         />
       ) : null}
       <span className={compact ? "text-sm font-semibold" : "font-semibold"}>{teamName(team)}</span>
-      <span className="text-xs text-ink/55">{team.fifa_code}</span>
+      <span className={codeClassName}>{team.fifa_code}</span>
     </>
   );
 
