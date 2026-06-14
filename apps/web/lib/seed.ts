@@ -51,12 +51,12 @@ export const prediction: ModelPrediction = {
   expected_away_goals: 1.02,
   predicted_score: "1-1",
   explanation_json: {
-    summary: "Deterministic v0 baseline using normalized ranking, Elo and country-level football features.",
+    summary: "Deterministisk v0-baseline som bruker normalisert rangering, Elo og landnivåvariabler.",
     limitations: [
-      "GDP per capita is a proxy for sports infrastructure.",
-      "Population is a proxy for talent pool.",
-      "Football popularity is seeded until documented provider data is connected.",
-      "Chance is used only in Monte Carlo simulation."
+      "BNP per innbygger er en proxy for sportslig infrastruktur.",
+      "Befolkning er en proxy for talentgrunnlag.",
+      "Fotballpopularitet er seedet frem til dokumenterte datakilder kobles på.",
+      "Tilfeldighet brukes bare i Monte Carlo-simulering."
     ]
   }
 };
@@ -68,7 +68,7 @@ export const liveTimeline: LiveSnapshot[] = [
 ];
 
 export const whatChanged: ProbabilityEvent[] = [
-  { id: 1, match_id: 1, minute: 24, score_state: "1-0", event_type: "goal", probability_delta: 0.21, explanation: "Home win probability moved +21.0% at 24' with score 1-0. Main signal: goal." },
-  { id: 2, match_id: 1, minute: 64, score_state: "1-0", event_type: "shot_momentum", probability_delta: -0.07, explanation: "Home win probability moved -7.0% at 64' with score 1-0. Main signal: shot momentum." }
+  { id: 1, match_id: 1, minute: 24, score_state: "1-0", event_type: "goal", probability_delta: 0.21, explanation: "Norges vinnersannsynlighet økte med 21,0 prosentpoeng etter målet til 1-0." },
+  { id: 2, match_id: 1, minute: 64, score_state: "1-0", event_type: "shot_momentum", probability_delta: -0.07, explanation: "Norges vinnersannsynlighet falt med 7,0 prosentpoeng fordi Senegal skapte mer skuddtrykk." }
 ];
 

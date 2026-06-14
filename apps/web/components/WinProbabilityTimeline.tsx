@@ -1,13 +1,16 @@
+import { probabilityEventLabel } from "@/lib/labels";
 import type { LiveSnapshot, ProbabilityEvent } from "@/lib/types";
 
 export function WinProbabilityTimeline({ timeline, changes }: { timeline: LiveSnapshot[]; changes: ProbabilityEvent[] }) {
   return (
     <section className="rounded-md border border-ink/10 bg-white/88 p-4">
-      <h2 className="mb-3 text-lg font-semibold">What changed?</h2>
+      <h2 className="mb-3 text-lg font-semibold">Hva endret seg?</h2>
       <div className="mb-4 grid gap-2">
         {changes.map((change) => (
           <div key={change.id} className="rounded-sm border border-ink/10 bg-frost p-3">
-            <div className="text-xs uppercase tracking-wide text-ink/55">{change.minute} min · {change.event_type.replaceAll("_", " ")} · {change.score_state}</div>
+            <div className="text-xs uppercase tracking-wide text-ink/55">
+              {change.minute} min - {probabilityEventLabel(change.event_type)} - {change.score_state}
+            </div>
             <p className="mt-1 text-sm">{change.explanation}</p>
           </div>
         ))}

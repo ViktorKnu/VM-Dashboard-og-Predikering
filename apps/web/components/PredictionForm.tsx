@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { teamName } from "@/lib/labels";
 import type { Match, Player, Team } from "@/lib/types";
 
 export function PredictionForm({ match, players, teams }: { match: Match; players: Player[]; teams: Team[] }) {
@@ -12,31 +13,31 @@ export function PredictionForm({ match, players, teams }: { match: Match; player
   const [topScorer, setTopScorer] = useState(String(players[2]?.id ?? ""));
 
   const comparison = useMemo(() => {
-    const predictedWinner = Number(winner) === match.home_team_id ? match.home_team.name : Number(winner) === match.away_team_id ? match.away_team.name : "Uavgjort";
+    const predictedWinner = Number(winner) === match.home_team_id ? teamName(match.home_team) : Number(winner) === match.away_team_id ? teamName(match.away_team) : "Uavgjort";
     return {
       predictedWinner,
       score: `${homeScore}-${awayScore}`,
-      modelHint: "Modellens baseline sammenlignes mot brukerens valg etter kampslutt."
+      modelHint: "Modellens baseline sammenlignes med brukerens valg etter kampslutt."
     };
-  }, [awayScore, homeScore, match.away_team.name, match.away_team_id, match.home_team.name, match.home_team_id, winner]);
+  }, [awayScore, homeScore, match.away_team, match.away_team_id, match.home_team, match.home_team_id, winner]);
 
   return (
     <section className="rounded-md border border-ink/10 bg-white/88 p-4">
       <h2 className="mb-3 text-lg font-semibold">Din prediksjon</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm font-medium">
-          {match.home_team.name}
+          {teamName(match.home_team)}
           <input className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" min="0" type="number" value={homeScore} onChange={(event) => setHomeScore(event.target.value)} />
         </label>
         <label className="text-sm font-medium">
-          {match.away_team.name}
+          {teamName(match.away_team)}
           <input className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" min="0" type="number" value={awayScore} onChange={(event) => setAwayScore(event.target.value)} />
         </label>
         <label className="text-sm font-medium">
           Vinner
           <select className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" value={winner} onChange={(event) => setWinner(event.target.value)}>
-            <option value={match.home_team_id}>{match.home_team.name}</option>
-            <option value={match.away_team_id}>{match.away_team.name}</option>
+            <option value={match.home_team_id}>{teamName(match.home_team)}</option>
+            <option value={match.away_team_id}>{teamName(match.away_team)}</option>
             <option value="">Uavgjort</option>
           </select>
         </label>
@@ -49,7 +50,7 @@ export function PredictionForm({ match, players, teams }: { match: Match; player
         <label className="text-sm font-medium">
           Turneringsvinner
           <select className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" value={tournamentWinner} onChange={(event) => setTournamentWinner(event.target.value)}>
-            {teams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
+            {teams.map((team) => <option key={team.id} value={team.id}>{teamName(team)}</option>)}
           </select>
         </label>
         <label className="text-sm font-medium">

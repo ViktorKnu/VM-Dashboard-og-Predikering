@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { teamName } from "@/lib/labels";
 import type { Team } from "@/lib/types";
 
 type TeamBadgeProps = {
@@ -20,7 +21,7 @@ export function TeamBadge({ team, compact = false, linked = true }: TeamBadgePro
           width={compact ? 26 : 34}
         />
       ) : null}
-      <span className={compact ? "text-sm font-semibold" : "font-semibold"}>{team.name}</span>
+      <span className={compact ? "text-sm font-semibold" : "font-semibold"}>{teamName(team)}</span>
       <span className="text-xs text-ink/55">{team.fifa_code}</span>
     </>
   );
