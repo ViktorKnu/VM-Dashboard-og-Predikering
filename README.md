@@ -1,76 +1,92 @@
-# World Cup Insights
+# VM Dashboard og Predikering
 
-![Tests](https://img.shields.io/badge/tests-pytest-2f6f91)
+![Tester](https://img.shields.io/badge/tester-pytest-2f6f91)
 ![Lint](https://img.shields.io/badge/lint-ruff%20%2F%20eslint-d5a021)
-![Build](https://img.shields.io/badge/build-docker%20compose-0f5d4f)
+![Bygg](https://img.shields.io/badge/bygg-docker%20compose-0f5d4f)
 
-Portfolio-grade FIFA World Cup analytics and prediction platform built for Norwegian users. The app shows fixtures, results, teams, players, formations, official Norwegian broadcast links, user-vs-model predictions, live win probability explanations, historical insights and tournament simulation.
+Et fullstack VM-prosjekt for kampoversikt, prediksjoner, historisk innsikt og modellforklaringer. Løsningen er laget med norske brukere i tankene: kamptidspunkt vises i `Europe/Oslo`, og sendinger lenkes bare til offisielle norske aktører som NRK, NRK TV, TV 2, TV 2 Play, TV 2 Direkte og TV 2 Sport 1.
 
-The first version runs on seeded/mock data so it does not depend on paid APIs. The architecture is ready for FIFA schedules/results, Fjelstul World Cup Database, international_results, World Football Elo Ratings, FIFA rankings, World Bank indicators, StatsBomb Open Data and API-Football-style live providers.
+Første versjon kjører på seedet/mock-data, slik at prosjektet fungerer uten betalte API-er. Arkitekturen er samtidig klargjort for ekte datakilder som FIFA-resultater, Fjelstul World Cup Database, World Football Elo Ratings, FIFA-rangeringer, World Bank, StatsBomb Open Data og live-leverandører som API-Football.
 
-## Screenshots
+## Skjermbilder
 
-- `docs/screenshots/home.png` placeholder
-- `docs/screenshots/match-detail.png` placeholder
-- `docs/screenshots/model-lab.png` placeholder
+- `docs/screenshots/home.png` kommer
+- `docs/screenshots/match-detail.png` kommer
+- `docs/screenshots/model-lab.png` kommer
 
-## What This Project Demonstrates
+## Hva prosjektet viser
 
-- Fullstack monorepo architecture with Next.js, FastAPI, SQLAlchemy and Alembic.
-- Typed API contracts, deterministic model logic and testable prediction scoring.
-- Product thinking for Norway: Europe/Oslo kickoff times and official NRK/TV 2 links only.
-- ML engineering hygiene: feature normalization, model versioning, backtesting placeholders and calibration surface.
-- Live-data engineering plan: raw response storage, caching, rate limits, seeded live mode, polling config and SSE updates.
+- Fullstack monorepo med Next.js, FastAPI, SQLAlchemy og Alembic.
+- TypeScript-frontend med dashboardsider, kampsider, prediksjonsskjema og Model Lab.
+- FastAPI-backend med dokumenterte endepunkter, seed-data, simulering og live-sannsynlighet.
+- Datamodell for lag, spillere, kamper, hendelser, lagoppstillinger, sendinger, brukerprediksjoner, modellprediksjoner og sannsynlighetshendelser.
+- Modelllogikk som skiller mellom deterministiske sannsynligheter og tilfeldighet i Monte Carlo-simuleringer.
+- Norsk produktfokus: Oslo-tid, offisielle norske TV-lenker og ingen ulovlige streams.
+- Deploy-hensyn: produksjons-Dockerfile, lokale demo-secrets, rate-/input-grenser og auditert frontend-avhengighetstre.
 
-## Architecture
+## Arkitektur
 
 ```text
 apps/web (Next.js)
-  -> API fetch with seeded fallback
-  -> match pages, predictions, Model Lab, historical insights
+  -> Henter data fra API-et med seedet fallback
+  -> Viser kamper, lag, spillere, prediksjoner, Model Lab og historiske innsikter
 
 apps/api (FastAPI)
-  -> REST + SSE endpoints
-  -> SQLAlchemy models + Alembic schema
-  -> seeded repository layer for first portfolio version
-  -> prediction, live probability and tournament simulation services
+  -> REST-endepunkter og SSE-endepunkt for liveoppdateringer
+  -> SQLAlchemy-modeller og Alembic-migrering
+  -> Seedet datalag for første versjon
+  -> Tjenester for prediksjoner, live-sannsynlighet og turneringssimulering
 
 ml/
-  -> feature engineering, training, inference and evaluation modules
+  -> Mapper for feature engineering, trening, inferens og evaluering
 
 data/
-  -> raw provider payloads, processed datasets, seed data
+  -> Rådata, prosesserte data og seed-data
 
 PostgreSQL + Redis
-  -> configured in docker-compose for production-like local development
+  -> Klargjort i docker-compose for lokal utvikling
 ```
 
-## Features
+Se også:
 
-- Fixtures and results with all kickoff times displayed in `Europe/Oslo`.
-- Match detail page with score, venue, xG, events, lineups, formation and live win probability.
-- Official Norwegian broadcast links for NRK, NRK TV, TV 2, TV 2 Play, TV 2 Direkte and TV 2 Sport 1.
-- User-vs-model predictions for score, winner, first goalscorer, group winners, tournament winner and top scorer.
-- Prediction points: winner 3, goal difference 2, exact score 5, first goalscorer 4, tournament top scorer 10.
-- “What changed?” explanations for probability swings caused by goals, cards, xG, shot momentum, substitutions, formations, yellow-card risk and score state.
-- Formation viewer for `4-3-3`, `4-2-3-1`, `3-4-3`, `3-5-2`, `5-3-2` and `4-4-2`.
-- Tournament simulator estimating advancing, round of 32, round of 16, quarterfinal, semifinal, final and champion probability.
-- Model Lab with version history, feature importance, backtesting metrics, calibration/chart placeholders and SHAP placeholder.
-- Strong seed data for Norway, France, Senegal, Iraq, Netherlands, Spain, Portugal and Brazil.
+- [docs/architecture.md](docs/architecture.md)
+- [docs/system-overview.md](docs/system-overview.md)
+- [docs/model.md](docs/model.md)
+- [docs/data-sources.md](docs/data-sources.md)
+- [docs/roadmap.md](docs/roadmap.md)
 
-## Tech Stack
+## Funksjoner
 
-- Frontend: Next.js, TypeScript, Tailwind CSS, Recharts-ready components, lucide-react icons.
-- Backend: FastAPI, Python, Pydantic-compatible schemas.
+- Kampoversikt og resultater med tidspunkter i `Europe/Oslo`.
+- Kampdetaljer med score, arena, xG, hendelser, lagoppstillinger, formasjon og live vinnsannsynlighet.
+- Offisielle norske sendelenker for NRK og TV 2.
+- Bruker mot modell: tipp resultat, vinner, første målscorer, gruppevinnere, VM-vinner og toppscorer.
+- Poengberegning for prediksjoner:
+  - Riktig vinner: 3 poeng
+  - Riktig målforskjell: 2 poeng
+  - Eksakt resultat: 5 poeng
+  - Riktig første målscorer: 4 poeng
+  - Riktig VM-toppscorer: 10 poeng
+- "Hva endret seg?"-forklaringer når live-sannsynlighet flytter seg betydelig.
+- Støtte for formasjonene `4-3-3`, `4-2-3-1`, `3-4-3`, `3-5-2`, `5-3-2` og `4-4-2`.
+- Turneringssimulator for avansement, utslagsrunder, semifinale, finale og VM-seier.
+- Model Lab med versjonshistorikk, feature importance, backtesting-metrikker og plassholdere for kalibrering, confusion matrix og SHAP.
+- Seed-data for Norge, Frankrike, Senegal, Irak, Nederland, Spania, Portugal og Brasil.
+
+## Teknologi
+
+- Frontend: Next.js, TypeScript, Tailwind CSS, lucide-react og Recharts-klare komponenter.
+- Backend: FastAPI, Python og Pydantic.
 - Database: PostgreSQL.
-- ORM/migrations: SQLAlchemy + Alembic.
-- ML: deterministic Python baseline, extensible `ml/` folders for pandas/scikit-learn/XGBoost or LightGBM.
-- Live updates: FastAPI Server-Sent Events starter.
-- Background jobs: Redis configured; APScheduler/Celery can be added behind ingestion commands.
-- Testing: pytest for backend prediction logic.
-- Linting/formatting: ruff/black and ESLint/Prettier-ready package scripts.
+- ORM og migrering: SQLAlchemy og Alembic.
+- ML: deterministisk Python-baseline, med struktur for pandas, scikit-learn, XGBoost eller LightGBM senere.
+- Liveoppdateringer: Server-Sent Events fra FastAPI.
+- Bakgrunnsjobber/cache: Redis er klargjort.
+- Tester: pytest for backend-logikk.
+- Lint/format: ruff/black og ESLint.
+- Lokal drift: Docker Compose.
 
-## Run Locally
+## Kom i gang lokalt
 
 ### Backend
 
@@ -82,7 +98,7 @@ pip install -e ".[dev]"
 uvicorn app.main:app --reload
 ```
 
-API docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+API-dokumentasjon: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ### Frontend
 
@@ -100,9 +116,11 @@ App: [http://localhost:3000](http://localhost:3000)
 docker compose up --build
 ```
 
-The default Compose credentials are local demo placeholders only. PostgreSQL and Redis are bound to `127.0.0.1` by default; set real secrets and deployment-specific ports through environment variables before using any shared environment.
+Standardverdiene i Compose er bare lokale demo-verdier. PostgreSQL og Redis bindes til `127.0.0.1` som standard. Bruk egne secrets og deploy-spesifikke porter før prosjektet settes i et delt miljø.
 
-## Useful Commands
+## Nyttige kommandoer
+
+Backend:
 
 ```bash
 cd apps/api
@@ -113,13 +131,16 @@ worldcup-ingest import-teams
 worldcup-ingest import-broadcast-links
 ```
 
+Frontend:
+
 ```bash
 cd apps/web
 npm run lint
 npm run build
+npm audit --audit-level=moderate
 ```
 
-## Example API Responses
+## Eksempel på API-respons
 
 `GET /matches/1/prediction`
 
@@ -152,32 +173,32 @@ npm run build
 }
 ```
 
-## ML Model
+## Modell
 
-Model `wc-v0.2-norway` is a deterministic baseline using normalized FIFA ranking, Elo, GDP per capita, population, football popularity, confederation strength, host advantage and historical World Cup performance. GDP and population are proxies only and are documented as limitations. Randomness is used only inside Monte Carlo simulation, never in raw deterministic probabilities.
+Modellversjon `wc-v0.2-norway` er en deterministisk baseline. Den bruker normaliserte features som FIFA-rangering, Elo-rating, BNP per innbygger, befolkning, fotballpopularitet, konføderasjonsstyrke, vertsnasjonseffekt og historisk VM-prestasjon.
 
-## Data Sources
+BNP, befolkning og fotballpopularitet er grove proxyer, ikke direkte årsaksforklaringer. Det er dokumentert som en begrensning i modellnotatene. Tilfeldighet brukes bare i Monte Carlo-simuleringer, ikke i rå modellprediksjoner.
 
-Planned adapters:
+## Datakilder som er planlagt
 
-- FIFA official schedule/results.
-- Fjelstul World Cup Database.
-- international_results dataset.
-- World Football Elo Ratings.
-- FIFA rankings.
-- World Bank GDP per capita and population.
-- StatsBomb Open Data.
-- API-Football or similar live provider.
-- NRK and TV 2 official broadcaster pages.
+- FIFA offisiell terminliste og resultater
+- Fjelstul World Cup Database
+- international_results
+- World Football Elo Ratings
+- FIFA-rangeringer
+- World Bank BNP per innbygger og befolkning
+- StatsBomb Open Data
+- API-Football eller tilsvarende liveleverandør
+- Offisielle NRK- og TV 2-sider
 
-The initial repository uses seed data and mock live snapshots. No illegal streams are embedded or linked.
+Første versjon bruker seed-data og mockede live snapshots. Prosjektet embedder ikke og lenker ikke til ulovlige streams.
 
 ## Roadmap
 
-- [ ] Replace seeded repository with PostgreSQL-backed service layer.
-- [ ] Add provider clients with caching, raw response storage and rate-limit handling.
-- [ ] Add WebSocket fanout in addition to SSE.
-- [ ] Expand historical backtesting across Fjelstul/FIFA datasets.
-- [ ] Add frontend chart implementations for calibration, confusion matrix and SHAP-style explanations.
-- [ ] Add auth and persistent user prediction leagues.
-- [ ] Add CI workflow for backend tests, frontend lint and Docker build.
+- [ ] Flytte seedet datalag over til PostgreSQL-repositories.
+- [ ] Lage provider-adaptere med caching, råresponslagring og rate-limit-håndtering.
+- [ ] Legge til WebSocket-fanout i tillegg til SSE.
+- [ ] Utvide historisk backtesting på FIFA/Fjelstul-data.
+- [ ] Implementere faktiske grafer for kalibrering, confusion matrix og SHAP-lignende forklaringer.
+- [ ] Legge til autentisering og persistente bruker-ligaer.
+- [ ] Sette opp CI for backend-tester, frontend-lint og Docker-build.
