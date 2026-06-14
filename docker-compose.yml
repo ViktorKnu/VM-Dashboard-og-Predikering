@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-world_cup_insights}
+      POSTGRES_USER: ${POSTGRES_USER:-worldcup_local}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local-only}
+    ports:
+      - "${POSTGRES_PORT:-127.0.0.1:5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-127.0.0.1:6379}:6379"
+
+  api:
+    build:
+      context: ./apps/api
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://worldcup_local:change-me-local-only@postgres:5432/world_cup_insights}
+      REDIS_URL: redis://redis:6379/0
+      LIVE_DATA_PROVIDER: seeded
+      LIVE_POLL_INTERVAL_SECONDS: 30
+      MODEL_VERSION: wc-v0.2-norway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+
+  web:
+    build:
+      context: ./apps/web
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

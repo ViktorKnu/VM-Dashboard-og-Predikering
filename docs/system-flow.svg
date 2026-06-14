@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img" aria-labelledby="title desc">
+  <title id="title">Systemflyt for World Cup Insights</title>
+  <desc id="desc">Viser hvordan brukeren, Next.js frontend, FastAPI backend, tjenestelag, seed data, planlagt database, Redis, ML og eksterne datakilder henger sammen.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2563eb" />
+    </marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#059669" />
+    </marker>
+    <marker id="arrow-amber" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#d97706" />
+    </marker>
+    <marker id="arrow-slate" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#475569" />
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .panel-title { fill: #0f172a; font: 700 22px Arial, sans-serif; }
+      .panel-note { fill: #475569; font: 400 14px Arial, sans-serif; }
+      .box { rx: 10; ry: 10; stroke-width: 2; }
+      .box-title { fill: #0f172a; font: 700 17px Arial, sans-serif; }
+      .box-text { fill: #334155; font: 400 13px Arial, sans-serif; }
+      .small { fill: #475569; font: 400 12px Arial, sans-serif; }
+      .tag { font: 700 12px Arial, sans-serif; }
+      .blue { fill: #eff6ff; stroke: #2563eb; }
+      .green { fill: #ecfdf5; stroke: #059669; }
+      .amber { fill: #fffbeb; stroke: #d97706; }
+      .rose { fill: #fff1f2; stroke: #e11d48; }
+      .violet { fill: #f5f3ff; stroke: #7c3aed; }
+      .slate { fill: #f1f5f9; stroke: #64748b; }
+      .line-blue { fill: none; stroke: #2563eb; stroke-width: 3; marker-end: url(#arrow-blue); }
+      .line-green { fill: none; stroke: #059669; stroke-width: 3; marker-end: url(#arrow-green); }
+      .line-amber { fill: none; stroke: #d97706; stroke-width: 3; marker-end: url(#arrow-amber); }
+      .line-slate { fill: none; stroke: #475569; stroke-width: 3; marker-end: url(#arrow-slate); }
+      .dash { stroke-dasharray: 8 7; }
+      .thin { stroke-width: 2; }
+      .label-bg { fill: #ffffff; stroke: #e2e8f0; stroke-width: 1; rx: 7; ry: 7; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1440" height="980" />
+
+  <text x="64" y="62" fill="#0f172a" font-family="Arial, sans-serif" font-size="34" font-weight="700">World Cup Insights: system, samkjøring og dataflyt</text>
+  <text x="64" y="92" fill="#475569" font-family="Arial, sans-serif" font-size="16">Fra brukeropplevelse til API, prediksjonslogikk, live-sannsynlighet, seed-data og planlagt produksjonsdata.</text>
+
+  <rect class="panel" x="56" y="130" width="286" height="690" rx="16" />
+  <text class="panel-title" x="84" y="170">1. Bruker og web</text>
+  <text class="panel-note" x="84" y="194">Next.js henter API-data, men kan falle tilbake på seed-data.</text>
+
+  <rect class="box blue" x="86" y="232" width="226" height="92" />
+  <text class="box-title" x="112" y="265">Bruker</text>
+  <text class="box-text" x="112" y="290">Åpner kamp, lag, spiller,</text>
+  <text class="box-text" x="112" y="309">prediksjon eller modellside</text>
+
+  <rect class="box blue" x="86" y="384" width="226" height="126" />
+  <text class="box-title" x="112" y="417">Next.js app</text>
+  <text class="box-text" x="112" y="443">apps/web/app/*</text>
+  <text class="box-text" x="112" y="463">Sider for matches, teams,</text>
+  <text class="box-text" x="112" y="483">players, predictions, model</text>
+
+  <rect class="box blue" x="86" y="572" width="226" height="120" />
+  <text class="box-title" x="112" y="605">API-klient</text>
+  <text class="box-text" x="112" y="631">apps/web/lib/api.ts</text>
+  <text class="box-text" x="112" y="651">fetch mot FastAPI</text>
+  <text class="box-text" x="112" y="671">fallback: apps/web/lib/seed.ts</text>
+
+  <rect class="panel" x="386" y="130" width="338" height="690" rx="16" />
+  <text class="panel-title" x="414" y="170">2. Backend og kontrakter</text>
+  <text class="panel-note" x="414" y="194">FastAPI eksponerer typed views, REST og SSE.</text>
+
+  <rect class="box green" x="424" y="232" width="262" height="112" />
+  <text class="box-title" x="450" y="265">FastAPI app</text>
+  <text class="box-text" x="450" y="290">apps/api/app/main.py</text>
+  <text class="box-text" x="450" y="310">CORS for localhost:3000</text>
+  <text class="box-text" x="450" y="330">router registrerer alle endepunkt</text>
+
+  <rect class="box green" x="424" y="400" width="262" height="152" />
+  <text class="box-title" x="450" y="433">API routes</text>
+  <text class="box-text" x="450" y="458">/matches, /teams, /players</text>
+  <text class="box-text" x="450" y="478">/matches/{id}/prediction</text>
+  <text class="box-text" x="450" y="498">/matches/{id}/live-probability</text>
+  <text class="box-text" x="450" y="518">/tournament/simulation</text>
+
+  <rect class="box green" x="424" y="620" width="262" height="104" />
+  <text class="box-title" x="450" y="653">Pydantic skjema</text>
+  <text class="box-text" x="450" y="678">apps/api/app/schemas/*</text>
+  <text class="box-text" x="450" y="698">Validerer prediksjoner inn/ut</text>
+
+  <rect class="panel" x="768" y="130" width="330" height="690" rx="16" />
+  <text class="panel-title" x="796" y="170">3. Tjenestelag</text>
+  <text class="panel-note" x="796" y="194">Regler og modellnær logikk kjøres her.</text>
+
+  <rect class="box violet" x="806" y="222" width="254" height="104" />
+  <text class="box-title" x="832" y="255">Prediksjon</text>
+  <text class="box-text" x="832" y="280">services/prediction.py</text>
+  <text class="box-text" x="832" y="300">FIFA, Elo, BNP, historikk, vertskap</text>
+
+  <rect class="box violet" x="806" y="364" width="254" height="104" />
+  <text class="box-title" x="832" y="397">Live probability</text>
+  <text class="box-text" x="832" y="422">services/live_probability.py</text>
+  <text class="box-text" x="832" y="442">Mål, kort, xG og momentum</text>
+
+  <rect class="box violet" x="806" y="506" width="254" height="104" />
+  <text class="box-title" x="832" y="539">Simulering</text>
+  <text class="box-text" x="832" y="564">services/simulation.py</text>
+  <text class="box-text" x="832" y="584">Monte Carlo for kamp og turnering</text>
+
+  <rect class="box violet" x="806" y="648" width="254" height="104" />
+  <text class="box-title" x="832" y="681">Historikk og sending</text>
+  <text class="box-text" x="832" y="706">historical.py og broadcasts.py</text>
+  <text class="box-text" x="832" y="726">Innsikt + NRK/TV 2-hostvalidering</text>
+
+  <rect class="panel" x="1142" y="130" width="242" height="690" rx="16" />
+  <text class="panel-title" x="1170" y="170">4. Data og drift</text>
+  <text class="panel-note" x="1170" y="194">Seed nå, klar for DB og live-leverandører.</text>
+
+  <rect class="box amber" x="1172" y="222" width="182" height="104" />
+  <text class="box-title" x="1194" y="255">Seed-data</text>
+  <text class="box-text" x="1194" y="280">data/seed/*.json</text>
+  <text class="box-text" x="1194" y="300">Lokalt produktgrunnlag</text>
+
+  <rect class="box amber" x="1172" y="364" width="182" height="104" />
+  <text class="box-title" x="1194" y="397">Raw / processed</text>
+  <text class="box-text" x="1194" y="422">data/raw</text>
+  <text class="box-text" x="1194" y="442">data/processed</text>
+
+  <rect class="box slate" x="1172" y="506" width="182" height="104" />
+  <text class="box-title" x="1194" y="539">PostgreSQL</text>
+  <text class="box-text" x="1194" y="564">SQLAlchemy</text>
+  <text class="box-text" x="1194" y="584">Alembic migrasjoner</text>
+
+  <rect class="box slate" x="1172" y="648" width="182" height="104" />
+  <text class="box-title" x="1194" y="681">Redis</text>
+  <text class="box-text" x="1194" y="706">Cache og fremtidige</text>
+  <text class="box-text" x="1194" y="726">bakgrunnsjobber</text>
+
+  <rect class="panel" x="56" y="852" width="1328" height="74" rx="16" />
+  <text class="panel-title" x="84" y="892">Eksterne kilder og import</text>
+  <text class="panel-note" x="84" y="916">FIFA, Fjelstul World Cup Database, Elo, FIFA-ranking, World Bank, StatsBomb, live-provider og NRK/TV 2 importeres via apps/api/app/commands/ingest.py.</text>
+
+  <path class="line-blue" d="M199 324 L199 384" />
+  <path class="line-blue" d="M199 510 L199 572" />
+  <path class="line-blue" d="M312 632 C356 632 368 288 424 288" />
+  <rect class="label-bg" x="319" y="450" width="138" height="26" />
+  <text class="small" x="332" y="468">HTTP fetch JSON</text>
+
+  <path class="line-green" d="M686 288 C735 288 750 274 806 274" />
+  <path class="line-green" d="M686 476 C748 476 753 416 806 416" />
+  <path class="line-green" d="M686 476 C748 476 753 558 806 558" />
+  <path class="line-green" d="M686 476 C748 476 753 700 806 700" />
+
+  <path class="line-amber" d="M1060 274 C1100 274 1122 274 1172 274" />
+  <path class="line-amber" d="M1060 416 C1100 416 1122 274 1172 274" />
+  <path class="line-amber" d="M1060 558 C1100 558 1122 274 1172 274" />
+  <path class="line-amber" d="M1060 700 C1100 700 1122 274 1172 274" />
+  <rect class="label-bg" x="1080" y="250" width="80" height="26" />
+  <text class="small" x="1095" y="268">seed()</text>
+
+  <path class="line-slate dash" d="M555 344 C555 604 1098 558 1172 558" />
+  <text class="small" x="710" y="603">planlagt produksjonslagring</text>
+
+  <path class="line-slate dash" d="M555 344 C555 714 1098 700 1172 700" />
+  <text class="small" x="710" y="738">cache / jobbkø senere</text>
+
+  <path class="line-amber dash" d="M1263 852 L1263 752" />
+  <path class="line-amber dash" d="M1263 852 L1263 468" />
+  <path class="line-amber dash" d="M1263 852 L1263 326" />
+  <text class="small" x="1088" y="842">ingest -> raw -> processed -> DB/seed</text>
+
+  <path class="line-slate thin" d="M806 302 C730 356 646 410 686 476" />
+  <rect class="label-bg" x="684" y="344" width="98" height="26" />
+  <text class="small" x="696" y="362">resultater</text>
+
+  <path class="line-blue dash" d="M424 458 C336 526 338 664 312 664" />
+  <rect class="label-bg" x="326" y="570" width="118" height="26" />
+  <text class="small" x="339" y="588">fallback lokalt</text>
+
+  <path class="line-green" d="M555 552 L555 620" />
+  <text class="small" x="574" y="590">POST /predictions</text>
+
+  <rect x="86" y="734" width="24" height="24" fill="#eff6ff" stroke="#2563eb" stroke-width="2" rx="5" />
+  <text class="tag" x="120" y="751" fill="#2563eb">Blå: brukerflate og klientdata</text>
+  <rect x="86" y="768" width="24" height="24" fill="#ecfdf5" stroke="#059669" stroke-width="2" rx="5" />
+  <text class="tag" x="120" y="785" fill="#059669">Grønn: API og kontrakter</text>
+
+  <rect x="424" y="756" width="24" height="24" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2" rx="5" />
+  <text class="tag" x="458" y="773" fill="#7c3aed">Lilla: beregninger og domenelogikk</text>
+  <rect x="806" y="786" width="24" height="24" fill="#fffbeb" stroke="#d97706" stroke-width="2" rx="5" />
+  <text class="tag" x="840" y="803" fill="#d97706">Gul: nåværende seed og importdata</text>
+
+  <text x="64" y="958" fill="#64748b" font-family="Arial, sans-serif" font-size="13">Kilde: README.md, docs/architecture.md, apps/web/lib/api.ts og apps/api/app/api/routes.py</text>
+</svg>

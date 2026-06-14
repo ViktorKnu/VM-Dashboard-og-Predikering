@@ -1,0 +1,13 @@
+{
+  "name": "world-cup-insights seed",
+  "version": "0.2.0",
+  "timezone": "Europe/Oslo",
+  "official_norwegian_broadcasters": ["NRK", "NRK TV", "TV 2", "TV 2 Play", "TV 2 Direkte", "TV 2 Sport 1"],
+  "teams": ["Norway", "France", "Senegal", "Iraq", "Netherlands", "Spain", "Portugal", "Brazil"],
+  "notes": [
+    "Seed data is realistic but not official tournament data.",
+    "No illegal stream links are included.",
+    "Provider integrations should store raw responses and respect rate limits."
+  ]
+}
+
