@@ -1,25 +1,70 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/config";
 import { teamName } from "@/lib/labels";
-import type { Match, Player, Team } from "@/lib/types";
+import type { Match, Player, Team, UserPrediction } from "@/lib/types";
 
 export function PredictionForm({ match, players, teams }: { match: Match; players: Player[]; teams: Team[] }) {
+  const router = useRouter();
   const [homeScore, setHomeScore] = useState("1");
   const [awayScore, setAwayScore] = useState("0");
   const [winner, setWinner] = useState(String(match.home_team_id));
   const [firstScorer, setFirstScorer] = useState(String(players[0]?.id ?? ""));
   const [tournamentWinner, setTournamentWinner] = useState(String(teams[1]?.id ?? ""));
   const [topScorer, setTopScorer] = useState(String(players[2]?.id ?? ""));
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [result, setResult] = useState<UserPrediction | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const comparison = useMemo(() => {
-    const predictedWinner = Number(winner) === match.home_team_id ? teamName(match.home_team) : Number(winner) === match.away_team_id ? teamName(match.away_team) : "Uavgjort";
+    const predictedWinner = Number(winner) === match.home_team_id
+      ? teamName(match.home_team)
+      : Number(winner) === match.away_team_id
+        ? teamName(match.away_team)
+        : "Uavgjort";
     return {
       predictedWinner,
       score: `${homeScore}-${awayScore}`,
       modelHint: "Modellens baseline sammenlignes med brukerens valg etter kampslutt."
     };
   }, [awayScore, homeScore, match.away_team, match.away_team_id, match.home_team, match.home_team_id, winner]);
+
+  async function submitPrediction() {
+    setIsSubmitting(true);
+    setError(null);
+    setResult(null);
+
+    const payload = {
+      match_id: match.id,
+      user_name: "portfolio_guest",
+      predicted_home_score: Number(homeScore),
+      predicted_away_score: Number(awayScore),
+      predicted_winner_team_id: winner ? Number(winner) : null,
+      first_goalscorer_player_id: firstScorer ? Number(firstScorer) : null,
+      group_winners_json: null,
+      tournament_winner_team_id: tournamentWinner ? Number(tournamentWinner) : null,
+      tournament_top_scorer_player_id: topScorer ? Number(topScorer) : null
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/predictions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error("API-et avviste prediksjonen.");
+      }
+      setResult((await response.json()) as UserPrediction);
+      router.refresh();
+    } catch {
+      setError("Kunne ikke sende prediksjonen. Sjekk at API-et kjører og at CORS er satt riktig.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <section className="rounded-md border border-ink/10 bg-white/88 p-4">
@@ -63,7 +108,24 @@ export function PredictionForm({ match, players, teams }: { match: Match; player
       <div className="mt-4 rounded-sm bg-frost p-3 text-sm">
         <strong>{comparison.score}</strong> · {comparison.predictedWinner}. {comparison.modelHint}
       </div>
+      <button
+        className="focus-ring mt-4 w-full rounded-md bg-pine px-4 py-3 font-semibold text-white transition hover:bg-pine/90 disabled:cursor-not-allowed disabled:bg-ink/35"
+        disabled={isSubmitting}
+        type="button"
+        onClick={submitPrediction}
+      >
+        {isSubmitting ? "Sender tips..." : "Send tips til API"}
+      </button>
+      {result ? (
+        <div className="mt-3 rounded-sm border border-pine/20 bg-pine/10 p-3 text-sm text-ink">
+          <strong>Lagret.</strong> API-et ga {result.points} poeng på denne prediksjonen.
+        </div>
+      ) : null}
+      {error ? (
+        <div className="mt-3 rounded-sm border border-coral/25 bg-coral/10 p-3 text-sm text-coral">
+          {error}
+        </div>
+      ) : null}
     </section>
   );
 }
-

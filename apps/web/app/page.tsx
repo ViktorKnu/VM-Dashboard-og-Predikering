@@ -3,15 +3,17 @@ import Link from "next/link";
 import { api, formatOsloTime } from "@/lib/api";
 import { APP_NAME, matchStageLabel, matchStatusLabel, teamName } from "@/lib/labels";
 import { MatchCard } from "@/components/MatchCard";
+import { DataFlowStatus } from "@/components/DataFlowStatus";
 import { TeamBadge } from "@/components/TeamBadge";
 import { TeamLeaderboard, TopScorerTable } from "@/components/Leaderboards";
 
 export default async function HomePage() {
-  const [matches, teams, players, tournament] = await Promise.all([
+  const [matches, teams, players, tournament, dataStatus] = await Promise.all([
     api.matches(),
     api.teams(),
     api.players(),
-    api.tournament()
+    api.tournament(),
+    api.dataStatus()
   ]);
 
   const liveMatch = matches.find((match) => match.status === "live") ?? matches[0];
@@ -91,6 +93,8 @@ export default async function HomePage() {
           </div>
         ))}
       </section>
+
+      <DataFlowStatus status={dataStatus} />
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">

@@ -1,6 +1,8 @@
 from app.services.live_probability import probability_events, update_live_probability
 from app.services.prediction import predict_match, score_prediction
 from app.services.seed_data import seed
+from app.api.routes import create_prediction, data_status, list_predictions, USER_PREDICTIONS
+from app.schemas import PredictionIn
 
 
 def test_prediction_is_deterministic_and_sums_to_one():
@@ -59,4 +61,27 @@ def test_live_probability_explains_significant_change():
     assert current["home_win_probability"] > prematch["home_win_probability"]
     assert events
     assert events[0]["event_type"] == "goal"
+
+
+def test_data_status_exposes_counts_and_prediction_flow():
+    USER_PREDICTIONS.clear()
+
+    status = data_status()
+    assert status["timezone"] == "Europe/Oslo"
+    assert status["counts"]["teams"] == len(seed()["teams"])
+
+    created = create_prediction(
+        PredictionIn(
+            match_id=1,
+            predicted_home_score=1,
+            predicted_away_score=0,
+            predicted_winner_team_id=1,
+            first_goalscorer_player_id=1,
+            tournament_winner_team_id=2,
+            tournament_top_scorer_player_id=3,
+        )
+    )
+
+    assert created["points"] > 0
+    assert list_predictions(limit=5)[-1]["id"] == created["id"]
 

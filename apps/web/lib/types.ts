@@ -102,3 +102,38 @@ export type ProbabilityEvent = {
   explanation: string;
 };
 
+export type DataStatus = {
+  source: string;
+  mode: "seeded" | "external" | "seed-fallback";
+  timezone: "Europe/Oslo";
+  model_version: string;
+  counts: {
+    teams: number;
+    players: number;
+    matches: number;
+    broadcasts: number;
+    live_snapshots: number;
+    user_predictions: number;
+  };
+  data_flow: string[];
+};
+
+export type UserPrediction = {
+  id: number;
+  match_id: number | null;
+  user_name: string;
+  predicted_home_score: number | null;
+  predicted_away_score: number | null;
+  predicted_winner_team_id: number | null;
+  first_goalscorer_player_id: number | null;
+  group_winners_json: Record<string, number> | null;
+  tournament_winner_team_id: number | null;
+  tournament_top_scorer_player_id: number | null;
+  points: number;
+  created_at: string;
+  scoring?: {
+    total_points: number;
+    breakdown: Record<string, number>;
+  };
+};
+

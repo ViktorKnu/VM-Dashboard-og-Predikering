@@ -38,6 +38,30 @@ def health() -> dict[str, str]:
     return {"status": "ok", "timezone": "Europe/Oslo", "model_version": settings.model_version}
 
 
+@router.get("/data/status")
+def data_status() -> dict:
+    data = seed()
+    return {
+        "source": settings.live_data_provider,
+        "mode": "seeded" if settings.live_data_provider == "seeded" else "external",
+        "timezone": "Europe/Oslo",
+        "model_version": settings.model_version,
+        "counts": {
+            "teams": len(data["teams"]),
+            "players": len(data["players"]),
+            "matches": len(data["matches"]),
+            "broadcasts": len(data["broadcasts"]),
+            "live_snapshots": len(data["live_snapshots"]),
+            "user_predictions": len(USER_PREDICTIONS),
+        },
+        "data_flow": [
+            "API-et er primær datakilde for frontend.",
+            "Seed-data brukes som trygg demo-fallback når liveleverandør ikke er koblet på.",
+            "Brukerprediksjoner går fra frontend til POST /predictions og poengsettes i API-et.",
+        ],
+    }
+
+
 @router.get("/teams")
 def teams() -> list[dict]:
     return seed()["teams"]
