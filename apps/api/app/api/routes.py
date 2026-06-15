@@ -5,7 +5,7 @@ import json
 from datetime import datetime, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 
 from app.core.config import settings
@@ -14,6 +14,7 @@ from app.services.broadcasts import is_official_broadcast_link
 from app.services.historical import HISTORICAL_INSIGHTS
 from app.services.live_probability import probability_events, update_live_probability
 from app.services.prediction import FEATURES, predict_match, score_prediction
+from app.services.rate_limit import enforce_rate_limit
 from app.services.seed_data import find_one, seed
 from app.services.simulation import simulate_match, simulate_tournament
 
@@ -22,6 +23,24 @@ USER_PREDICTIONS: list[dict] = []
 PREDICTION_STORE_LIMIT = 500
 DEFAULT_PUBLIC_PREDICTION_LIMIT = 25
 MAX_PUBLIC_PREDICTION_LIMIT = 100
+
+
+def prediction_write_rate_limit(request: Request) -> None:
+    enforce_rate_limit(
+        request,
+        "predictions:write",
+        settings.prediction_rate_limit,
+        settings.rate_limit_window_seconds,
+    )
+
+
+def simulation_rate_limit(request: Request) -> None:
+    enforce_rate_limit(
+        request,
+        "simulation",
+        settings.simulation_rate_limit,
+        settings.rate_limit_window_seconds,
+    )
 
 
 def enrich_match(match: dict, data: dict) -> dict:
@@ -185,7 +204,7 @@ async def live_probability_stream(match_id: int):
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
-@router.post("/predictions")
+@router.post("/predictions", dependencies=[Depends(prediction_write_rate_limit)])
 def create_prediction(prediction: PredictionIn) -> dict:
     data = seed()
     prediction_dict = prediction.model_dump()
@@ -278,7 +297,7 @@ def historical_insights() -> dict:
     return HISTORICAL_INSIGHTS
 
 
-@router.get("/tournament/simulation")
+@router.get("/tournament/simulation", dependencies=[Depends(simulation_rate_limit)])
 def tournament_simulation(
     iterations: Annotated[
         int,
@@ -288,7 +307,7 @@ def tournament_simulation(
     return simulate_tournament(seed()["teams"], iterations=iterations)
 
 
-@router.get("/matches/{match_id}/simulation")
+@router.get("/matches/{match_id}/simulation", dependencies=[Depends(simulation_rate_limit)])
 def match_simulation(
     match_id: int,
     iterations: Annotated[

@@ -93,3 +93,5 @@ npm audit --audit-level=moderate
 - `.env.example` og `apps/web/.env.example` inneholder bare lokale demo-verdier.
 - Frontend bruker seed fallback hvis API-et ikke svarer.
 - Ikke bruk betalte API-er, databaseplaner eller deploy-addons for denne demoen.
+- Demo-API-et har enkel in-memory rate limiting på prediksjoner og simuleringer.
+- For produksjon med flere API-instanser bør rate limiting flyttes til Redis, WAF eller en gateway.

@@ -17,6 +17,9 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
     live_poll_interval_seconds: int = 30
     allowed_broadcaster_hosts: str = "nrk.no,tv.nrk.no,tv2.no,play.tv2.no"
     allowed_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    rate_limit_window_seconds: int = 60
+    prediction_rate_limit: int = 20
+    simulation_rate_limit: int = 12
 
     if SettingsConfigDict:
         model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -32,6 +35,9 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
                 "live_poll_interval_seconds": self.live_poll_interval_seconds,
                 "allowed_broadcaster_hosts": self.allowed_broadcaster_hosts,
                 "allowed_origins": self.allowed_origins,
+                "rate_limit_window_seconds": self.rate_limit_window_seconds,
+                "prediction_rate_limit": self.prediction_rate_limit,
+                "simulation_rate_limit": self.simulation_rate_limit,
             }.items():
                 setattr(self, key, values.get(key, os.getenv(key.upper(), default)))
         else:
