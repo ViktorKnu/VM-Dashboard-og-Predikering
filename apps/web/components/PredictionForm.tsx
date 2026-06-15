@@ -1,10 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/config";
 import { teamName } from "@/lib/labels";
 import type { Match, Player, Team, UserPrediction } from "@/lib/types";
+
+const inputClassName = "mt-1 w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-fjord focus:ring-2 focus:ring-fjord/20";
 
 export function PredictionForm({ match, players, teams }: { match: Match; players: Player[]; teams: Team[] }) {
   const router = useRouter();
@@ -67,62 +70,65 @@ export function PredictionForm({ match, players, teams }: { match: Match; player
   }
 
   return (
-    <section className="rounded-md border border-ink/10 bg-white/88 p-4">
-      <h2 className="mb-3 text-lg font-semibold">Din prediksjon</h2>
+    <section className="surface p-4">
+      <div className="mb-4">
+        <p className="eyebrow">Bruker mot modell</p>
+        <h2 className="text-lg font-semibold">Din prediksjon</h2>
+      </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-semibold">
           {teamName(match.home_team)}
-          <input className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" min="0" type="number" value={homeScore} onChange={(event) => setHomeScore(event.target.value)} />
+          <input className={inputClassName} min="0" type="number" value={homeScore} onChange={(event) => setHomeScore(event.target.value)} />
         </label>
-        <label className="text-sm font-medium">
+        <label className="text-sm font-semibold">
           {teamName(match.away_team)}
-          <input className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" min="0" type="number" value={awayScore} onChange={(event) => setAwayScore(event.target.value)} />
+          <input className={inputClassName} min="0" type="number" value={awayScore} onChange={(event) => setAwayScore(event.target.value)} />
         </label>
-        <label className="text-sm font-medium">
+        <label className="text-sm font-semibold">
           Vinner
-          <select className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" value={winner} onChange={(event) => setWinner(event.target.value)}>
+          <select className={inputClassName} value={winner} onChange={(event) => setWinner(event.target.value)}>
             <option value={match.home_team_id}>{teamName(match.home_team)}</option>
             <option value={match.away_team_id}>{teamName(match.away_team)}</option>
             <option value="">Uavgjort</option>
           </select>
         </label>
-        <label className="text-sm font-medium">
+        <label className="text-sm font-semibold">
           Første målscorer
-          <select className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" value={firstScorer} onChange={(event) => setFirstScorer(event.target.value)}>
+          <select className={inputClassName} value={firstScorer} onChange={(event) => setFirstScorer(event.target.value)}>
             {players.map((player) => <option key={player.id} value={player.id}>{player.name}</option>)}
           </select>
         </label>
-        <label className="text-sm font-medium">
+        <label className="text-sm font-semibold">
           Turneringsvinner
-          <select className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" value={tournamentWinner} onChange={(event) => setTournamentWinner(event.target.value)}>
+          <select className={inputClassName} value={tournamentWinner} onChange={(event) => setTournamentWinner(event.target.value)}>
             {teams.map((team) => <option key={team.id} value={team.id}>{teamName(team)}</option>)}
           </select>
         </label>
-        <label className="text-sm font-medium">
+        <label className="text-sm font-semibold">
           Toppscorer
-          <select className="mt-1 w-full rounded-sm border border-ink/15 px-3 py-2" value={topScorer} onChange={(event) => setTopScorer(event.target.value)}>
+          <select className={inputClassName} value={topScorer} onChange={(event) => setTopScorer(event.target.value)}>
             {players.map((player) => <option key={player.id} value={player.id}>{player.name}</option>)}
           </select>
         </label>
       </div>
-      <div className="mt-4 rounded-sm bg-frost p-3 text-sm">
+      <div className="mt-4 rounded-md bg-frost p-3 text-sm">
         <strong>{comparison.score}</strong> · {comparison.predictedWinner}. {comparison.modelHint}
       </div>
       <button
-        className="focus-ring mt-4 w-full rounded-md bg-pine px-4 py-3 font-semibold text-white transition hover:bg-pine/90 disabled:cursor-not-allowed disabled:bg-ink/35"
+        className="primary-action mt-4 w-full disabled:cursor-not-allowed disabled:bg-ink/35"
         disabled={isSubmitting}
         type="button"
         onClick={submitPrediction}
       >
-        {isSubmitting ? "Sender tips..." : "Send tips til API"}
+        <Send size={17} /> {isSubmitting ? "Sender tips..." : "Send tips til API"}
       </button>
       {result ? (
-        <div className="mt-3 rounded-sm border border-pine/20 bg-pine/10 p-3 text-sm text-ink">
+        <div className="mt-3 rounded-md border border-pine/20 bg-pine/10 p-3 text-sm text-ink">
           <strong>Lagret.</strong> API-et ga {result.points} poeng på denne prediksjonen.
         </div>
       ) : null}
       {error ? (
-        <div className="mt-3 rounded-sm border border-coral/25 bg-coral/10 p-3 text-sm text-coral">
+        <div className="mt-3 rounded-md border border-coral/25 bg-coral/10 p-3 text-sm text-coral">
           {error}
         </div>
       ) : null}

@@ -10,7 +10,7 @@ const formations: Record<string, number[]> = {
 export function FormationPitch({ formation = "4-3-3" }: { formation?: string }) {
   const rows = formations[formation] ?? formations["4-3-3"];
   return (
-    <section className="rounded-md border border-ink/10 bg-white/88 p-4">
+    <section className="rounded-md border border-ink/10 bg-white/90 p-4">
       <h2 className="mb-3 text-lg font-semibold">Formasjon {formation}</h2>
       <div className="relative grid min-h-[360px] gap-3 rounded-md border-2 border-white bg-pine p-4 shadow-inner">
         {rows.map((count, rowIndex) => (

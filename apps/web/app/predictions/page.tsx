@@ -17,7 +17,7 @@ export default async function PredictionsPage() {
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">Bruker vs modell</h1>
       <PredictionForm match={matches[0]} players={players} teams={teams} />
-      <section className="rounded-md border border-ink/10 bg-white/88 p-4">
+      <section className="rounded-md border border-ink/10 bg-white/90 p-4">
         <h2 className="mb-3 text-lg font-semibold">Poengsystem</h2>
         <div className="grid gap-2 text-sm sm:grid-cols-5">
           {[
@@ -34,7 +34,7 @@ export default async function PredictionsPage() {
           ))}
         </div>
       </section>
-      <section className="rounded-md border border-ink/10 bg-white/88 p-4">
+      <section className="rounded-md border border-ink/10 bg-white/90 p-4">
         <h2 className="mb-3 text-lg font-semibold">Siste tips fra API</h2>
         {latestPredictions.length ? (
           <div className="space-y-2">

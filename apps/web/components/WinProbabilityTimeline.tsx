@@ -3,7 +3,7 @@ import type { LiveSnapshot, ProbabilityEvent } from "@/lib/types";
 
 export function WinProbabilityTimeline({ timeline, changes }: { timeline: LiveSnapshot[]; changes: ProbabilityEvent[] }) {
   return (
-    <section className="rounded-md border border-ink/10 bg-white/88 p-4">
+    <section className="rounded-md border border-ink/10 bg-white/90 p-4">
       <h2 className="mb-3 text-lg font-semibold">Hva endret seg?</h2>
       <div className="mb-4 grid gap-2">
         {changes.length ? changes.map((change) => (

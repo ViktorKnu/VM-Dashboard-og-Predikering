@@ -11,7 +11,7 @@ export default async function TeamPage({ params }: { params: Promise<{ id: strin
   const team = await api.team(Number(id));
   return (
     <div className="space-y-5">
-      <section className="rounded-md border border-ink/10 bg-white/88 p-5">
+      <section className="rounded-md border border-ink/10 bg-white/90 p-5">
         <TeamBadge team={team} />
         <div className="mt-4 grid gap-3 sm:grid-cols-4">
           <div className="rounded-sm bg-frost p-3">FIFA <strong className="block">{team.fifa_ranking}</strong></div>

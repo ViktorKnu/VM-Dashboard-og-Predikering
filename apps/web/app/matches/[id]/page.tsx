@@ -22,7 +22,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
 
   return (
     <div className="space-y-5">
-      <section className="rounded-md border border-ink/10 bg-white/88 p-5">
+      <section className="rounded-md border border-ink/10 bg-white/90 p-5">
         <div className="text-sm text-ink/60">{matchStageLabel(match.stage)} - {match.stadium}, {match.city}</div>
         <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <TeamBadge team={match.home_team} />
@@ -43,7 +43,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
         <div className="space-y-5">
           <PredictionForm match={match} players={players} teams={teams} />
           <BroadcastLinksCard broadcasts={match.broadcasts ?? []} />
-          <section className="rounded-md border border-ink/10 bg-white/88 p-4">
+          <section className="rounded-md border border-ink/10 bg-white/90 p-4">
             <h2 className="mb-3 text-lg font-semibold">xG og kampdata</h2>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="rounded-sm bg-frost p-3">xG hjemme <strong className="block">{liveStat(live.current.home_xg)}</strong></div>

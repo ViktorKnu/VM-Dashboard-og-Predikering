@@ -11,14 +11,14 @@ export default async function ModelPage() {
       <h1 className="text-3xl font-bold">Modellverksted</h1>
       <section className="grid gap-4 lg:grid-cols-3">
         {["accuracy", "log_loss", "brier_score"].map((key) => (
-          <div key={key} className="rounded-md border border-ink/10 bg-white/88 p-4">
+          <div key={key} className="rounded-md border border-ink/10 bg-white/90 p-4">
             <span className="text-sm text-ink/60">{metricLabel(key)}</span>
             <strong className="block text-3xl">{String(backtesting[key] ?? "Kommer")}</strong>
           </div>
         ))}
       </section>
       <section className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-md border border-ink/10 bg-white/88 p-4">
+        <div className="rounded-md border border-ink/10 bg-white/90 p-4">
           <h2 className="mb-3 text-lg font-semibold">Variabelbetydning</h2>
           <div className="space-y-2">
             {featureImportance.map((item: any) => (
@@ -30,7 +30,7 @@ export default async function ModelPage() {
             ))}
           </div>
         </div>
-        <div className="rounded-md border border-ink/10 bg-white/88 p-4">
+        <div className="rounded-md border border-ink/10 bg-white/90 p-4">
           <h2 className="mb-3 text-lg font-semibold">Versjoner</h2>
           <div className="space-y-2">
             {versions.map((item: any) => <div key={item.version} className="rounded-sm bg-frost p-3"><strong>{item.version}</strong><p className="text-sm text-ink/65">{item.notes}</p></div>)}
