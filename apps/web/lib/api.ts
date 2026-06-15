@@ -1,5 +1,5 @@
-import { liveTimeline, matches, players, prediction, teams, whatChanged } from "./seed";
 import { API_BASE_URL } from "./config";
+import { liveTimeline, matches, players, prediction, teams, whatChanged } from "./seed";
 import type {
   DataStatus,
   LiveSnapshot,
@@ -23,6 +23,29 @@ async function getJson<T>(path: string, fallback: T): Promise<T> {
 
 function validId(id: number): boolean {
   return Number.isInteger(id) && id > 0;
+}
+
+function liveFallback(matchId: number): { current: LiveSnapshot; timeline: LiveSnapshot[]; what_changed: ProbabilityEvent[] } {
+  return {
+    current: {
+      id: 0,
+      match_id: matchId,
+      minute: 0,
+      home_score: 0,
+      away_score: 0,
+      home_xg: 0,
+      away_xg: 0,
+      home_shots_on_target: 0,
+      away_shots_on_target: 0,
+      home_dangerous_attacks: 0,
+      away_dangerous_attacks: 0,
+      home_win_probability: prediction.home_win_probability,
+      draw_probability: prediction.draw_probability,
+      away_win_probability: prediction.away_win_probability
+    },
+    timeline: [],
+    what_changed: []
+  };
 }
 
 export function formatOsloTime(value: string): string {
@@ -68,9 +91,13 @@ export const api = {
   player: (id: number) => getJson<Player>(`/players/${validId(id) ? id : players[0].id}`, players.find((player) => player.id === id) ?? players[0]),
   predictions: () => getJson<UserPrediction[]>("/predictions", []),
   prediction: (id: number) => getJson<ModelPrediction>(`/matches/${id}/prediction`, { ...prediction, match_id: id }),
-  live: (id: number) => getJson<{ current: LiveSnapshot; timeline: LiveSnapshot[]; what_changed: ProbabilityEvent[] }>(`/matches/${id}/live-probability`, { current: liveTimeline[liveTimeline.length - 1], timeline: liveTimeline, what_changed: whatChanged }),
+  live: (id: number) => getJson<{ current: LiveSnapshot; timeline: LiveSnapshot[]; what_changed: ProbabilityEvent[] }>(
+    `/matches/${id}/live-probability`,
+    liveTimeline.length
+      ? { current: liveTimeline[liveTimeline.length - 1], timeline: liveTimeline, what_changed: whatChanged }
+      : liveFallback(id)
+  ),
   historical: () => getJson<Record<string, unknown>>("/historical-insights", {}),
   modelLab: () => getJson<Record<string, unknown>>("/model/lab", {}),
   tournament: () => getJson<Record<string, unknown>>("/tournament/simulation", {})
 };
-

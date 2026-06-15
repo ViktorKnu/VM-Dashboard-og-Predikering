@@ -28,17 +28,19 @@ const byTeam = (id: number) => teams.find((team) => team.id === id)!;
 
 export const broadcasts: Broadcast[] = [
   { id: 1, match_id: 1, country_code: "NO", broadcaster: "NRK", channel: "NRK TV", stream_url: "https://tv.nrk.no/", replay_url: "https://tv.nrk.no/programmer/sport", requires_login: false, source_url: "https://www.nrk.no/sport/" },
-  { id: 2, match_id: 2, country_code: "NO", broadcaster: "TV 2", channel: "TV 2 Direkte", stream_url: "https://play.tv2.no/", replay_url: "https://play.tv2.no/sport", requires_login: true, source_url: "https://www.tv2.no/sport/" },
-  { id: 3, match_id: 3, country_code: "NO", broadcaster: "TV 2", channel: "TV 2 Sport 1", stream_url: "https://play.tv2.no/", replay_url: "https://play.tv2.no/sport", requires_login: true, source_url: "https://www.tv2.no/sport/" },
-  { id: 4, match_id: 4, country_code: "NO", broadcaster: "NRK", channel: "NRK", stream_url: "https://tv.nrk.no/", replay_url: "https://tv.nrk.no/programmer/sport", requires_login: false, source_url: "https://www.nrk.no/sport/" }
+  { id: 2, match_id: 2, country_code: "NO", broadcaster: "TV 2", channel: "TV 2 Play", stream_url: "https://play.tv2.no/", replay_url: "https://play.tv2.no/sport", requires_login: true, source_url: "https://www.tv2.no/sport/" },
+  { id: 3, match_id: 3, country_code: "NO", broadcaster: "TV 2", channel: "TV 2 Direkte", stream_url: "https://play.tv2.no/", replay_url: "https://play.tv2.no/sport", requires_login: true, source_url: "https://www.tv2.no/sport/" },
+  { id: 4, match_id: 4, country_code: "NO", broadcaster: "NRK", channel: "NRK", stream_url: "https://tv.nrk.no/", replay_url: "https://tv.nrk.no/programmer/sport", requires_login: false, source_url: "https://www.nrk.no/sport/" },
+  { id: 5, match_id: 5, country_code: "NO", broadcaster: "TV 2", channel: "TV 2 Sport 1", stream_url: "https://play.tv2.no/", replay_url: "https://play.tv2.no/sport", requires_login: true, source_url: "https://www.tv2.no/sport/" }
 ];
 
 export const matches: Match[] = [
-  { id: 1, tournament_year: 2026, stage: "Group stage", group_name: "A", home_team_id: 1, away_team_id: 3, kickoff_at: "2026-06-15T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "MetLife Stadium", city: "New York/New Jersey", status: "live", home_score: 1, away_score: 0, home_team: byTeam(1), away_team: byTeam(3), broadcasts: broadcasts.filter((item) => item.match_id === 1) },
-  { id: 2, tournament_year: 2026, stage: "Group stage", group_name: "A", home_team_id: 2, away_team_id: 4, kickoff_at: "2026-06-16T16:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "BC Place", city: "Vancouver", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(2), away_team: byTeam(4), broadcasts: broadcasts.filter((item) => item.match_id === 2) },
-  { id: 3, tournament_year: 2026, stage: "Group stage", group_name: "B", home_team_id: 5, away_team_id: 6, kickoff_at: "2026-06-17T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "AT&T Stadium", city: "Dallas", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(5), away_team: byTeam(6), broadcasts: broadcasts.filter((item) => item.match_id === 3) },
-  { id: 4, tournament_year: 2026, stage: "Group stage", group_name: "B", home_team_id: 7, away_team_id: 8, kickoff_at: "2026-06-18T22:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "SoFi Stadium", city: "Los Angeles", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(7), away_team: byTeam(8), broadcasts: broadcasts.filter((item) => item.match_id === 4) },
-  { id: 5, tournament_year: 2026, stage: "Round of 16", group_name: null, home_team_id: 2, away_team_id: 5, kickoff_at: "2026-07-04T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Mercedes-Benz Stadium", city: "Atlanta", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(2), away_team: byTeam(5), broadcasts: [] }
+  { id: 1, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 2, away_team_id: 3, kickoff_at: "2026-06-16T16:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "New York New Jersey Stadium", city: "New York/New Jersey", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(2), away_team: byTeam(3), broadcasts: broadcasts.filter((item) => item.match_id === 1) },
+  { id: 2, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 4, away_team_id: 1, kickoff_at: "2026-06-16T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Boston Stadium", city: "Boston", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(4), away_team: byTeam(1), broadcasts: broadcasts.filter((item) => item.match_id === 2) },
+  { id: 3, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 1, away_team_id: 3, kickoff_at: "2026-06-22T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "New York New Jersey Stadium", city: "New York/New Jersey", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(1), away_team: byTeam(3), broadcasts: broadcasts.filter((item) => item.match_id === 3) },
+  { id: 4, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 2, away_team_id: 4, kickoff_at: "2026-06-22T22:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Philadelphia Stadium", city: "Philadelphia", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(2), away_team: byTeam(4), broadcasts: broadcasts.filter((item) => item.match_id === 4) },
+  { id: 5, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 1, away_team_id: 2, kickoff_at: "2026-06-26T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Boston Stadium", city: "Boston", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(1), away_team: byTeam(2), broadcasts: broadcasts.filter((item) => item.match_id === 5) },
+  { id: 6, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 3, away_team_id: 4, kickoff_at: "2026-06-26T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Toronto Stadium", city: "Toronto", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(3), away_team: byTeam(4), broadcasts: [] }
 ];
 
 export const prediction: ModelPrediction = {
@@ -62,13 +64,8 @@ export const prediction: ModelPrediction = {
 };
 
 export const liveTimeline: LiveSnapshot[] = [
-  { id: 1, match_id: 1, minute: 0, home_score: 0, away_score: 0, home_xg: 0, away_xg: 0, home_shots_on_target: 0, away_shots_on_target: 0, home_dangerous_attacks: 0, away_dangerous_attacks: 0, home_win_probability: 0.47, draw_probability: 0.27, away_win_probability: 0.26 },
-  { id: 2, match_id: 1, minute: 24, home_score: 1, away_score: 0, home_xg: 0.74, away_xg: 0.15, home_shots_on_target: 3, away_shots_on_target: 0, home_dangerous_attacks: 18, away_dangerous_attacks: 7, home_win_probability: 0.68, draw_probability: 0.2, away_win_probability: 0.12 },
-  { id: 3, match_id: 1, minute: 64, home_score: 1, away_score: 0, home_xg: 1.05, away_xg: 0.82, home_shots_on_target: 4, away_shots_on_target: 3, home_dangerous_attacks: 31, away_dangerous_attacks: 29, home_win_probability: 0.61, draw_probability: 0.25, away_win_probability: 0.14 }
 ];
 
 export const whatChanged: ProbabilityEvent[] = [
-  { id: 1, match_id: 1, minute: 24, score_state: "1-0", event_type: "goal", probability_delta: 0.21, explanation: "Norges vinnersannsynlighet økte med 21,0 prosentpoeng etter målet til 1-0." },
-  { id: 2, match_id: 1, minute: 64, score_state: "1-0", event_type: "shot_momentum", probability_delta: -0.07, explanation: "Norges vinnersannsynlighet falt med 7,0 prosentpoeng fordi Senegal skapte mer skuddtrykk." }
 ];
 

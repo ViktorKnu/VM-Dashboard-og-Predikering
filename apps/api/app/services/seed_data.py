@@ -145,43 +145,29 @@ PLAYERS = [
 ]
 
 MATCHES = [
-    {"id": 1, "tournament_year": 2026, "stage": "Group stage", "group_name": "A", "home_team_id": 1, "away_team_id": 3, "kickoff_at": utc("2026-06-15T19:00:00+00:00"), "stadium": "MetLife Stadium", "city": "New York/New Jersey", "status": "live", "home_score": 1, "away_score": 0},
-    {"id": 2, "tournament_year": 2026, "stage": "Group stage", "group_name": "A", "home_team_id": 2, "away_team_id": 4, "kickoff_at": utc("2026-06-16T16:00:00+00:00"), "stadium": "BC Place", "city": "Vancouver", "status": "scheduled", "home_score": None, "away_score": None},
-    {"id": 3, "tournament_year": 2026, "stage": "Group stage", "group_name": "B", "home_team_id": 5, "away_team_id": 6, "kickoff_at": utc("2026-06-17T19:00:00+00:00"), "stadium": "AT&T Stadium", "city": "Dallas", "status": "scheduled", "home_score": None, "away_score": None},
-    {"id": 4, "tournament_year": 2026, "stage": "Group stage", "group_name": "B", "home_team_id": 7, "away_team_id": 8, "kickoff_at": utc("2026-06-18T22:00:00+00:00"), "stadium": "SoFi Stadium", "city": "Los Angeles", "status": "scheduled", "home_score": None, "away_score": None},
-    {"id": 5, "tournament_year": 2026, "stage": "Round of 16", "group_name": None, "home_team_id": 2, "away_team_id": 5, "kickoff_at": utc("2026-07-04T19:00:00+00:00"), "stadium": "Mercedes-Benz Stadium", "city": "Atlanta", "status": "scheduled", "home_score": None, "away_score": None},
+    {"id": 1, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 2, "away_team_id": 3, "kickoff_at": utc("2026-06-16T16:00:00+00:00"), "stadium": "New York New Jersey Stadium", "city": "New York/New Jersey", "status": "scheduled", "home_score": None, "away_score": None},
+    {"id": 2, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 4, "away_team_id": 1, "kickoff_at": utc("2026-06-16T19:00:00+00:00"), "stadium": "Boston Stadium", "city": "Boston", "status": "scheduled", "home_score": None, "away_score": None},
+    {"id": 3, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 1, "away_team_id": 3, "kickoff_at": utc("2026-06-22T19:00:00+00:00"), "stadium": "New York New Jersey Stadium", "city": "New York/New Jersey", "status": "scheduled", "home_score": None, "away_score": None},
+    {"id": 4, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 2, "away_team_id": 4, "kickoff_at": utc("2026-06-22T22:00:00+00:00"), "stadium": "Philadelphia Stadium", "city": "Philadelphia", "status": "scheduled", "home_score": None, "away_score": None},
+    {"id": 5, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 1, "away_team_id": 2, "kickoff_at": utc("2026-06-26T19:00:00+00:00"), "stadium": "Boston Stadium", "city": "Boston", "status": "scheduled", "home_score": None, "away_score": None},
+    {"id": 6, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 3, "away_team_id": 4, "kickoff_at": utc("2026-06-26T19:00:00+00:00"), "stadium": "Toronto Stadium", "city": "Toronto", "status": "scheduled", "home_score": None, "away_score": None},
 ]
 
-EVENTS = [
-    {"id": 1, "match_id": 1, "minute": 12, "second": 8, "event_type": "shot_momentum", "team_id": 1, "player_id": 2, "assist_player_id": None, "description": "Norway starts with sustained pressure and two early shots."},
-    {"id": 2, "match_id": 1, "minute": 24, "second": 41, "event_type": "goal", "team_id": 1, "player_id": 1, "assist_player_id": 2, "description": "Haaland scores from Odegaard's through ball."},
-    {"id": 3, "match_id": 1, "minute": 53, "second": 10, "event_type": "yellow_card_risk", "team_id": 3, "player_id": 5, "assist_player_id": None, "description": "Mane booked after stopping a transition."},
-    {"id": 4, "match_id": 1, "minute": 64, "second": 2, "event_type": "substitution", "team_id": 3, "player_id": None, "assist_player_id": None, "description": "Senegal adds a second striker and moves closer to 3-5-2."},
-]
+EVENTS = []
 
-LINEUPS = [
-    {"id": 1, "match_id": 1, "team_id": 1, "formation": "4-3-3"},
-    {"id": 2, "match_id": 1, "team_id": 3, "formation": "4-2-3-1"},
-]
+LINEUPS = []
 
-LINEUP_PLAYERS = [
-    {"id": 1, "lineup_id": 1, "player_id": 1, "position_x": 84, "position_y": 50, "is_starter": True},
-    {"id": 2, "lineup_id": 1, "player_id": 2, "position_x": 56, "position_y": 44, "is_starter": True},
-    {"id": 3, "lineup_id": 2, "player_id": 5, "position_x": 80, "position_y": 34, "is_starter": True},
-]
+LINEUP_PLAYERS = []
 
 BROADCASTS = [
-    {"id": 1, "match_id": 1, "country_code": "NO", "broadcaster": "NRK", "channel": "NRK TV", "stream_url": "https://tv.nrk.no/", "replay_url": "https://tv.nrk.no/programmer/sport", "requires_login": False, "source_url": "https://www.nrk.no/sport/", "last_checked_at": utc("2026-06-14T12:00:00+00:00")},
-    {"id": 2, "match_id": 2, "country_code": "NO", "broadcaster": "TV 2", "channel": "TV 2 Direkte", "stream_url": "https://play.tv2.no/", "replay_url": "https://play.tv2.no/sport", "requires_login": True, "source_url": "https://www.tv2.no/sport/", "last_checked_at": utc("2026-06-14T12:00:00+00:00")},
-    {"id": 3, "match_id": 3, "country_code": "NO", "broadcaster": "TV 2", "channel": "TV 2 Sport 1", "stream_url": "https://play.tv2.no/", "replay_url": "https://play.tv2.no/sport", "requires_login": True, "source_url": "https://www.tv2.no/sport/", "last_checked_at": utc("2026-06-14T12:00:00+00:00")},
-    {"id": 4, "match_id": 4, "country_code": "NO", "broadcaster": "NRK", "channel": "NRK", "stream_url": "https://tv.nrk.no/", "replay_url": "https://tv.nrk.no/programmer/sport", "requires_login": False, "source_url": "https://www.nrk.no/sport/", "last_checked_at": utc("2026-06-14T12:00:00+00:00")},
+    {"id": 1, "match_id": 1, "country_code": "NO", "broadcaster": "NRK", "channel": "NRK TV", "stream_url": "https://tv.nrk.no/", "replay_url": "https://tv.nrk.no/programmer/sport", "requires_login": False, "source_url": "https://www.nrk.no/sport/", "last_checked_at": utc("2026-06-15T12:00:00+00:00")},
+    {"id": 2, "match_id": 2, "country_code": "NO", "broadcaster": "TV 2", "channel": "TV 2 Play", "stream_url": "https://play.tv2.no/", "replay_url": "https://play.tv2.no/sport", "requires_login": True, "source_url": "https://www.tv2.no/sport/", "last_checked_at": utc("2026-06-15T12:00:00+00:00")},
+    {"id": 3, "match_id": 3, "country_code": "NO", "broadcaster": "TV 2", "channel": "TV 2 Direkte", "stream_url": "https://play.tv2.no/", "replay_url": "https://play.tv2.no/sport", "requires_login": True, "source_url": "https://www.tv2.no/sport/", "last_checked_at": utc("2026-06-15T12:00:00+00:00")},
+    {"id": 4, "match_id": 4, "country_code": "NO", "broadcaster": "NRK", "channel": "NRK", "stream_url": "https://tv.nrk.no/", "replay_url": "https://tv.nrk.no/programmer/sport", "requires_login": False, "source_url": "https://www.nrk.no/sport/", "last_checked_at": utc("2026-06-15T12:00:00+00:00")},
+    {"id": 5, "match_id": 5, "country_code": "NO", "broadcaster": "TV 2", "channel": "TV 2 Sport 1", "stream_url": "https://play.tv2.no/", "replay_url": "https://play.tv2.no/sport", "requires_login": True, "source_url": "https://www.tv2.no/sport/", "last_checked_at": utc("2026-06-15T12:00:00+00:00")},
 ]
 
-LIVE_SNAPSHOTS = [
-    {"id": 1, "match_id": 1, "minute": 0, "second": 0, "home_score": 0, "away_score": 0, "home_xg": 0.0, "away_xg": 0.0, "home_shots": 0, "away_shots": 0, "home_shots_on_target": 0, "away_shots_on_target": 0, "home_possession": 50, "away_possession": 50, "home_corners": 0, "away_corners": 0, "home_yellow_cards": 0, "away_yellow_cards": 0, "home_red_cards": 0, "away_red_cards": 0, "home_dangerous_attacks": 0, "away_dangerous_attacks": 0, "home_win_probability": 0.47, "draw_probability": 0.27, "away_win_probability": 0.26, "model_version": "wc-v0.2-norway", "created_at": utc("2026-06-15T18:59:00+00:00")},
-    {"id": 2, "match_id": 1, "minute": 24, "second": 41, "home_score": 1, "away_score": 0, "home_xg": 0.74, "away_xg": 0.15, "home_shots": 5, "away_shots": 1, "home_shots_on_target": 3, "away_shots_on_target": 0, "home_possession": 57, "away_possession": 43, "home_corners": 2, "away_corners": 0, "home_yellow_cards": 0, "away_yellow_cards": 0, "home_red_cards": 0, "away_red_cards": 0, "home_dangerous_attacks": 18, "away_dangerous_attacks": 7, "home_win_probability": 0.68, "draw_probability": 0.20, "away_win_probability": 0.12, "model_version": "wc-v0.2-norway", "created_at": utc("2026-06-15T19:25:00+00:00")},
-    {"id": 3, "match_id": 1, "minute": 64, "second": 2, "home_score": 1, "away_score": 0, "home_xg": 1.05, "away_xg": 0.82, "home_shots": 8, "away_shots": 7, "home_shots_on_target": 4, "away_shots_on_target": 3, "home_possession": 52, "away_possession": 48, "home_corners": 3, "away_corners": 4, "home_yellow_cards": 1, "away_yellow_cards": 2, "home_red_cards": 0, "away_red_cards": 0, "home_dangerous_attacks": 31, "away_dangerous_attacks": 29, "home_win_probability": 0.61, "draw_probability": 0.25, "away_win_probability": 0.14, "model_version": "wc-v0.2-norway", "created_at": utc("2026-06-15T20:05:00+00:00")},
-]
+LIVE_SNAPSHOTS = []
 
 MODEL_VERSIONS = [
     {"version": "wc-v0.1-baseline", "date": "2026-06-01", "notes": "Initial ranking and Elo baseline."},

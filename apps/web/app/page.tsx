@@ -16,13 +16,14 @@ export default async function HomePage() {
     api.dataStatus()
   ]);
 
-  const liveMatch = matches.find((match) => match.status === "live") ?? matches[0];
-  const upcomingMatches = matches.filter((match) => match.id !== liveMatch.id).slice(0, 3);
+  const liveMatch = matches.find((match) => match.status === "live") ?? null;
+  const featuredMatch = liveMatch ?? matches[0];
+  const upcomingMatches = matches.filter((match) => match.id !== featuredMatch.id).slice(0, 3);
   const tournamentTeams = Array.isArray(tournament.teams) ? tournament.teams.slice(0, 5) : [];
   const officialBroadcasts = matches.reduce((count, match) => count + (match.broadcasts?.length ?? 0), 0);
 
   const stats: Array<[string, string | number, string, LucideIcon]> = [
-    ["Kamper", matches.length, "Seedet terminliste", CalendarDays],
+    ["Kamper", matches.length, "Gruppe I-terminliste", CalendarDays],
     ["Lag", teams.length, "VM-felt i demoen", BarChart3],
     ["Sendinger", officialBroadcasts, "Kun offisielle lenker", ShieldCheck],
     ["Direkte", liveMatch ? "1 kamp" : "Ingen", "SSE-klargjort", Activity]
@@ -51,30 +52,30 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <Link className="focus-ring rounded-md border border-ink/10 bg-ink p-5 text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md md:p-6" href={`/matches/${liveMatch.id}`}>
+        <Link className="focus-ring rounded-md border border-ink/10 bg-ink p-5 text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md md:p-6" href={`/matches/${featuredMatch.id}`}>
           <div className="flex items-center justify-between gap-3 text-sm text-white/70">
-            <span>{matchStageLabel(liveMatch.stage)}{liveMatch.group_name ? ` - Gruppe ${liveMatch.group_name}` : ""}</span>
+            <span>{matchStageLabel(featuredMatch.stage)}{featuredMatch.group_name ? ` - Gruppe ${featuredMatch.group_name}` : ""}</span>
             <span className="inline-flex items-center gap-1 rounded-sm bg-white/10 px-2 py-1">
-              <Radio size={15} /> {matchStatusLabel(liveMatch.status)}
+              <Radio size={15} /> {matchStatusLabel(featuredMatch.status)}
             </span>
           </div>
           <div className="mt-8 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-            <TeamBadge inverted linked={false} team={liveMatch.home_team} />
+            <TeamBadge inverted linked={false} team={featuredMatch.home_team} />
             <div className="rounded-sm bg-white px-4 py-3 text-center text-2xl font-bold text-ink">
-              {liveMatch.home_score ?? "-"} : {liveMatch.away_score ?? "-"}
+              {featuredMatch.home_score ?? "-"} : {featuredMatch.away_score ?? "-"}
             </div>
             <div className="justify-self-end">
-              <TeamBadge inverted linked={false} team={liveMatch.away_team} />
+              <TeamBadge inverted linked={false} team={featuredMatch.away_team} />
             </div>
           </div>
           <div className="mt-8 grid gap-3 text-sm text-white/75 sm:grid-cols-2">
             <div className="rounded-sm bg-white/10 p-3">
               <span className="block text-white/55">Avspark</span>
-              <strong className="text-white">{formatOsloTime(liveMatch.kickoff_at)}</strong>
+              <strong className="text-white">{formatOsloTime(featuredMatch.kickoff_at)}</strong>
             </div>
             <div className="rounded-sm bg-white/10 p-3">
               <span className="block text-white/55">Sted</span>
-              <strong className="text-white">{liveMatch.city}</strong>
+              <strong className="text-white">{featuredMatch.city}</strong>
             </div>
           </div>
           <div className="mt-5 text-sm font-semibold text-white">Åpne kampdetaljer</div>

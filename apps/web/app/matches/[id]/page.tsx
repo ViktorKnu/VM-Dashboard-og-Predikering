@@ -17,6 +17,8 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
     api.players(),
     api.teams()
   ]);
+  const hasLiveData = live.timeline.length > 0;
+  const liveStat = (value: number | undefined) => hasLiveData ? value ?? 0 : "Ikke startet";
 
   return (
     <div className="space-y-5">
@@ -44,10 +46,10 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
           <section className="rounded-md border border-ink/10 bg-white/88 p-4">
             <h2 className="mb-3 text-lg font-semibold">xG og kampdata</h2>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="rounded-sm bg-frost p-3">xG hjemme <strong className="block">{live.current.home_xg}</strong></div>
-              <div className="rounded-sm bg-frost p-3">xG borte <strong className="block">{live.current.away_xg}</strong></div>
-              <div className="rounded-sm bg-frost p-3">Skudd på mål hjemme <strong className="block">{live.current.home_shots_on_target}</strong></div>
-              <div className="rounded-sm bg-frost p-3">Skudd på mål borte <strong className="block">{live.current.away_shots_on_target}</strong></div>
+              <div className="rounded-sm bg-frost p-3">xG hjemme <strong className="block">{liveStat(live.current.home_xg)}</strong></div>
+              <div className="rounded-sm bg-frost p-3">xG borte <strong className="block">{liveStat(live.current.away_xg)}</strong></div>
+              <div className="rounded-sm bg-frost p-3">Skudd på mål hjemme <strong className="block">{liveStat(live.current.home_shots_on_target)}</strong></div>
+              <div className="rounded-sm bg-frost p-3">Skudd på mål borte <strong className="block">{liveStat(live.current.away_shots_on_target)}</strong></div>
             </div>
           </section>
         </div>

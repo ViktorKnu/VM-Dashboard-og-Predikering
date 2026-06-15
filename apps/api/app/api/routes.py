@@ -149,7 +149,23 @@ def live_probability(match_id: int) -> dict:
     snapshots = [snapshot for snapshot in data["live_snapshots"] if snapshot["match_id"] == match_id]
     if not snapshots:
         prediction = model_prediction(match_id)
-        return {"current": prediction, "timeline": [], "what_changed": []}
+        current = {
+            "id": 0,
+            "match_id": match_id,
+            "minute": 0,
+            "home_score": 0,
+            "away_score": 0,
+            "home_xg": 0.0,
+            "away_xg": 0.0,
+            "home_shots_on_target": 0,
+            "away_shots_on_target": 0,
+            "home_dangerous_attacks": 0,
+            "away_dangerous_attacks": 0,
+            "home_win_probability": prediction["home_win_probability"],
+            "draw_probability": prediction["draw_probability"],
+            "away_win_probability": prediction["away_win_probability"],
+        }
+        return {"current": current, "timeline": [], "what_changed": []}
     prematch = model_prediction(match_id)
     current = update_live_probability(prematch, snapshots[-1])
     return {

@@ -49,18 +49,65 @@ def test_prediction_points_are_additive():
 
 
 def test_live_probability_explains_significant_change():
-    data = seed()
     prematch = {
         "home_win_probability": 0.47,
         "draw_probability": 0.27,
         "away_win_probability": 0.26,
     }
-    current = update_live_probability(prematch, data["live_snapshots"][1])
-    events = probability_events(1, data["live_snapshots"][:2])
+    snapshots = [
+        {
+            "id": 1,
+            "match_id": 99,
+            "minute": 0,
+            "home_score": 0,
+            "away_score": 0,
+            "home_xg": 0.0,
+            "away_xg": 0.0,
+            "home_shots_on_target": 0,
+            "away_shots_on_target": 0,
+            "home_dangerous_attacks": 0,
+            "away_dangerous_attacks": 0,
+            "home_red_cards": 0,
+            "away_red_cards": 0,
+            "home_yellow_cards": 0,
+            "away_yellow_cards": 0,
+            "home_win_probability": 0.47,
+        },
+        {
+            "id": 2,
+            "match_id": 99,
+            "minute": 24,
+            "home_score": 1,
+            "away_score": 0,
+            "home_xg": 0.74,
+            "away_xg": 0.15,
+            "home_shots_on_target": 3,
+            "away_shots_on_target": 0,
+            "home_dangerous_attacks": 18,
+            "away_dangerous_attacks": 7,
+            "home_red_cards": 0,
+            "away_red_cards": 0,
+            "home_yellow_cards": 0,
+            "away_yellow_cards": 0,
+            "home_win_probability": 0.68,
+        },
+    ]
+    current = update_live_probability(prematch, snapshots[1])
+    events = probability_events(99, snapshots)
 
     assert current["home_win_probability"] > prematch["home_win_probability"]
     assert events
     assert events[0]["event_type"] == "goal"
+
+
+def test_seed_schedule_uses_group_i_without_fake_live_or_knockout_matches():
+    matches = seed()["matches"]
+
+    assert matches
+    assert all(match["group_name"] == "I" for match in matches)
+    assert all(match["stage"] == "Group stage" for match in matches)
+    assert all(match["status"] == "scheduled" for match in matches)
+    assert all(match["home_score"] is None and match["away_score"] is None for match in matches)
 
 
 def test_data_status_exposes_counts_and_prediction_flow():
