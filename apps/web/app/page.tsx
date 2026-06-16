@@ -5,7 +5,7 @@ import { APP_NAME, matchStageLabel, matchStatusLabel, teamName } from "@/lib/lab
 import { DataFlowStatus } from "@/components/DataFlowStatus";
 import { MatchCard } from "@/components/MatchCard";
 import { TeamBadge } from "@/components/TeamBadge";
-import { TeamLeaderboard, TopScorerTable } from "@/components/Leaderboards";
+import { PlayerProfileTable, TeamLeaderboard } from "@/components/Leaderboards";
 
 export default async function HomePage() {
   const [matches, teams, players, tournament, dataStatus] = await Promise.all([
@@ -144,7 +144,7 @@ export default async function HomePage() {
       </section>
 
       <section className="grid gap-5 lg:grid-cols-2">
-        <TopScorerTable players={players} />
+        <PlayerProfileTable players={players} />
         <TeamLeaderboard teams={teams} />
       </section>
     </div>
