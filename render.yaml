@@ -20,16 +20,6 @@ services:
         fromDatabase:
           name: vm-dashboard-db
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: vm-dashboard-redis
-          property: connectionString
-
-  - type: redis
-    name: vm-dashboard-redis
-    plan: free
-    ipAllowList: []
 
 databases:
   - name: vm-dashboard-db

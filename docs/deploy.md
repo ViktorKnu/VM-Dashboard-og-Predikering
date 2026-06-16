@@ -1,10 +1,11 @@
 # Deploy
 
-Prosjektet er klargjort for gratis/offentlig demo uten betalte API-er.
+Prosjektet er klargjort for offentlig demo uten betalte live-data-API-er.
 
 - Frontend: Vercel fra `apps/web`
 - API: Render fra `apps/api`
-- Data: seed/mock-data som fungerer uten database, Redis eller betalte leverandører
+- Prediksjoner: lagres i SQL-database når `DATABASE_URL` er satt
+- Fallback: frontend bruker seed-data hvis API-et ikke svarer
 
 ## 1. Deploy frontend på Vercel
 
@@ -24,10 +25,9 @@ Build Command: npm run build
 Framework: Next.js
 ```
 
-5. Ikke legg inn betalingskort eller betalte integrasjoner.
-6. Deploy.
+5. Deploy.
 
-Frontend fungerer selv uten API fordi den faller tilbake til seed-data. Når API-et senere er deployet, legg inn:
+Frontend fungerer selv uten API fordi den faller tilbake til seed-data. Når API-et er deployet, legg inn denne miljøvariabelen i Vercel:
 
 ```text
 NEXT_PUBLIC_API_BASE_URL=https://<render-api-url>
@@ -39,7 +39,7 @@ NEXT_PUBLIC_API_BASE_URL=https://<render-api-url>
 2. Koble til GitHub-repoet `h678128/VM-Dashboard-og-Predikering`.
 3. Render leser `render.yaml` fra rotmappen.
 4. Bruk gratis plan der det er tilgjengelig.
-5. Ikke aktiver betalt PostgreSQL, Redis eller add-ons hvis Render ber om kort.
+5. Ikke aktiver betalte add-ons hvis Render ber om kort.
 
 API-et har health check her:
 
@@ -47,24 +47,32 @@ API-et har health check her:
 https://<render-api-url>/health
 ```
 
+API-et lager nødvendige tabeller ved oppstart. `POST /predictions` skriver til databasen når `DATABASE_URL` finnes. Hvis databasen ikke er tilgjengelig, faller API-et tilbake til minnelagring slik at demoen fortsatt virker, men da overlever ikke prediksjoner restart.
+
 ## 3. Koble frontend og API
 
-Når Vercel-URL-en er klar, sett CORS i Render:
+Sett CORS i Render:
 
 ```text
-ALLOWED_ORIGINS=https://<vercel-url>
+ALLOWED_ORIGINS=https://vm-dashboard-og-predikering.vercel.app
 ```
 
-Når Render-URL-en er klar, sett API-base i Vercel:
+For både lokal utvikling og deploy:
+
+```text
+ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,https://vm-dashboard-og-predikering.vercel.app
+```
+
+Sett API-base i Vercel:
 
 ```text
 NEXT_PUBLIC_API_BASE_URL=https://<render-api-url>
 ```
 
-Hvis du vil støtte både lokal utvikling og deploy:
+Etterpå kan du teste:
 
 ```text
-ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,https://<vercel-url>
+https://<render-api-url>/predictions
 ```
 
 ## Lokal kontroll før deploy
@@ -73,8 +81,7 @@ Backend:
 
 ```bash
 cd apps/api
-python -m pytest tests
-python -m ruff check app tests
+python -m pytest
 ```
 
 Frontend:
@@ -90,8 +97,7 @@ npm audit --audit-level=moderate
 
 - Ikke legg ekte secrets i repoet.
 - `.env` og `.env.local` er ignorert.
-- `.env.example` og `apps/web/.env.example` inneholder bare lokale demo-verdier.
-- Frontend bruker seed fallback hvis API-et ikke svarer.
-- Ikke bruk betalte API-er, databaseplaner eller deploy-addons for denne demoen.
+- `NEXT_PUBLIC_API_BASE_URL` er offentlig klientkonfig og kan vises i frontend.
+- Brukerprediksjoner er offentlig demo-data, ikke private brukerkontoer.
 - Demo-API-et har enkel in-memory rate limiting på prediksjoner og simuleringer.
-- For produksjon med flere API-instanser bør rate limiting flyttes til Redis, WAF eller en gateway.
+- For produksjon med mer trafikk bør rate limiting flyttes til Redis, WAF eller en gateway.

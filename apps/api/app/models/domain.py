@@ -98,16 +98,17 @@ class UserPrediction(Base):
     __tablename__ = "user_predictions"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    match_id: Mapped[int | None] = mapped_column(ForeignKey("matches.id"), nullable=True)
+    match_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     user_name: Mapped[str] = mapped_column(String(80), default="portfolio_guest")
     predicted_home_score: Mapped[int | None] = mapped_column(Integer)
     predicted_away_score: Mapped[int | None] = mapped_column(Integer)
-    predicted_winner_team_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"))
-    first_goalscorer_player_id: Mapped[int | None] = mapped_column(ForeignKey("players.id"))
+    predicted_winner_team_id: Mapped[int | None] = mapped_column(Integer)
+    first_goalscorer_player_id: Mapped[int | None] = mapped_column(Integer)
     group_winners_json: Mapped[dict | None] = mapped_column(JSON)
-    tournament_winner_team_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"))
-    tournament_top_scorer_player_id: Mapped[int | None] = mapped_column(ForeignKey("players.id"))
+    tournament_winner_team_id: Mapped[int | None] = mapped_column(Integer)
+    tournament_top_scorer_player_id: Mapped[int | None] = mapped_column(Integer)
     points: Mapped[int] = mapped_column(Integer, default=0)
+    scoring_json: Mapped[dict | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 

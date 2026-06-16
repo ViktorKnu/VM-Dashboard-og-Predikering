@@ -7,8 +7,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
+from sqlalchemy import desc
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.db.session import get_db
+from app.models.domain import UserPrediction as UserPredictionModel
 from app.schemas import PredictionIn
 from app.services.broadcasts import is_official_broadcast_link
 from app.services.historical import HISTORICAL_INSIGHTS
@@ -23,6 +28,47 @@ USER_PREDICTIONS: list[dict] = []
 PREDICTION_STORE_LIMIT = 500
 DEFAULT_PUBLIC_PREDICTION_LIMIT = 25
 MAX_PUBLIC_PREDICTION_LIMIT = 100
+
+
+def usable_db(db: object) -> Session | None:
+    return db if hasattr(db, "add") and hasattr(db, "query") else None
+
+
+def serialize_prediction(row: UserPredictionModel) -> dict:
+    return {
+        "id": row.id,
+        "match_id": row.match_id,
+        "user_name": row.user_name,
+        "predicted_home_score": row.predicted_home_score,
+        "predicted_away_score": row.predicted_away_score,
+        "predicted_winner_team_id": row.predicted_winner_team_id,
+        "first_goalscorer_player_id": row.first_goalscorer_player_id,
+        "group_winners_json": row.group_winners_json,
+        "tournament_winner_team_id": row.tournament_winner_team_id,
+        "tournament_top_scorer_player_id": row.tournament_top_scorer_player_id,
+        "points": row.points,
+        "created_at": row.created_at,
+        "scoring": row.scoring_json,
+    }
+
+
+def prediction_count(db: object) -> int:
+    db_session = usable_db(db)
+    if not db_session:
+        return len(USER_PREDICTIONS)
+    try:
+        return db_session.query(UserPredictionModel).count()
+    except SQLAlchemyError:
+        db_session.rollback()
+        return len(USER_PREDICTIONS)
+
+
+def append_memory_prediction(prediction_dict: dict) -> dict:
+    prediction_dict["id"] = len(USER_PREDICTIONS) + 1
+    USER_PREDICTIONS.append(prediction_dict)
+    if len(USER_PREDICTIONS) > PREDICTION_STORE_LIMIT:
+        del USER_PREDICTIONS[: len(USER_PREDICTIONS) - PREDICTION_STORE_LIMIT]
+    return prediction_dict
 
 
 def prediction_write_rate_limit(request: Request) -> None:
@@ -58,7 +104,7 @@ def health() -> dict[str, str]:
 
 
 @router.get("/data/status")
-def data_status() -> dict:
+def data_status(db: Session | None = Depends(get_db)) -> dict:
     data = seed()
     return {
         "source": settings.live_data_provider,
@@ -71,7 +117,7 @@ def data_status() -> dict:
             "matches": len(data["matches"]),
             "broadcasts": len(data["broadcasts"]),
             "live_snapshots": len(data["live_snapshots"]),
-            "user_predictions": len(USER_PREDICTIONS),
+            "user_predictions": prediction_count(db),
         },
         "data_flow": [
             "API-et er primær datakilde for frontend.",
@@ -205,19 +251,31 @@ async def live_probability_stream(match_id: int):
 
 
 @router.post("/predictions", dependencies=[Depends(prediction_write_rate_limit)])
-def create_prediction(prediction: PredictionIn) -> dict:
+def create_prediction(prediction: PredictionIn, db: Session | None = Depends(get_db)) -> dict:
     data = seed()
     prediction_dict = prediction.model_dump()
-    prediction_dict["id"] = len(USER_PREDICTIONS) + 1
     prediction_dict["created_at"] = datetime.now(timezone.utc)
     actual = find_one("matches", prediction.match_id) if prediction.match_id else {}
     actual = (actual or {}) | {"first_goalscorer_player_id": 1, "tournament_top_scorer_player_id": 3}
     scoring = score_prediction(prediction_dict, actual)
     prediction_dict["points"] = scoring["total_points"]
     prediction_dict["scoring"] = scoring
-    USER_PREDICTIONS.append(prediction_dict)
-    if len(USER_PREDICTIONS) > PREDICTION_STORE_LIMIT:
-        del USER_PREDICTIONS[: len(USER_PREDICTIONS) - PREDICTION_STORE_LIMIT]
+
+    db_session = usable_db(db)
+    if db_session:
+        try:
+            row = UserPredictionModel(
+                **{key: value for key, value in prediction_dict.items() if key != "scoring"},
+                scoring_json=scoring,
+            )
+            db_session.add(row)
+            db_session.commit()
+            db_session.refresh(row)
+            return serialize_prediction(row) | {"teams_available": len(data["teams"])}
+        except SQLAlchemyError:
+            db_session.rollback()
+
+    append_memory_prediction(prediction_dict)
     return prediction_dict | {"teams_available": len(data["teams"])}
 
 
@@ -231,7 +289,20 @@ def list_predictions(
             description="Return only the latest public demo predictions.",
         ),
     ] = DEFAULT_PUBLIC_PREDICTION_LIMIT,
+    db: Session | None = Depends(get_db),
 ) -> list[dict]:
+    db_session = usable_db(db)
+    if db_session:
+        try:
+            rows = (
+                db_session.query(UserPredictionModel)
+                .order_by(desc(UserPredictionModel.created_at), desc(UserPredictionModel.id))
+                .limit(limit)
+                .all()
+            )
+            return [serialize_prediction(row) for row in reversed(rows)]
+        except SQLAlchemyError:
+            db_session.rollback()
     return USER_PREDICTIONS[-limit:]
 
 

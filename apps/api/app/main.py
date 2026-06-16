@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import router
 from app.core.config import settings
+from app.db.base import Base
+from app.db.session import engine
+from app.models import domain  # noqa: F401
 
 app = FastAPI(
     title="World Cup Insights API",
@@ -19,4 +22,12 @@ app.add_middleware(
 )
 
 app.include_router(router)
+
+
+@app.on_event("startup")
+def create_demo_tables() -> None:
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as exc:  # pragma: no cover - API can still serve seed fallback without DB.
+        print(f"Database startup skipped: {exc}")
 

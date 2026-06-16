@@ -16,7 +16,10 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
     live_data_provider: str = "seeded"
     live_poll_interval_seconds: int = 30
     allowed_broadcaster_hosts: str = "nrk.no,tv.nrk.no,tv2.no,play.tv2.no"
-    allowed_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    allowed_origins: str = (
+        "http://localhost:3000,http://127.0.0.1:3000,"
+        "https://vm-dashboard-og-predikering.vercel.app"
+    )
     rate_limit_window_seconds: int = 60
     prediction_rate_limit: int = 20
     simulation_rate_limit: int = 12
