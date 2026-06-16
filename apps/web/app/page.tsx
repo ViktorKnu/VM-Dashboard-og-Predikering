@@ -19,44 +19,73 @@ export default async function HomePage() {
 
   const liveMatch = matches.find((match) => match.status === "live") ?? null;
   const featuredMatch = liveMatch ?? matches[0];
-  const upcomingMatches = matches.filter((match) => match.id !== featuredMatch.id).slice(0, 3);
+  const upcomingMatches = matches.filter((match) => match.id !== featuredMatch.id).slice(0, 4);
   const tournamentTeams = Array.isArray(tournament.teams) ? tournament.teams.slice(0, 5) : [];
   const officialBroadcasts = matches.reduce((count, match) => count + (match.broadcasts?.length ?? 0), 0);
 
   const stats: Array<[string, string | number, string, LucideIcon]> = [
     ["Kamper", matches.length, "Terminliste", CalendarDays],
-    ["Lag", teams.length, "Seedet felt", BarChart3],
+    ["Lag", teams.length, "Modellfelt", BarChart3],
     ["TV-lenker", officialBroadcasts, "Offisielle", ShieldCheck],
     ["Direkte", liveMatch ? "1 kamp" : "Ingen", "SSE klar", Activity]
   ];
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="space-y-5">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="panel overflow-hidden">
+          <div className="grid min-w-0 gap-6 p-5 md:p-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+            <div className="min-w-0">
               <p className="eyebrow">Norsk VM-dashboard</p>
               <h1 className="mt-2 max-w-3xl text-4xl font-bold tracking-normal md:text-5xl">{APP_NAME}</h1>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-ink/66">
-                Kamper, prediksjoner, modellforklaringer og offisielle norske sendelenker samlet i en ryddig portfolio-demo.
+              <p className="mt-4 max-w-2xl text-base leading-7 text-ink/65">
+                Kampoversikt, prediksjoner, modellforklaringer og offisielle norske sendelenker i ett deployklart portfolio-produkt.
               </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Link className="primary-action" href="/matches">
+                  Se kamper <ArrowRight size={16} />
+                </Link>
+                <Link className="secondary-action" href="/model">
+                  Åpne modellverksted
+                </Link>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Link className="primary-action" href="/matches">
-                Kamper <ArrowRight size={16} />
-              </Link>
-              <Link className="secondary-action" href="/model">
-                Modell
+
+            <div className="min-w-0 rounded-lg bg-ink p-4 text-white">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/50">Neste kamp</p>
+                  <h2 className="mt-1 text-xl font-bold">{matchStageLabel(featuredMatch.stage)}</h2>
+                </div>
+                <span className="chip bg-white/10 text-white">
+                  <Radio size={14} /> {matchStatusLabel(featuredMatch.status)}
+                </span>
+              </div>
+              <div className="mt-5 space-y-2">
+                <div className="flex items-center justify-between gap-3 rounded-md bg-white/10 px-3 py-2">
+                  <TeamBadge inverted linked={false} team={featuredMatch.home_team} />
+                  <strong>{featuredMatch.home_score ?? "-"}</strong>
+                </div>
+                <div className="flex items-center justify-between gap-3 rounded-md bg-white/10 px-3 py-2">
+                  <TeamBadge inverted linked={false} team={featuredMatch.away_team} />
+                  <strong>{featuredMatch.away_score ?? "-"}</strong>
+                </div>
+              </div>
+              <div className="mt-5 rounded-md bg-white/10 p-3 text-sm text-white/70">
+                <strong className="block text-white">{formatOsloTime(featuredMatch.kickoff_at)}</strong>
+                {featuredMatch.stadium}, {featuredMatch.city}
+              </div>
+              <Link className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white hover:text-gold" href={`/matches/${featuredMatch.id}`}>
+                Kampdetaljer <ArrowRight size={15} />
               </Link>
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid border-t border-ink/10 bg-frost/70 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map(([label, value, helper, Icon]) => (
-              <div key={label} className="metric-tile">
+              <div key={label} className="border-b border-ink/10 p-4 sm:border-r xl:border-b-0">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="grid size-9 place-items-center rounded-md bg-frost text-fjord">
+                  <span className="grid size-9 place-items-center rounded-md bg-white text-fjord shadow-sm">
                     <Icon size={18} />
                   </span>
                   <span className="text-xs font-bold uppercase tracking-[0.12em] text-ink/40">{helper}</span>
@@ -68,50 +97,22 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <aside className="panel p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="eyebrow">Neste kamp</p>
-              <h2 className="mt-1 text-xl font-bold">{matchStageLabel(featuredMatch.stage)}</h2>
-            </div>
-            <span className="inline-flex items-center gap-1 rounded-md bg-frost px-2 py-1 text-xs font-bold text-fjord">
-              <Radio size={14} /> {matchStatusLabel(featuredMatch.status)}
-            </span>
-          </div>
-          <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-            <TeamBadge linked={false} team={featuredMatch.home_team} />
-            <div className="rounded-md bg-ink px-3 py-2 text-center font-bold text-white">
-              {featuredMatch.home_score ?? "-"} : {featuredMatch.away_score ?? "-"}
-            </div>
-            <div className="justify-self-end text-right">
-              <TeamBadge linked={false} team={featuredMatch.away_team} />
-            </div>
-          </div>
-          <div className="mt-5 rounded-md bg-frost p-3 text-sm text-ink/68">
-            <strong className="block text-ink">{formatOsloTime(featuredMatch.kickoff_at)}</strong>
-            {featuredMatch.stadium}, {featuredMatch.city}
-          </div>
-          <Link className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-fjord hover:text-pine" href={`/matches/${featuredMatch.id}`}>
-            Åpne kampdetaljer <ArrowRight size={15} />
-          </Link>
-        </aside>
+        <DataFlowStatus status={dataStatus} />
       </section>
 
-      <DataFlowStatus status={dataStatus} />
-
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_390px]">
         <div className="space-y-3">
-          <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="section-head">
             <div>
               <p className="eyebrow">Terminliste</p>
               <h2 className="mt-1 text-2xl font-bold">Kampoversikt</h2>
-              <p className="text-sm text-ink/60">Alle tider vises i norsk tid. Resultater vises først når ekte data finnes.</p>
+              <p className="muted-copy">Alle tider vises i norsk tid. Resultater vises først når ekte data finnes.</p>
             </div>
             <Link className="secondary-action" href="/matches">
               Alle kamper <ArrowRight size={16} />
             </Link>
           </div>
-          <div className="grid gap-3 lg:grid-cols-3">
+          <div className="grid gap-3 lg:grid-cols-2 2xl:grid-cols-4">
             {upcomingMatches.map((match) => <MatchCard key={match.id} match={match} />)}
           </div>
         </div>

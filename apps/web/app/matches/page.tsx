@@ -11,11 +11,11 @@ export default async function MatchesPage() {
           <div>
             <p className="eyebrow">Terminliste</p>
             <h1 className="mt-1 text-3xl font-bold">Kamper</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/62">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
               Gruppe I-kamper med tider i Europe/Oslo. Resultater og livehendelser vises først når ekte data finnes.
             </p>
           </div>
-          <span className="inline-flex items-center gap-2 rounded-md bg-frost px-3 py-2 text-sm font-semibold text-ink/68">
+          <span className="inline-flex items-center gap-2 rounded-md bg-frost px-3 py-2 text-sm font-semibold text-ink/70">
             <CalendarDays size={17} /> {matches.length} kamper
           </span>
         </div>

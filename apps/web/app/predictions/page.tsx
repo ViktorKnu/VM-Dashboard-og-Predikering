@@ -24,7 +24,7 @@ export default async function PredictionsPage() {
           <div>
             <p className="eyebrow">Tipskonkurranse</p>
             <h1 className="mt-1 text-3xl font-bold">Bruker vs modell</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/62">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
               Legg inn kampresultat, vinner, første målscorer og turneringsvalg. Poengene beregnes av API-et etter kampdata.
             </p>
           </div>

@@ -13,7 +13,7 @@ export default async function LeaderboardsPage() {
       <section className="surface p-5 md:p-6">
         <p className="eyebrow">Oversikt</p>
         <h1 className="mt-1 text-3xl font-bold">Tabeller</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/62">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
           Live toppscorer teller faktiske mål fra kampdata. Modellprediksjonen viser hvem modellen tror ender øverst.
         </p>
       </section>

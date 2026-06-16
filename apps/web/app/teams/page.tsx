@@ -10,7 +10,7 @@ export default async function TeamsPage() {
       <section className="surface p-5 md:p-6">
         <p className="eyebrow">Land og modellfeatures</p>
         <h1 className="mt-1 text-3xl font-bold">Lag</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/62">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
           Seedet lagfelt med FIFA-rangering, Elo og enkle landnivåvariabler for prediksjonsmodellen.
         </p>
       </section>
@@ -23,19 +23,19 @@ export default async function TeamsPage() {
             </div>
             <div className="mt-5 grid grid-cols-2 gap-2 text-sm">
               <div className="rounded-md bg-frost p-3">
-                <span className="block text-ink/52">FIFA</span>
+                <span className="block text-ink/50">FIFA</span>
                 <strong>{team.fifa_ranking}</strong>
               </div>
               <div className="rounded-md bg-frost p-3">
-                <span className="block text-ink/52">Elo</span>
+                <span className="block text-ink/50">Elo</span>
                 <strong>{team.elo_rating}</strong>
               </div>
               <div className="rounded-md bg-frost p-3">
-                <span className="block text-ink/52">Region</span>
+                <span className="block text-ink/50">Region</span>
                 <strong>{team.confederation}</strong>
               </div>
               <div className="rounded-md bg-frost p-3">
-                <span className="block text-ink/52">Fotball</span>
+                <span className="block text-ink/50">Fotball</span>
                 <strong>{Math.round(team.football_popularity_score * 100)}%</strong>
               </div>
             </div>

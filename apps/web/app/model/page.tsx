@@ -46,7 +46,7 @@ export default async function ModelPage({ searchParams }: { searchParams?: Promi
           <div>
             <p className="eyebrow">Modellinnsikt</p>
             <h1 className="mt-1 text-3xl font-bold">Modellverksted</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-ink/62">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-ink/60">
               Velg mellom en enkel aktiv modell, neste planlagte landmodell og en senere avansert modell. Tallene er seedet for portfolio-demoen, men strukturen viser hvordan modellene kan sammenlignes.
             </p>
           </div>
@@ -65,7 +65,7 @@ export default async function ModelPage({ searchParams }: { searchParams?: Promi
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-ink/42">{model.version}</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-ink/40">{model.version}</p>
                   <h2 className="mt-1 text-lg font-bold">{model.name}</h2>
                 </div>
                 <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold ${isActive ? "bg-pine/10 text-pine" : "bg-ink/10 text-ink/55"}`}>
@@ -127,7 +127,7 @@ export default async function ModelPage({ searchParams }: { searchParams?: Promi
               </div>
               <div className="space-y-2 text-sm">
                 {selectedModel.features.map((feature) => (
-                  <div key={feature} className="rounded-md bg-frost px-3 py-2 font-semibold text-ink/72">
+                  <div key={feature} className="rounded-md bg-frost px-3 py-2 font-semibold text-ink/70">
                     {featureLabel(feature)}
                   </div>
                 ))}

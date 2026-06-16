@@ -28,7 +28,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
         <div className="border-b border-ink/10 bg-ink px-5 py-4 text-white md:px-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/56">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/60">
                 {matchStageLabel(match.stage)}{match.group_name ? ` - Gruppe ${match.group_name}` : ""}
               </p>
               <div className="mt-2 flex items-center gap-2 text-sm text-white/70">

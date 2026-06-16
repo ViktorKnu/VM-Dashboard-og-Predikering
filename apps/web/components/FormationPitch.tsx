@@ -49,7 +49,7 @@ export function FormationPitch({ match, lineups }: { match: Match; lineups: Line
       <div className="mb-4">
         <p className="eyebrow">Taktikk</p>
         <h2 className="text-lg font-semibold">Formasjon</h2>
-        <p className="mt-1 text-sm text-ink/58">
+        <p className="mt-1 text-sm text-ink/60">
           Viser bare bekreftede lagoppstillinger fra kampdata. Ingen hardkodet standardformasjon.
         </p>
       </div>

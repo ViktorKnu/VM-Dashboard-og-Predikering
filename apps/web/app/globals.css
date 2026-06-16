@@ -4,7 +4,7 @@
 
 :root {
   color-scheme: light;
-  background: #f7f6f2;
+  background: #eef1ed;
   color: #17211f;
 }
 
@@ -15,9 +15,13 @@
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 246, 242, 1) 360px),
-    #f7f6f2;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(238, 241, 237, 1) 380px),
+    linear-gradient(90deg, rgba(23, 33, 31, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(23, 33, 31, 0.035) 1px, transparent 1px),
+    #eef1ed;
+  background-size: auto, 36px 36px, 36px 36px, auto;
   color: #17211f;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
@@ -33,28 +37,34 @@ a {
 }
 
 @layer components {
-  .panel {
-    @apply rounded-lg border border-ink/10 bg-white shadow-[0_10px_30px_rgba(23,33,31,0.055)];
-  }
-
-  .panel-muted {
-    @apply rounded-lg border border-ink/10 bg-[#fbfaf7];
-  }
-
+  .panel,
   .surface {
-    @apply panel;
+    @apply min-w-0 w-full rounded-lg border border-ink/10 bg-white shadow-[0_14px_42px_rgba(23,33,31,0.07)];
   }
 
+  .panel-muted,
   .surface-muted {
-    @apply panel-muted;
+    @apply rounded-lg border border-ink/10 bg-frost shadow-sm;
+  }
+
+  .section-head {
+    @apply flex flex-wrap items-end justify-between gap-3;
   }
 
   .eyebrow {
     @apply text-xs font-bold uppercase tracking-[0.14em] text-fjord;
   }
 
+  .muted-copy {
+    @apply text-sm leading-6 text-ink/60;
+  }
+
   .metric-tile {
-    @apply rounded-lg border border-ink/10 bg-white p-4 shadow-sm;
+    @apply rounded-lg border border-ink/10 bg-white p-4 shadow-[0_12px_28px_rgba(23,33,31,0.06)];
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-bold;
   }
 
   .primary-action {
@@ -67,5 +77,16 @@ a {
 
   .field {
     @apply mt-1 w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-fjord focus:ring-2 focus:ring-fjord/20;
+  }
+
+  .data-row {
+    @apply rounded-md bg-frost px-3 py-2 text-sm;
+  }
+}
+
+@media (max-width: 640px) {
+  .panel,
+  .surface {
+    max-width: calc(100vw - 2rem);
   }
 }

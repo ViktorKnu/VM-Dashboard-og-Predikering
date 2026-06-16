@@ -15,7 +15,7 @@ export default async function HistoricalInsightsPage() {
           <div>
             <p className="eyebrow">VM-data</p>
             <h1 className="mt-1 text-3xl font-bold">Historiske innsikter</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/62">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
               Historiske mønstre for kampstatus, comebacks, underdogs og målprofil. Demoen bruker seedede innsikter.
             </p>
           </div>

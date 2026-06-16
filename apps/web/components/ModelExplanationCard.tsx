@@ -20,7 +20,7 @@ export function ModelExplanationCard({ prediction }: { prediction: ModelPredicti
         <div className="rounded-md bg-frost p-3"><span className="text-ink/60">Tips</span><strong className="block text-lg">{prediction.predicted_score}</strong></div>
         <div className="rounded-md bg-frost p-3"><span className="text-ink/60">xG borte</span><strong className="block text-lg">{prediction.expected_away_goals}</strong></div>
       </div>
-      <p className="mt-3 text-sm leading-6 text-ink/68">
+      <p className="mt-3 text-sm leading-6 text-ink/70">
         Deterministisk modell som bruker rangering, Elo, økonomiske proxyer, fotballpopularitet og historisk VM-styrke. Tilfeldighet brukes bare i simuleringene.
       </p>
     </section>
