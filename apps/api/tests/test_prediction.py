@@ -6,6 +6,7 @@ from app.api.routes import (
     data_status,
     list_predictions,
     model_lab,
+    match_lineups,
     top_scorer_prediction,
     top_scorers,
     USER_PREDICTIONS,
@@ -161,4 +162,8 @@ def test_top_scorer_prediction_returns_model_forecast():
     assert forecast[0]["probability"] >= forecast[-1]["probability"]
     assert forecast[0]["expected_goals"] > 0
     assert "spiller-rating" in forecast[0]["signals"]
+
+
+def test_seed_matches_do_not_expose_fake_lineups():
+    assert match_lineups(1) == []
 

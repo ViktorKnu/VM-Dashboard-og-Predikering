@@ -1,8 +1,9 @@
 import { API_BASE_URL } from "./config";
-import { liveTimeline, matches, modelLab, players, prediction, teams, topScorerPredictions, topScorers, whatChanged } from "./seed";
+import { lineups, liveTimeline, matches, modelLab, players, prediction, teams, topScorerPredictions, topScorers, whatChanged } from "./seed";
 import type {
   DataStatus,
   LiveSnapshot,
+  Lineup,
   Match,
   ModelPrediction,
   Player,
@@ -94,6 +95,7 @@ export const api = {
   topScorers: () => getJson<TopScorerStanding[]>("/leaderboards/top-scorers", topScorers),
   topScorerPredictions: () => getJson<TopScorerPrediction[]>("/model/top-scorer-prediction", topScorerPredictions),
   predictions: () => getJson<UserPrediction[]>("/predictions", []),
+  lineups: (id: number) => getJson<Lineup[]>(`/matches/${id}/lineups`, lineups.filter((lineup) => lineup.match_id === id)),
   prediction: (id: number) => getJson<ModelPrediction>(`/matches/${id}/prediction`, { ...prediction, match_id: id }),
   live: (id: number) => getJson<{ current: LiveSnapshot; timeline: LiveSnapshot[]; what_changed: ProbabilityEvent[] }>(
     `/matches/${id}/live-probability`,

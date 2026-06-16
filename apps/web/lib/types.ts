@@ -102,6 +102,24 @@ export type ProbabilityEvent = {
   explanation: string;
 };
 
+export type LineupPlayer = {
+  id: number;
+  lineup_id: number;
+  player_id: number;
+  position_x: number;
+  position_y: number;
+  is_starter: boolean;
+  player?: Player | null;
+};
+
+export type Lineup = {
+  id: number;
+  match_id: number;
+  team_id: number;
+  formation: string;
+  players: LineupPlayer[];
+};
+
 export type DataStatus = {
   source: string;
   mode: "seeded" | "external" | "seed-fallback";

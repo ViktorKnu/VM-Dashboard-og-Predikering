@@ -11,10 +11,11 @@ import { WinProbabilityTimeline } from "@/components/WinProbabilityTimeline";
 export default async function MatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
   const id = Number(rawId);
-  const [match, prediction, live, players, teams] = await Promise.all([
+  const [match, prediction, live, lineups, players, teams] = await Promise.all([
     api.match(id),
     api.prediction(id),
     api.live(id),
+    api.lineups(id),
     api.players(),
     api.teams()
   ]);
@@ -55,7 +56,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
         <div className="space-y-5">
           <ModelExplanationCard prediction={prediction} />
           <WinProbabilityTimeline changes={live.what_changed} timeline={live.timeline} />
-          <FormationPitch formation="4-3-3" />
+          <FormationPitch lineups={lineups} match={match} />
         </div>
         <div className="space-y-5">
           <PredictionForm match={match} players={players} teams={teams} />

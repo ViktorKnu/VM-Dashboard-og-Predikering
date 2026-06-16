@@ -1,4 +1,4 @@
-import type { Broadcast, LiveSnapshot, Match, ModelPrediction, Player, ProbabilityEvent, Team, TopScorerPrediction, TopScorerStanding } from "./types";
+import type { Broadcast, Lineup, LiveSnapshot, Match, ModelPrediction, Player, ProbabilityEvent, Team, TopScorerPrediction, TopScorerStanding } from "./types";
 
 export const teams: Team[] = [
   { id: 1, name: "Norway", fifa_code: "NOR", confederation: "UEFA", flag_url: "https://flagcdn.com/no.svg", fifa_ranking: 43, fifa_ranking_points: 1472.2, elo_rating: 1810, gdp_per_capita: 87962, population: 5500000, football_popularity_score: 0.76, host_advantage_score: 0, historical_world_cup_score: 0.18 },
@@ -68,6 +68,8 @@ export const liveTimeline: LiveSnapshot[] = [
 
 export const whatChanged: ProbabilityEvent[] = [
 ];
+
+export const lineups: Lineup[] = [];
 
 export const topScorers: TopScorerStanding[] = [];
 
