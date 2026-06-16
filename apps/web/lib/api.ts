@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "./config";
-import { liveTimeline, matches, players, prediction, teams, whatChanged } from "./seed";
+import { liveTimeline, matches, modelLab, players, prediction, teams, whatChanged } from "./seed";
 import type {
   DataStatus,
   LiveSnapshot,
@@ -98,6 +98,6 @@ export const api = {
       : liveFallback(id)
   ),
   historical: () => getJson<Record<string, unknown>>("/historical-insights", {}),
-  modelLab: () => getJson<Record<string, unknown>>("/model/lab", {}),
+  modelLab: () => getJson<Record<string, unknown>>("/model/lab", modelLab),
   tournament: () => getJson<Record<string, unknown>>("/tournament/simulation", {})
 };

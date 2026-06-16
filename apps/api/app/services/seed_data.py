@@ -170,8 +170,21 @@ BROADCASTS = [
 LIVE_SNAPSHOTS = []
 
 MODEL_VERSIONS = [
-    {"version": "wc-v0.1-baseline", "date": "2026-06-01", "notes": "Initial ranking and Elo baseline."},
-    {"version": "wc-v0.2-norway", "date": "2026-06-14", "notes": "Adds normalized country features, Norwegian broadcast support and live explanations."},
+    {
+        "version": "wc-v0.1-simple",
+        "date": "2026-06-01",
+        "notes": "Enkel baseline med FIFA-rangering og Elo. Aktiv i demoen nå.",
+    },
+    {
+        "version": "wc-v0.2-country-features",
+        "date": "2026-06-14",
+        "notes": "Planlagt utvidelse med normaliserte landfeatures, økonomiske proxyer og fotballkultur.",
+    },
+    {
+        "version": "wc-v1.0-advanced",
+        "date": "Senere",
+        "notes": "Planlagt avansert modell med historisk backtesting, kalibrering og forklarbarhet.",
+    },
 ]
 
 

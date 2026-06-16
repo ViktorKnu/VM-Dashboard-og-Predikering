@@ -69,3 +69,80 @@ export const liveTimeline: LiveSnapshot[] = [
 export const whatChanged: ProbabilityEvent[] = [
 ];
 
+export const modelLab = {
+  active_model_id: "simple",
+  models: [
+    {
+      id: "simple",
+      name: "Enkel modell",
+      version: "wc-v0.1-simple",
+      status: "active",
+      description: "Rask baseline som kombinerer FIFA-rangering og Elo. Denne er lett å forklare og brukes som første sammenligningspunkt.",
+      features: ["fifa_ranking", "elo_rating"],
+      accuracy: 0.52,
+      log_loss: 1.02,
+      brier_score: 0.23,
+      limitations: [
+        "Tar ikke hensyn til form, skader eller kampkontekst.",
+        "Brukes som enkel referanse, ikke som endelig prediksjonsmotor."
+      ]
+    },
+    {
+      id: "country",
+      name: "Utvidet landmodell",
+      version: "wc-v0.2-country-features",
+      status: "planned",
+      description: "Neste steg legger til BNP per innbygger, befolkning, fotballpopularitet, historisk VM-score og konføderasjonsstyrke.",
+      features: ["fifa_ranking", "elo_rating", "gdp_per_capita", "population", "football_popularity_score", "historical_world_cup_score"],
+      accuracy: null,
+      log_loss: null,
+      brier_score: null,
+      limitations: [
+        "Økonomi og befolkning er proxyer, ikke direkte årsaker.",
+        "Må backtestes mot historiske VM-kamper før den brukes som hovedmodell."
+      ]
+    },
+    {
+      id: "advanced",
+      name: "Avansert modell",
+      version: "wc-v1.0-advanced",
+      status: "planned",
+      description: "Senere modell med historiske kampdata, ratings over tid, kalibrering, SHAP-lignende forklaringer og bedre evaluering.",
+      features: ["all_country_features", "historical_match_results", "team_form", "squad_strength", "market_and_injury_signals", "calibrated_probabilities"],
+      accuracy: null,
+      log_loss: null,
+      brier_score: null,
+      limitations: [
+        "Krever rene datakilder og streng validering.",
+        "Skal ikke slippes før kalibrering og leakage-sjekk er dokumentert."
+      ]
+    }
+  ],
+  version_history: [
+    { version: "wc-v0.1-simple", date: "2026-06-01", notes: "Enkel baseline med FIFA-rangering og Elo. Aktiv i demoen nå." },
+    { version: "wc-v0.2-country-features", date: "2026-06-14", notes: "Planlagt utvidelse med normaliserte landfeatures, økonomiske proxyer og fotballkultur." },
+    { version: "wc-v1.0-advanced", date: "Senere", notes: "Planlagt avansert modell med historisk backtesting, kalibrering og forklarbarhet." }
+  ],
+  feature_importance: [
+    { feature: "elo_rating", importance: 0.28 },
+    { feature: "fifa_ranking", importance: 0.22 },
+    { feature: "historical_world_cup_score", importance: 0.1 },
+    { feature: "football_popularity_score", importance: 0.1 },
+    { feature: "confederation_strength", importance: 0.1 },
+    { feature: "gdp_per_capita", importance: 0.08 },
+    { feature: "population", importance: 0.07 },
+    { feature: "host_advantage_score", importance: 0.05 }
+  ],
+  backtesting: {
+    dataset: "Historical World Cup matches placeholder: wire Fjelstul + FIFA official results.",
+    accuracy: 0.52,
+    log_loss: 1.02,
+    brier_score: 0.23
+  },
+  placeholders: {
+    calibration_chart: "Reserved chart slot",
+    confusion_matrix: "Reserved chart slot",
+    shap_explanation: "Reserved chart slot"
+  }
+};
+

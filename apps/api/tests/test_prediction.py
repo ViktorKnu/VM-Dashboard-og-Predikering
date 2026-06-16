@@ -1,7 +1,7 @@
 from app.services.live_probability import probability_events, update_live_probability
 from app.services.prediction import predict_match, score_prediction
 from app.services.seed_data import seed
-from app.api.routes import create_prediction, data_status, list_predictions, USER_PREDICTIONS
+from app.api.routes import create_prediction, data_status, list_predictions, model_lab, USER_PREDICTIONS
 from app.schemas import PredictionIn
 
 
@@ -131,4 +131,13 @@ def test_data_status_exposes_counts_and_prediction_flow():
 
     assert created["points"] > 0
     assert list_predictions(limit=5)[-1]["id"] == created["id"]
+
+
+def test_model_lab_exposes_selectable_model_levels():
+    lab = model_lab()
+
+    assert lab["active_model_id"] == "simple"
+    assert [model["id"] for model in lab["models"]] == ["simple", "country", "advanced"]
+    assert lab["models"][0]["status"] == "active"
+    assert lab["models"][-1]["name"] == "Avansert modell"
 
