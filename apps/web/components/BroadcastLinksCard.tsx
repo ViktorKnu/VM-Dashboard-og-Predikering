@@ -18,7 +18,7 @@ export function BroadcastLinksCard({ broadcasts }: { broadcasts: Broadcast[] }) 
         {broadcasts.map((item) => (
           <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-frost p-3">
             <div>
-              <div className="font-semibold">{item.broadcaster} · {item.channel}</div>
+              <div className="font-semibold">{item.broadcaster} - {item.channel}</div>
               <div className="text-sm text-ink/60">{item.requires_login ? "Krever innlogging/abonnement" : "Åpen offisiell side"}</div>
             </div>
             <div className="flex gap-2 text-sm font-semibold text-fjord">

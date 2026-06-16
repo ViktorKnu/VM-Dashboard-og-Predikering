@@ -14,8 +14,8 @@ export function DataFlowStatus({ status }: { status: DataStatus }) {
   ];
 
   return (
-    <section className="surface p-4 md:p-5">
-      <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+    <section className="surface overflow-hidden">
+      <div className="grid gap-5 p-4 md:p-5 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="flex items-start gap-3">
           <span className="grid size-11 shrink-0 place-items-center rounded-md bg-fjord/10 text-fjord">
             <DatabaseZap size={22} />
@@ -24,7 +24,7 @@ export function DataFlowStatus({ status }: { status: DataStatus }) {
             <p className="eyebrow">Datastatus</p>
             <h2 className="mt-1 text-xl font-bold">Dataflyt</h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-ink/62">
-              Frontend henter primært fra API-et. Når API-et ikke svarer, brukes seed-data slik at demoen fortsatt virker.
+              Frontend henter primært fra API-et. Når API-et ikke svarer, brukes seed-data slik at demoen fortsatt virker uten betalte tjenester.
             </p>
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
               <span className={`rounded-sm px-3 py-1 font-semibold ${isFallback ? "bg-gold/20 text-ink" : "bg-pine/10 text-pine"}`}>
@@ -45,9 +45,10 @@ export function DataFlowStatus({ status }: { status: DataStatus }) {
           ))}
         </div>
       </div>
-      <div className="mt-4 grid gap-2 text-sm text-ink/65 md:grid-cols-3">
+
+      <div className="grid gap-2 border-t border-ink/10 bg-frost/65 p-4 text-sm text-ink/65 md:grid-cols-3">
         {status.data_flow.slice(0, 3).map((item) => (
-          <div key={item} className="flex gap-2 rounded-md bg-white/70 p-3">
+          <div key={item} className="flex gap-2 rounded-md bg-white p-3">
             <CheckCircle2 className="mt-0.5 shrink-0 text-pine" size={16} />
             <span>{item}</span>
           </div>

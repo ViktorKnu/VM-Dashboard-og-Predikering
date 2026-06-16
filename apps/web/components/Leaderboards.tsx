@@ -10,9 +10,9 @@ export function TopScorerTable({ players }: { players: Player[] }) {
       </div>
       <div className="space-y-2">
         {players.slice(0, 8).map((player, index) => (
-          <div key={player.id} className="grid grid-cols-[34px_1fr_56px] items-center gap-3 rounded-md bg-frost px-3 py-2 text-sm">
+          <div key={player.id} className="grid grid-cols-[34px_minmax(0,1fr)_64px] items-center gap-3 rounded-md bg-frost px-3 py-2 text-sm">
             <span className="grid size-7 place-items-center rounded-sm bg-white font-bold text-ink/70">{index + 1}</span>
-            <span className="font-medium">{player.name}</span>
+            <span className="truncate font-medium">{player.name}</span>
             <strong className="text-right">{player.goals} mål</strong>
           </div>
         ))}
@@ -30,7 +30,7 @@ export function TeamLeaderboard({ teams }: { teams: Team[] }) {
       </div>
       <div className="space-y-2">
         {teams.slice(0, 8).map((team) => (
-          <div key={team.id} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-md bg-frost px-3 py-2 text-sm">
+          <div key={team.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-md bg-frost px-3 py-2 text-sm">
             <TeamBadge compact team={team} />
             <div className="text-right">
               <span className="block text-xs text-ink/52">FIFA {team.fifa_ranking}</span>

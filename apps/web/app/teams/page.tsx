@@ -16,7 +16,7 @@ export default async function TeamsPage() {
       </section>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {teams.map((team) => (
-          <Link key={team.id} className="focus-ring group block rounded-lg border border-ink/10 bg-white/90 p-4 shadow-[0_14px_44px_rgba(23,33,31,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_60px_rgba(23,33,31,0.11)]" href={`/teams/${team.id}`}>
+          <Link key={team.id} className="focus-ring group block rounded-lg border border-ink/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-fjord/35 hover:shadow-[0_18px_48px_rgba(23,33,31,0.11)]" href={`/teams/${team.id}`}>
             <div className="flex items-start justify-between gap-3">
               <TeamBadge linked={false} team={team} />
               <ArrowRight className="text-ink/35 transition group-hover:translate-x-1 group-hover:text-pine" size={18} />

@@ -7,8 +7,6 @@ import { API_BASE_URL } from "@/lib/config";
 import { teamName } from "@/lib/labels";
 import type { Match, Player, Team, UserPrediction } from "@/lib/types";
 
-const inputClassName = "mt-1 w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-fjord focus:ring-2 focus:ring-fjord/20";
-
 export function PredictionForm({ match, players, teams }: { match: Match; players: Player[]; teams: Team[] }) {
   const router = useRouter();
   const [homeScore, setHomeScore] = useState("1");
@@ -78,15 +76,15 @@ export function PredictionForm({ match, players, teams }: { match: Match; player
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm font-semibold">
           {teamName(match.home_team)}
-          <input className={inputClassName} min="0" type="number" value={homeScore} onChange={(event) => setHomeScore(event.target.value)} />
+          <input className="field" min="0" type="number" value={homeScore} onChange={(event) => setHomeScore(event.target.value)} />
         </label>
         <label className="text-sm font-semibold">
           {teamName(match.away_team)}
-          <input className={inputClassName} min="0" type="number" value={awayScore} onChange={(event) => setAwayScore(event.target.value)} />
+          <input className="field" min="0" type="number" value={awayScore} onChange={(event) => setAwayScore(event.target.value)} />
         </label>
         <label className="text-sm font-semibold">
           Vinner
-          <select className={inputClassName} value={winner} onChange={(event) => setWinner(event.target.value)}>
+          <select className="field" value={winner} onChange={(event) => setWinner(event.target.value)}>
             <option value={match.home_team_id}>{teamName(match.home_team)}</option>
             <option value={match.away_team_id}>{teamName(match.away_team)}</option>
             <option value="">Uavgjort</option>
@@ -94,32 +92,27 @@ export function PredictionForm({ match, players, teams }: { match: Match; player
         </label>
         <label className="text-sm font-semibold">
           Første målscorer
-          <select className={inputClassName} value={firstScorer} onChange={(event) => setFirstScorer(event.target.value)}>
+          <select className="field" value={firstScorer} onChange={(event) => setFirstScorer(event.target.value)}>
             {players.map((player) => <option key={player.id} value={player.id}>{player.name}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold">
           Turneringsvinner
-          <select className={inputClassName} value={tournamentWinner} onChange={(event) => setTournamentWinner(event.target.value)}>
+          <select className="field" value={tournamentWinner} onChange={(event) => setTournamentWinner(event.target.value)}>
             {teams.map((team) => <option key={team.id} value={team.id}>{teamName(team)}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold">
           Toppscorer
-          <select className={inputClassName} value={topScorer} onChange={(event) => setTopScorer(event.target.value)}>
+          <select className="field" value={topScorer} onChange={(event) => setTopScorer(event.target.value)}>
             {players.map((player) => <option key={player.id} value={player.id}>{player.name}</option>)}
           </select>
         </label>
       </div>
       <div className="mt-4 rounded-md bg-frost p-3 text-sm">
-        <strong>{comparison.score}</strong> · {comparison.predictedWinner}. {comparison.modelHint}
+        <strong>{comparison.score}</strong> - {comparison.predictedWinner}. {comparison.modelHint}
       </div>
-      <button
-        className="primary-action mt-4 w-full disabled:cursor-not-allowed disabled:bg-ink/35"
-        disabled={isSubmitting}
-        type="button"
-        onClick={submitPrediction}
-      >
+      <button className="primary-action mt-4 w-full disabled:cursor-not-allowed disabled:bg-ink/35" disabled={isSubmitting} type="button" onClick={submitPrediction}>
         <Send size={17} /> {isSubmitting ? "Sender tips..." : "Send tips til API"}
       </button>
       {result ? (
