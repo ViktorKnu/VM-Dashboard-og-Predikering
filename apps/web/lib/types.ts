@@ -137,3 +137,21 @@ export type UserPrediction = {
   };
 };
 
+export type TopScorerStanding = {
+  player_id: number;
+  player: Player;
+  team: Team | null;
+  goals: number;
+  last_goal_minute: number | null;
+};
+
+export type TopScorerPrediction = {
+  player_id: number;
+  player: Player;
+  team: Team;
+  probability: number;
+  expected_goals: number;
+  model_version: string;
+  signals: string[];
+};
+

@@ -1,4 +1,4 @@
-import type { Broadcast, LiveSnapshot, Match, ModelPrediction, Player, ProbabilityEvent, Team } from "./types";
+import type { Broadcast, LiveSnapshot, Match, ModelPrediction, Player, ProbabilityEvent, Team, TopScorerPrediction, TopScorerStanding } from "./types";
 
 export const teams: Team[] = [
   { id: 1, name: "Norway", fifa_code: "NOR", confederation: "UEFA", flag_url: "https://flagcdn.com/no.svg", fifa_ranking: 43, fifa_ranking_points: 1472.2, elo_rating: 1810, gdp_per_capita: 87962, population: 5500000, football_popularity_score: 0.76, host_advantage_score: 0, historical_world_cup_score: 0.18 },
@@ -68,6 +68,31 @@ export const liveTimeline: LiveSnapshot[] = [
 
 export const whatChanged: ProbabilityEvent[] = [
 ];
+
+export const topScorers: TopScorerStanding[] = [];
+
+export const topScorerPredictions: TopScorerPrediction[] = players
+  .map((player) => {
+    const team = byTeam(player.team_id);
+    const goalsPerCap = player.goals / Math.max(player.caps, 1);
+    const teamAttackProxy = (team.elo_rating - 1400) / 800;
+    const score = Math.max(0.01, 0.45 * (player.rating / 100) + 0.35 * goalsPerCap + 0.2 * teamAttackProxy);
+    return { player, team, score };
+  })
+  .sort((first, second) => second.score - first.score)
+  .slice(0, 8)
+  .map((item, _index, list) => {
+    const total = list.reduce((sum, current) => sum + current.score, 0) || 1;
+    return {
+      player_id: item.player.id,
+      player: item.player,
+      team: item.team,
+      probability: Number((item.score / total).toFixed(4)),
+      expected_goals: Number((1.2 + item.score * 5).toFixed(2)),
+      model_version: "wc-v0.2-norway",
+      signals: ["spiller-rating", "landslagsmål per kamp", "lagets Elo-proxy"]
+    };
+  });
 
 export const modelLab = {
   active_model_id: "simple",

@@ -5,15 +5,16 @@ import { APP_NAME, matchStageLabel, matchStatusLabel, teamName } from "@/lib/lab
 import { DataFlowStatus } from "@/components/DataFlowStatus";
 import { MatchCard } from "@/components/MatchCard";
 import { TeamBadge } from "@/components/TeamBadge";
-import { PlayerProfileTable, TeamLeaderboard } from "@/components/Leaderboards";
+import { LiveTopScorerTable, TeamLeaderboard, TopScorerPredictionTable } from "@/components/Leaderboards";
 
 export default async function HomePage() {
-  const [matches, teams, players, tournament, dataStatus] = await Promise.all([
+  const [matches, teams, tournament, dataStatus, topScorers, topScorerPredictions] = await Promise.all([
     api.matches(),
     api.teams(),
-    api.players(),
     api.tournament(),
-    api.dataStatus()
+    api.dataStatus(),
+    api.topScorers(),
+    api.topScorerPredictions()
   ]);
 
   const liveMatch = matches.find((match) => match.status === "live") ?? null;
@@ -143,8 +144,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-2">
-        <PlayerProfileTable players={players} />
+      <section className="grid gap-5 lg:grid-cols-3">
+        <LiveTopScorerTable scorers={topScorers} />
+        <TopScorerPredictionTable predictions={topScorerPredictions} />
         <TeamLeaderboard teams={teams} />
       </section>
     </div>

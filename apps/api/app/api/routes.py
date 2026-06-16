@@ -308,8 +308,65 @@ def list_predictions(
 
 @router.get("/leaderboards/top-scorers")
 def top_scorers() -> list[dict]:
-    players = sorted(seed()["players"], key=lambda player: player["goals"] or 0, reverse=True)
-    return players[:20]
+    data = seed()
+    players_by_id = {player["id"]: player for player in data["players"]}
+    teams_by_id = {team["id"]: team for team in data["teams"]}
+    standings: dict[int, dict] = {}
+
+    for event in data["events"]:
+        if event.get("event_type") != "goal" or not event.get("player_id"):
+            continue
+        player = players_by_id.get(event["player_id"])
+        if not player:
+            continue
+        team = teams_by_id.get(event.get("team_id") or player["team_id"])
+        standing = standings.setdefault(
+            player["id"],
+            {
+                "player_id": player["id"],
+                "player": player,
+                "team": team,
+                "goals": 0,
+                "last_goal_minute": None,
+            },
+        )
+        standing["goals"] += 1
+        standing["last_goal_minute"] = event.get("minute")
+
+    return sorted(
+        standings.values(),
+        key=lambda item: (-item["goals"], item["last_goal_minute"] or 999, item["player"]["name"]),
+    )[:20]
+
+
+@router.get("/model/top-scorer-prediction")
+def top_scorer_prediction() -> list[dict]:
+    data = seed()
+    teams_by_id = {team["id"]: team for team in data["teams"]}
+    raw_scores = []
+
+    for player in data["players"]:
+        team = teams_by_id[player["team_id"]]
+        goals_per_cap = (player.get("goals") or 0) / max(player.get("caps") or 1, 1)
+        team_attack_proxy = ((team.get("elo_rating") or 1500) - 1400) / 800
+        player_rating = (player.get("rating") or 70) / 100
+        score = max(0.01, 0.45 * player_rating + 0.35 * goals_per_cap + 0.20 * team_attack_proxy)
+        raw_scores.append((player, team, score))
+
+    total = sum(score for _, _, score in raw_scores) or 1
+    predictions = [
+        {
+            "player_id": player["id"],
+            "player": player,
+            "team": team,
+            "probability": round(score / total, 4),
+            "expected_goals": round(1.2 + score * 5, 2),
+            "model_version": settings.model_version,
+            "signals": ["spiller-rating", "landslagsmål per kamp", "lagets Elo-proxy"],
+        }
+        for player, team, score in raw_scores
+    ]
+    return sorted(predictions, key=lambda item: item["probability"], reverse=True)[:20]
 
 
 @router.get("/leaderboards/teams")

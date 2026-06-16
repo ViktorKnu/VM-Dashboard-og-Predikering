@@ -1,7 +1,15 @@
 from app.services.live_probability import probability_events, update_live_probability
 from app.services.prediction import predict_match, score_prediction
 from app.services.seed_data import seed
-from app.api.routes import create_prediction, data_status, list_predictions, model_lab, USER_PREDICTIONS
+from app.api.routes import (
+    create_prediction,
+    data_status,
+    list_predictions,
+    model_lab,
+    top_scorer_prediction,
+    top_scorers,
+    USER_PREDICTIONS,
+)
 from app.schemas import PredictionIn
 
 
@@ -140,4 +148,17 @@ def test_model_lab_exposes_selectable_model_levels():
     assert [model["id"] for model in lab["models"]] == ["simple", "country", "advanced"]
     assert lab["models"][0]["status"] == "active"
     assert lab["models"][-1]["name"] == "Avansert modell"
+
+
+def test_live_top_scorers_only_use_registered_goal_events():
+    assert top_scorers() == []
+
+
+def test_top_scorer_prediction_returns_model_forecast():
+    forecast = top_scorer_prediction()
+
+    assert forecast
+    assert forecast[0]["probability"] >= forecast[-1]["probability"]
+    assert forecast[0]["expected_goals"] > 0
+    assert "spiller-rating" in forecast[0]["signals"]
 
