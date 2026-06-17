@@ -86,9 +86,6 @@ export default async function HomePage() {
               {APP_NAME} samler kamper, norske sendelenker, spillerdata og modellstyrte prediksjoner i et deployklart analyse-dashboard.
             </p>
           </div>
-          <span className="inline-flex items-center rounded-md bg-mint px-3 py-1 text-xs font-black uppercase tracking-[0.08em] text-night">
-            USA · MEX · CAN
-          </span>
         </div>
       </section>
 
