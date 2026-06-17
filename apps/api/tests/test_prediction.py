@@ -109,18 +109,30 @@ def test_live_probability_explains_significant_change():
     assert events[0]["event_type"] == "goal"
 
 
-def test_seed_schedule_uses_group_i_with_real_opening_results_only():
+def test_seed_schedule_uses_verified_group_results_only():
     matches = seed()["matches"]
 
     assert matches
-    assert all(match["group_name"] == "I" for match in matches)
+    assert {match["group_name"] for match in matches} == {"I", "J", "K", "L"}
     assert all(match["stage"] == "Group stage" for match in matches)
-    assert [(match["status"], match["home_score"], match["away_score"]) for match in matches[:2]] == [
-        ("finished", 3, 1),
-        ("finished", 1, 4),
+    finished = [
+        (match["group_name"], match["home_team_id"], match["away_team_id"], match["home_score"], match["away_score"])
+        for match in matches
+        if match["status"] == "finished"
     ]
-    assert all(match["status"] == "scheduled" for match in matches[2:])
-    assert all(match["home_score"] is None and match["away_score"] is None for match in matches[2:])
+    assert finished == [
+        ("I", 2, 3, 3, 1),
+        ("I", 4, 1, 1, 4),
+        ("J", 5, 6, 3, 0),
+        ("J", 7, 8, 3, 1),
+        ("K", 9, 10, 1, 1),
+        ("L", 13, 14, 4, 2),
+    ]
+    assert all(
+        match["home_score"] is None and match["away_score"] is None
+        for match in matches
+        if match["status"] == "scheduled"
+    )
 
 
 def test_data_status_exposes_counts_and_prediction_flow():
@@ -159,11 +171,22 @@ def test_live_top_scorers_only_use_registered_goal_events():
     standings = top_scorers()
 
     assert [(item["player"]["name"], item["goals"]) for item in standings] == [
+        ("Lionel Messi", 3),
+        ("Harry Kane", 2),
         ("Erling Haaland", 2),
         ("Kylian Mbappe", 2),
+        ("Joao Neves", 1),
+        ("Romano Schmid", 1),
+        ("Martin Baturina", 1),
+        ("Ali Olwan", 1),
         ("Aymen Hussein", 1),
+        ("Petar Musa", 1),
+        ("Yoane Wissa", 1),
+        ("Jude Bellingham", 1),
         ("Leo Ostigard", 1),
         ("Bradley Barcola", 1),
+        ("Marcus Rashford", 1),
+        ("Marko Arnautovic", 1),
     ]
 
 

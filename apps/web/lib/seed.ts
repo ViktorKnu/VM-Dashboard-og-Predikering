@@ -1,49 +1,168 @@
 import type { Broadcast, Lineup, LiveSnapshot, Match, ModelPrediction, Player, ProbabilityEvent, Team, TopScorerPrediction, TopScorerStanding } from "./types";
 
+const mkTeam = (
+  id: number,
+  name: string,
+  fifa_code: string,
+  confederation: string,
+  flag: string,
+  fifa_ranking: number,
+  fifa_ranking_points: number,
+  elo_rating: number,
+  gdp_per_capita: number,
+  population: number,
+  football_popularity_score: number,
+  historical_world_cup_score: number
+): Team => ({
+  id,
+  name,
+  fifa_code,
+  confederation,
+  flag_url: `https://flagcdn.com/${flag}.svg`,
+  fifa_ranking,
+  fifa_ranking_points,
+  elo_rating,
+  gdp_per_capita,
+  population,
+  football_popularity_score,
+  host_advantage_score: 0,
+  historical_world_cup_score
+});
+
+const mkPlayer = (
+  id: number,
+  team_id: number,
+  name: string,
+  position: string,
+  shirt_number: number,
+  age: number,
+  club: string,
+  caps: number,
+  goals: number,
+  rating: number
+): Player => ({ id, team_id, name, position, shirt_number, age, club, caps, goals, rating });
+
 export const teams: Team[] = [
-  { id: 1, name: "Norway", fifa_code: "NOR", confederation: "UEFA", flag_url: "https://flagcdn.com/no.svg", fifa_ranking: 29, fifa_ranking_points: 1528.0, elo_rating: 1810, gdp_per_capita: 87962, population: 5500000, football_popularity_score: 0.76, host_advantage_score: 0, historical_world_cup_score: 0.18 },
-  { id: 2, name: "France", fifa_code: "FRA", confederation: "UEFA", flag_url: "https://flagcdn.com/fr.svg", fifa_ranking: 3, fifa_ranking_points: 1838.0, elo_rating: 2048, gdp_per_capita: 44461, population: 68000000, football_popularity_score: 0.92, host_advantage_score: 0, historical_world_cup_score: 0.92 },
-  { id: 3, name: "Senegal", fifa_code: "SEN", confederation: "CAF", flag_url: "https://flagcdn.com/sn.svg", fifa_ranking: 19, fifa_ranking_points: 1609.0, elo_rating: 1802, gdp_per_capita: 1598, population: 17700000, football_popularity_score: 0.88, host_advantage_score: 0, historical_world_cup_score: 0.34 },
-  { id: 4, name: "Iraq", fifa_code: "IRQ", confederation: "AFC", flag_url: "https://flagcdn.com/iq.svg", fifa_ranking: 58, fifa_ranking_points: 1410.3, elo_rating: 1640, gdp_per_capita: 5937, population: 45500000, football_popularity_score: 0.84, host_advantage_score: 0, historical_world_cup_score: 0.08 },
-  { id: 5, name: "Netherlands", fifa_code: "NED", confederation: "UEFA", flag_url: "https://flagcdn.com/nl.svg", fifa_ranking: 7, fifa_ranking_points: 1745.5, elo_rating: 1987, gdp_per_capita: 57025, population: 17800000, football_popularity_score: 0.91, host_advantage_score: 0, historical_world_cup_score: 0.76 },
-  { id: 6, name: "Spain", fifa_code: "ESP", confederation: "UEFA", flag_url: "https://flagcdn.com/es.svg", fifa_ranking: 8, fifa_ranking_points: 1732.6, elo_rating: 2001, gdp_per_capita: 32676, population: 48500000, football_popularity_score: 0.94, host_advantage_score: 0, historical_world_cup_score: 0.78 },
-  { id: 7, name: "Portugal", fifa_code: "POR", confederation: "UEFA", flag_url: "https://flagcdn.com/pt.svg", fifa_ranking: 6, fifa_ranking_points: 1748.1, elo_rating: 1975, gdp_per_capita: 27405, population: 10400000, football_popularity_score: 0.95, host_advantage_score: 0, historical_world_cup_score: 0.62 },
-  { id: 8, name: "Brazil", fifa_code: "BRA", confederation: "CONMEBOL", flag_url: "https://flagcdn.com/br.svg", fifa_ranking: 5, fifa_ranking_points: 1788.7, elo_rating: 2022, gdp_per_capita: 10044, population: 203000000, football_popularity_score: 0.98, host_advantage_score: 0, historical_world_cup_score: 1 }
+  mkTeam(1, "Norway", "NOR", "UEFA", "no", 29, 1528.0, 1810, 87962, 5500000, 0.76, 0.18),
+  mkTeam(2, "France", "FRA", "UEFA", "fr", 3, 1838.0, 2048, 44461, 68000000, 0.92, 0.92),
+  mkTeam(3, "Senegal", "SEN", "CAF", "sn", 19, 1609.0, 1802, 1598, 17700000, 0.88, 0.34),
+  mkTeam(4, "Iraq", "IRQ", "AFC", "iq", 58, 1410.3, 1640, 5937, 45500000, 0.84, 0.08),
+  mkTeam(5, "Argentina", "ARG", "CONMEBOL", "ar", 2, 1860.0, 2108, 13730, 46000000, 0.97, 1),
+  mkTeam(6, "Algeria", "ALG", "CAF", "dz", 35, 1512.0, 1735, 5260, 46000000, 0.9, 0.3),
+  mkTeam(7, "Austria", "AUT", "UEFA", "at", 24, 1546.0, 1815, 56000, 9100000, 0.82, 0.42),
+  mkTeam(8, "Jordan", "JOR", "AFC", "jo", 66, 1375.0, 1555, 4311, 11500000, 0.77, 0.02),
+  mkTeam(9, "Portugal", "POR", "UEFA", "pt", 6, 1748.1, 1975, 27405, 10400000, 0.95, 0.62),
+  mkTeam(10, "DR Congo", "COD", "CAF", "cd", 56, 1420.0, 1648, 715, 105000000, 0.86, 0.08),
+  mkTeam(11, "Uzbekistan", "UZB", "AFC", "uz", 50, 1455.0, 1662, 2496, 36400000, 0.72, 0.02),
+  mkTeam(12, "Colombia", "COL", "CONMEBOL", "co", 13, 1685.0, 1905, 6979, 52000000, 0.94, 0.45),
+  mkTeam(13, "England", "ENG", "UEFA", "gb-eng", 4, 1813.0, 2030, 48900, 57000000, 0.96, 0.84),
+  mkTeam(14, "Croatia", "CRO", "UEFA", "hr", 10, 1710.0, 1900, 21460, 3900000, 0.91, 0.82),
+  mkTeam(15, "Ghana", "GHA", "CAF", "gh", 72, 1350.0, 1610, 2238, 34000000, 0.89, 0.34),
+  mkTeam(16, "Panama", "PAN", "CONCACAF", "pa", 30, 1525.0, 1665, 18490, 4500000, 0.74, 0.08)
 ];
 
 export const players: Player[] = [
-  { id: 1, team_id: 1, name: "Erling Haaland", position: "ST", shirt_number: 9, age: 25, club: "Manchester City", caps: 39, goals: 38, rating: 94 },
-  { id: 2, team_id: 1, name: "Martin Odegaard", position: "CM", shirt_number: 10, age: 27, club: "Arsenal", caps: 70, goals: 4, rating: 89 },
-  { id: 3, team_id: 2, name: "Kylian Mbappe", position: "LW", shirt_number: 10, age: 27, club: "Real Madrid", caps: 92, goals: 52, rating: 95 },
-  { id: 4, team_id: 2, name: "Aurelien Tchouameni", position: "DM", shirt_number: 8, age: 26, club: "Real Madrid", caps: 44, goals: 3, rating: 87 },
-  { id: 5, team_id: 3, name: "Sadio Mane", position: "LW", shirt_number: 10, age: 34, club: "Al Nassr", caps: 108, goals: 45, rating: 86 },
-  { id: 6, team_id: 4, name: "Aymen Hussein", position: "ST", shirt_number: 18, age: 30, club: "Al Khor", caps: 80, goals: 28, rating: 77 },
-  { id: 7, team_id: 5, name: "Cody Gakpo", position: "LW", shirt_number: 11, age: 27, club: "Liverpool", caps: 41, goals: 14, rating: 86 },
-  { id: 8, team_id: 6, name: "Lamine Yamal", position: "RW", shirt_number: 19, age: 18, club: "Barcelona", caps: 28, goals: 8, rating: 90 },
-  { id: 9, team_id: 7, name: "Bruno Fernandes", position: "AM", shirt_number: 8, age: 31, club: "Manchester United", caps: 82, goals: 25, rating: 88 },
-  { id: 10, team_id: 8, name: "Vinicius Junior", position: "LW", shirt_number: 7, age: 25, club: "Real Madrid", caps: 40, goals: 7, rating: 93 },
-  { id: 11, team_id: 2, name: "Bradley Barcola", position: "LW", shirt_number: 20, age: 23, club: "Paris Saint-Germain", caps: 28, goals: 8, rating: 85 },
-  { id: 12, team_id: 1, name: "Leo Ostigard", position: "CB", shirt_number: 4, age: 26, club: "Genoa", caps: 31, goals: 2, rating: 78 }
+  mkPlayer(1, 1, "Erling Haaland", "ST", 9, 25, "Manchester City", 39, 38, 94),
+  mkPlayer(2, 1, "Martin Odegaard", "CM", 10, 27, "Arsenal", 70, 4, 89),
+  mkPlayer(3, 2, "Kylian Mbappe", "LW", 10, 27, "Real Madrid", 92, 52, 95),
+  mkPlayer(4, 2, "Aurelien Tchouameni", "DM", 8, 26, "Real Madrid", 44, 3, 87),
+  mkPlayer(5, 3, "Sadio Mane", "LW", 10, 34, "Al Nassr", 108, 45, 86),
+  mkPlayer(6, 4, "Aymen Hussein", "ST", 18, 30, "Al Khor", 80, 28, 77),
+  mkPlayer(7, 2, "Bradley Barcola", "LW", 20, 23, "Paris Saint-Germain", 28, 8, 85),
+  mkPlayer(8, 1, "Leo Ostigard", "CB", 4, 26, "Genoa", 31, 2, 78),
+  mkPlayer(9, 5, "Lionel Messi", "AM", 10, 38, "Inter Miami", 200, 112, 94),
+  mkPlayer(10, 7, "Romano Schmid", "AM", 18, 26, "Werder Bremen", 24, 3, 81),
+  mkPlayer(11, 8, "Ali Olwan", "ST", 9, 26, "Al-Faisaly", 77, 19, 76),
+  mkPlayer(12, 7, "Marko Arnautovic", "ST", 7, 37, "Inter", 125, 39, 82),
+  mkPlayer(13, 9, "Joao Neves", "CM", 6, 21, "Paris Saint-Germain", 28, 2, 86),
+  mkPlayer(14, 10, "Yoane Wissa", "ST", 20, 29, "Newcastle United", 34, 7, 82),
+  mkPlayer(15, 13, "Harry Kane", "ST", 9, 32, "Bayern Munich", 112, 74, 92),
+  mkPlayer(16, 13, "Jude Bellingham", "AM", 10, 22, "Real Madrid", 47, 8, 93),
+  mkPlayer(17, 13, "Marcus Rashford", "LW", 11, 28, "Manchester United", 69, 18, 84),
+  mkPlayer(18, 14, "Martin Baturina", "AM", 10, 23, "Dinamo Zagreb", 18, 3, 80),
+  mkPlayer(19, 14, "Petar Musa", "ST", 18, 28, "Benfica", 20, 6, 80)
 ];
 
 const byTeam = (id: number) => teams.find((team) => team.id === id)!;
 const byPlayer = (id: number) => players.find((player) => player.id === id)!;
 
+const mkBroadcast = (id: number, match_id: number, broadcaster: string, channel: string, requires_login: boolean): Broadcast => ({
+  id,
+  match_id,
+  country_code: "NO",
+  broadcaster,
+  channel,
+  stream_url: broadcaster === "NRK" ? "https://tv.nrk.no/" : "https://play.tv2.no/",
+  replay_url: broadcaster === "NRK" ? "https://tv.nrk.no/programmer/sport" : "https://play.tv2.no/sport",
+  requires_login,
+  source_url: broadcaster === "NRK" ? "https://www.nrk.no/sport/" : "https://www.tv2.no/sport/"
+});
+
 export const broadcasts: Broadcast[] = [
-  { id: 1, match_id: 1, country_code: "NO", broadcaster: "NRK", channel: "NRK TV", stream_url: "https://tv.nrk.no/", replay_url: "https://tv.nrk.no/programmer/sport", requires_login: false, source_url: "https://www.nrk.no/sport/" },
-  { id: 2, match_id: 2, country_code: "NO", broadcaster: "TV 2", channel: "TV 2 Play", stream_url: "https://play.tv2.no/", replay_url: "https://play.tv2.no/sport", requires_login: true, source_url: "https://www.tv2.no/sport/" },
-  { id: 3, match_id: 3, country_code: "NO", broadcaster: "TV 2", channel: "TV 2 Direkte", stream_url: "https://play.tv2.no/", replay_url: "https://play.tv2.no/sport", requires_login: true, source_url: "https://www.tv2.no/sport/" },
-  { id: 4, match_id: 4, country_code: "NO", broadcaster: "NRK", channel: "NRK", stream_url: "https://tv.nrk.no/", replay_url: "https://tv.nrk.no/programmer/sport", requires_login: false, source_url: "https://www.nrk.no/sport/" },
-  { id: 5, match_id: 5, country_code: "NO", broadcaster: "TV 2", channel: "TV 2 Sport 1", stream_url: "https://play.tv2.no/", replay_url: "https://play.tv2.no/sport", requires_login: true, source_url: "https://www.tv2.no/sport/" }
+  mkBroadcast(1, 1, "NRK", "NRK TV", false),
+  mkBroadcast(2, 2, "TV 2", "TV 2 Play", true),
+  mkBroadcast(3, 3, "TV 2", "TV 2 Direkte", true),
+  mkBroadcast(4, 4, "NRK", "NRK", false),
+  mkBroadcast(5, 5, "TV 2", "TV 2 Sport 1", true),
+  mkBroadcast(6, 7, "NRK", "NRK TV", false),
+  mkBroadcast(7, 8, "TV 2", "TV 2 Play", true),
+  mkBroadcast(8, 13, "TV 2", "TV 2 Play", true),
+  mkBroadcast(9, 18, "NRK", "NRK TV", false)
 ];
 
+const mkMatch = (
+  id: number,
+  group_name: string,
+  home_team_id: number,
+  away_team_id: number,
+  kickoff_at: string,
+  stadium: string,
+  city: string,
+  status: Match["status"] = "scheduled",
+  home_score: number | null = null,
+  away_score: number | null = null
+): Match => ({
+  id,
+  tournament_year: 2026,
+  stage: "Group stage",
+  group_name,
+  home_team_id,
+  away_team_id,
+  kickoff_at,
+  kickoff_timezone: "Europe/Oslo",
+  stadium,
+  city,
+  status,
+  home_score,
+  away_score,
+  home_team: byTeam(home_team_id),
+  away_team: byTeam(away_team_id),
+  broadcasts: broadcasts.filter((item) => item.match_id === id)
+});
+
 export const matches: Match[] = [
-  { id: 1, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 2, away_team_id: 3, kickoff_at: "2026-06-16T16:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "New York New Jersey Stadium", city: "New York/New Jersey", status: "finished", home_score: 3, away_score: 1, home_team: byTeam(2), away_team: byTeam(3), broadcasts: broadcasts.filter((item) => item.match_id === 1) },
-  { id: 2, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 4, away_team_id: 1, kickoff_at: "2026-06-16T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Boston Stadium", city: "Boston", status: "finished", home_score: 1, away_score: 4, home_team: byTeam(4), away_team: byTeam(1), broadcasts: broadcasts.filter((item) => item.match_id === 2) },
-  { id: 3, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 1, away_team_id: 3, kickoff_at: "2026-06-22T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "New York New Jersey Stadium", city: "New York/New Jersey", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(1), away_team: byTeam(3), broadcasts: broadcasts.filter((item) => item.match_id === 3) },
-  { id: 4, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 2, away_team_id: 4, kickoff_at: "2026-06-22T22:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Philadelphia Stadium", city: "Philadelphia", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(2), away_team: byTeam(4), broadcasts: broadcasts.filter((item) => item.match_id === 4) },
-  { id: 5, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 1, away_team_id: 2, kickoff_at: "2026-06-26T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Boston Stadium", city: "Boston", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(1), away_team: byTeam(2), broadcasts: broadcasts.filter((item) => item.match_id === 5) },
-  { id: 6, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 3, away_team_id: 4, kickoff_at: "2026-06-26T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Toronto Stadium", city: "Toronto", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(3), away_team: byTeam(4), broadcasts: [] }
+  mkMatch(1, "I", 2, 3, "2026-06-16T16:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey", "finished", 3, 1),
+  mkMatch(2, "I", 4, 1, "2026-06-16T19:00:00+00:00", "Boston Stadium", "Boston", "finished", 1, 4),
+  mkMatch(3, "I", 1, 3, "2026-06-22T19:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey"),
+  mkMatch(4, "I", 2, 4, "2026-06-22T22:00:00+00:00", "Philadelphia Stadium", "Philadelphia"),
+  mkMatch(5, "I", 1, 2, "2026-06-26T19:00:00+00:00", "Boston Stadium", "Boston"),
+  mkMatch(6, "I", 3, 4, "2026-06-26T19:00:00+00:00", "Toronto Stadium", "Toronto"),
+  mkMatch(7, "J", 5, 6, "2026-06-16T22:00:00+00:00", "Kansas City Stadium", "Kansas City", "finished", 3, 0),
+  mkMatch(8, "J", 7, 8, "2026-06-17T01:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area", "finished", 3, 1),
+  mkMatch(9, "J", 5, 7, "2026-06-22T19:00:00+00:00", "Dallas Stadium", "Dallas"),
+  mkMatch(10, "J", 8, 6, "2026-06-22T22:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area"),
+  mkMatch(11, "J", 6, 7, "2026-06-27T19:00:00+00:00", "Kansas City Stadium", "Kansas City"),
+  mkMatch(12, "J", 8, 5, "2026-06-27T19:00:00+00:00", "Dallas Stadium", "Dallas"),
+  mkMatch(13, "K", 9, 10, "2026-06-17T19:00:00+00:00", "Houston Stadium", "Houston", "finished", 1, 1),
+  mkMatch(14, "K", 9, 11, "2026-06-23T19:00:00+00:00", "Houston Stadium", "Houston"),
+  mkMatch(15, "K", 12, 10, "2026-06-23T22:00:00+00:00", "Estadio Guadalajara", "Guadalajara"),
+  mkMatch(16, "K", 12, 9, "2026-06-27T19:00:00+00:00", "Miami Stadium", "Miami"),
+  mkMatch(17, "K", 10, 11, "2026-06-27T19:00:00+00:00", "Atlanta Stadium", "Atlanta"),
+  mkMatch(18, "L", 13, 14, "2026-06-17T20:00:00+00:00", "Dallas Stadium", "Dallas", "finished", 4, 2),
+  mkMatch(19, "L", 13, 15, "2026-06-23T19:00:00+00:00", "Boston Stadium", "Boston"),
+  mkMatch(20, "L", 16, 14, "2026-06-23T22:00:00+00:00", "Toronto Stadium", "Toronto"),
+  mkMatch(21, "L", 16, 13, "2026-06-27T19:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey"),
+  mkMatch(22, "L", 14, 15, "2026-06-27T19:00:00+00:00", "Philadelphia Stadium", "Philadelphia")
 ];
 
 export const prediction: ModelPrediction = {
@@ -66,20 +185,34 @@ export const prediction: ModelPrediction = {
   }
 };
 
-export const liveTimeline: LiveSnapshot[] = [
-];
+export const liveTimeline: LiveSnapshot[] = [];
 
-export const whatChanged: ProbabilityEvent[] = [
-];
+export const whatChanged: ProbabilityEvent[] = [];
 
 export const lineups: Lineup[] = [];
 
+const mkScorer = (player_id: number, goals: number, last_goal_minute: number): TopScorerStanding => {
+  const player = byPlayer(player_id);
+  return { player_id, player, team: byTeam(player.team_id), goals, last_goal_minute };
+};
+
 export const topScorers: TopScorerStanding[] = [
-  { player_id: 1, player: byPlayer(1), team: byTeam(1), goals: 2, last_goal_minute: 45 },
-  { player_id: 3, player: byPlayer(3), team: byTeam(2), goals: 2, last_goal_minute: 90 },
-  { player_id: 6, player: byPlayer(6), team: byTeam(4), goals: 1, last_goal_minute: 39 },
-  { player_id: 12, player: byPlayer(12), team: byTeam(1), goals: 1, last_goal_minute: 72 },
-  { player_id: 11, player: byPlayer(11), team: byTeam(2), goals: 1, last_goal_minute: 79 }
+  mkScorer(9, 3, 76),
+  mkScorer(15, 2, 40),
+  mkScorer(1, 2, 45),
+  mkScorer(3, 2, 90),
+  mkScorer(13, 1, 6),
+  mkScorer(10, 1, 22),
+  mkScorer(18, 1, 25),
+  mkScorer(11, 1, 29),
+  mkScorer(6, 1, 39),
+  mkScorer(19, 1, 44),
+  mkScorer(14, 1, 44),
+  mkScorer(16, 1, 52),
+  mkScorer(8, 1, 72),
+  mkScorer(7, 1, 79),
+  mkScorer(17, 1, 85),
+  mkScorer(12, 1, 90)
 ];
 
 export const topScorerPredictions: TopScorerPrediction[] = players
@@ -170,15 +303,14 @@ export const modelLab = {
     { feature: "host_advantage_score", importance: 0.05 }
   ],
   backtesting: {
-    dataset: "Historical World Cup matches placeholder: wire Fjelstul + FIFA official results.",
+    dataset: "Historiske VM-kamper: kobles mot Fjelstul + offisielle FIFA-resultater.",
     accuracy: 0.52,
     log_loss: 1.02,
     brier_score: 0.23
   },
   placeholders: {
-    calibration_chart: "Reserved chart slot",
-    confusion_matrix: "Reserved chart slot",
-    shap_explanation: "Reserved chart slot"
+    calibration_chart: "Reservert grafplass",
+    confusion_matrix: "Reservert grafplass",
+    shap_explanation: "Reservert forklaringsplass"
   }
 };
-

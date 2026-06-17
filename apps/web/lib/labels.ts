@@ -7,10 +7,18 @@ const teamNames: Record<string, string> = {
   France: "Frankrike",
   Senegal: "Senegal",
   Iraq: "Irak",
-  Netherlands: "Nederland",
-  Spain: "Spania",
+  Argentina: "Argentina",
+  Algeria: "Algerie",
+  Austria: "Østerrike",
+  Jordan: "Jordan",
   Portugal: "Portugal",
-  Brazil: "Brasil"
+  "DR Congo": "DR Kongo",
+  Uzbekistan: "Usbekistan",
+  Colombia: "Colombia",
+  England: "England",
+  Croatia: "Kroatia",
+  Ghana: "Ghana",
+  Panama: "Panama"
 };
 
 const stageLabels: Record<string, string> = {
