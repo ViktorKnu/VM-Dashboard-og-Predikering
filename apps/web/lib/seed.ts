@@ -1,9 +1,9 @@
 import type { Broadcast, Lineup, LiveSnapshot, Match, ModelPrediction, Player, ProbabilityEvent, Team, TopScorerPrediction, TopScorerStanding } from "./types";
 
 export const teams: Team[] = [
-  { id: 1, name: "Norway", fifa_code: "NOR", confederation: "UEFA", flag_url: "https://flagcdn.com/no.svg", fifa_ranking: 43, fifa_ranking_points: 1472.2, elo_rating: 1810, gdp_per_capita: 87962, population: 5500000, football_popularity_score: 0.76, host_advantage_score: 0, historical_world_cup_score: 0.18 },
-  { id: 2, name: "France", fifa_code: "FRA", confederation: "UEFA", flag_url: "https://flagcdn.com/fr.svg", fifa_ranking: 2, fifa_ranking_points: 1840.6, elo_rating: 2048, gdp_per_capita: 44461, population: 68000000, football_popularity_score: 0.92, host_advantage_score: 0, historical_world_cup_score: 0.92 },
-  { id: 3, name: "Senegal", fifa_code: "SEN", confederation: "CAF", flag_url: "https://flagcdn.com/sn.svg", fifa_ranking: 17, fifa_ranking_points: 1620.1, elo_rating: 1802, gdp_per_capita: 1598, population: 17700000, football_popularity_score: 0.88, host_advantage_score: 0, historical_world_cup_score: 0.34 },
+  { id: 1, name: "Norway", fifa_code: "NOR", confederation: "UEFA", flag_url: "https://flagcdn.com/no.svg", fifa_ranking: 29, fifa_ranking_points: 1528.0, elo_rating: 1810, gdp_per_capita: 87962, population: 5500000, football_popularity_score: 0.76, host_advantage_score: 0, historical_world_cup_score: 0.18 },
+  { id: 2, name: "France", fifa_code: "FRA", confederation: "UEFA", flag_url: "https://flagcdn.com/fr.svg", fifa_ranking: 3, fifa_ranking_points: 1838.0, elo_rating: 2048, gdp_per_capita: 44461, population: 68000000, football_popularity_score: 0.92, host_advantage_score: 0, historical_world_cup_score: 0.92 },
+  { id: 3, name: "Senegal", fifa_code: "SEN", confederation: "CAF", flag_url: "https://flagcdn.com/sn.svg", fifa_ranking: 19, fifa_ranking_points: 1609.0, elo_rating: 1802, gdp_per_capita: 1598, population: 17700000, football_popularity_score: 0.88, host_advantage_score: 0, historical_world_cup_score: 0.34 },
   { id: 4, name: "Iraq", fifa_code: "IRQ", confederation: "AFC", flag_url: "https://flagcdn.com/iq.svg", fifa_ranking: 58, fifa_ranking_points: 1410.3, elo_rating: 1640, gdp_per_capita: 5937, population: 45500000, football_popularity_score: 0.84, host_advantage_score: 0, historical_world_cup_score: 0.08 },
   { id: 5, name: "Netherlands", fifa_code: "NED", confederation: "UEFA", flag_url: "https://flagcdn.com/nl.svg", fifa_ranking: 7, fifa_ranking_points: 1745.5, elo_rating: 1987, gdp_per_capita: 57025, population: 17800000, football_popularity_score: 0.91, host_advantage_score: 0, historical_world_cup_score: 0.76 },
   { id: 6, name: "Spain", fifa_code: "ESP", confederation: "UEFA", flag_url: "https://flagcdn.com/es.svg", fifa_ranking: 8, fifa_ranking_points: 1732.6, elo_rating: 2001, gdp_per_capita: 32676, population: 48500000, football_popularity_score: 0.94, host_advantage_score: 0, historical_world_cup_score: 0.78 },
@@ -21,10 +21,13 @@ export const players: Player[] = [
   { id: 7, team_id: 5, name: "Cody Gakpo", position: "LW", shirt_number: 11, age: 27, club: "Liverpool", caps: 41, goals: 14, rating: 86 },
   { id: 8, team_id: 6, name: "Lamine Yamal", position: "RW", shirt_number: 19, age: 18, club: "Barcelona", caps: 28, goals: 8, rating: 90 },
   { id: 9, team_id: 7, name: "Bruno Fernandes", position: "AM", shirt_number: 8, age: 31, club: "Manchester United", caps: 82, goals: 25, rating: 88 },
-  { id: 10, team_id: 8, name: "Vinicius Junior", position: "LW", shirt_number: 7, age: 25, club: "Real Madrid", caps: 40, goals: 7, rating: 93 }
+  { id: 10, team_id: 8, name: "Vinicius Junior", position: "LW", shirt_number: 7, age: 25, club: "Real Madrid", caps: 40, goals: 7, rating: 93 },
+  { id: 11, team_id: 2, name: "Bradley Barcola", position: "LW", shirt_number: 20, age: 23, club: "Paris Saint-Germain", caps: 28, goals: 8, rating: 85 },
+  { id: 12, team_id: 1, name: "Leo Ostigard", position: "CB", shirt_number: 4, age: 26, club: "Genoa", caps: 31, goals: 2, rating: 78 }
 ];
 
 const byTeam = (id: number) => teams.find((team) => team.id === id)!;
+const byPlayer = (id: number) => players.find((player) => player.id === id)!;
 
 export const broadcasts: Broadcast[] = [
   { id: 1, match_id: 1, country_code: "NO", broadcaster: "NRK", channel: "NRK TV", stream_url: "https://tv.nrk.no/", replay_url: "https://tv.nrk.no/programmer/sport", requires_login: false, source_url: "https://www.nrk.no/sport/" },
@@ -35,8 +38,8 @@ export const broadcasts: Broadcast[] = [
 ];
 
 export const matches: Match[] = [
-  { id: 1, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 2, away_team_id: 3, kickoff_at: "2026-06-16T16:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "New York New Jersey Stadium", city: "New York/New Jersey", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(2), away_team: byTeam(3), broadcasts: broadcasts.filter((item) => item.match_id === 1) },
-  { id: 2, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 4, away_team_id: 1, kickoff_at: "2026-06-16T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Boston Stadium", city: "Boston", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(4), away_team: byTeam(1), broadcasts: broadcasts.filter((item) => item.match_id === 2) },
+  { id: 1, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 2, away_team_id: 3, kickoff_at: "2026-06-16T16:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "New York New Jersey Stadium", city: "New York/New Jersey", status: "finished", home_score: 3, away_score: 1, home_team: byTeam(2), away_team: byTeam(3), broadcasts: broadcasts.filter((item) => item.match_id === 1) },
+  { id: 2, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 4, away_team_id: 1, kickoff_at: "2026-06-16T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Boston Stadium", city: "Boston", status: "finished", home_score: 1, away_score: 4, home_team: byTeam(4), away_team: byTeam(1), broadcasts: broadcasts.filter((item) => item.match_id === 2) },
   { id: 3, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 1, away_team_id: 3, kickoff_at: "2026-06-22T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "New York New Jersey Stadium", city: "New York/New Jersey", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(1), away_team: byTeam(3), broadcasts: broadcasts.filter((item) => item.match_id === 3) },
   { id: 4, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 2, away_team_id: 4, kickoff_at: "2026-06-22T22:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Philadelphia Stadium", city: "Philadelphia", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(2), away_team: byTeam(4), broadcasts: broadcasts.filter((item) => item.match_id === 4) },
   { id: 5, tournament_year: 2026, stage: "Group stage", group_name: "I", home_team_id: 1, away_team_id: 2, kickoff_at: "2026-06-26T19:00:00+00:00", kickoff_timezone: "Europe/Oslo", stadium: "Boston Stadium", city: "Boston", status: "scheduled", home_score: null, away_score: null, home_team: byTeam(1), away_team: byTeam(2), broadcasts: broadcasts.filter((item) => item.match_id === 5) },
@@ -71,7 +74,13 @@ export const whatChanged: ProbabilityEvent[] = [
 
 export const lineups: Lineup[] = [];
 
-export const topScorers: TopScorerStanding[] = [];
+export const topScorers: TopScorerStanding[] = [
+  { player_id: 1, player: byPlayer(1), team: byTeam(1), goals: 2, last_goal_minute: 45 },
+  { player_id: 3, player: byPlayer(3), team: byTeam(2), goals: 2, last_goal_minute: 90 },
+  { player_id: 6, player: byPlayer(6), team: byTeam(4), goals: 1, last_goal_minute: 39 },
+  { player_id: 12, player: byPlayer(12), team: byTeam(1), goals: 1, last_goal_minute: 72 },
+  { player_id: 11, player: byPlayer(11), team: byTeam(2), goals: 1, last_goal_minute: 79 }
+];
 
 export const topScorerPredictions: TopScorerPrediction[] = players
   .map((player) => {

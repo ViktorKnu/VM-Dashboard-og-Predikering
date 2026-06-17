@@ -109,14 +109,18 @@ def test_live_probability_explains_significant_change():
     assert events[0]["event_type"] == "goal"
 
 
-def test_seed_schedule_uses_group_i_without_fake_live_or_knockout_matches():
+def test_seed_schedule_uses_group_i_with_real_opening_results_only():
     matches = seed()["matches"]
 
     assert matches
     assert all(match["group_name"] == "I" for match in matches)
     assert all(match["stage"] == "Group stage" for match in matches)
-    assert all(match["status"] == "scheduled" for match in matches)
-    assert all(match["home_score"] is None and match["away_score"] is None for match in matches)
+    assert [(match["status"], match["home_score"], match["away_score"]) for match in matches[:2]] == [
+        ("finished", 3, 1),
+        ("finished", 1, 4),
+    ]
+    assert all(match["status"] == "scheduled" for match in matches[2:])
+    assert all(match["home_score"] is None and match["away_score"] is None for match in matches[2:])
 
 
 def test_data_status_exposes_counts_and_prediction_flow():
@@ -152,7 +156,15 @@ def test_model_lab_exposes_selectable_model_levels():
 
 
 def test_live_top_scorers_only_use_registered_goal_events():
-    assert top_scorers() == []
+    standings = top_scorers()
+
+    assert [(item["player"]["name"], item["goals"]) for item in standings] == [
+        ("Erling Haaland", 2),
+        ("Kylian Mbappe", 2),
+        ("Aymen Hussein", 1),
+        ("Leo Ostigard", 1),
+        ("Bradley Barcola", 1),
+    ]
 
 
 def test_top_scorer_prediction_returns_model_forecast():

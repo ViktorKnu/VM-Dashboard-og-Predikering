@@ -5,7 +5,8 @@
   "official_norwegian_broadcasters": ["NRK", "NRK TV", "TV 2", "TV 2 Play", "TV 2 Direkte", "TV 2 Sport 1"],
   "teams": ["Norway", "France", "Senegal", "Iraq", "Netherlands", "Spain", "Portugal", "Brazil"],
   "notes": [
-    "Seed data is realistic but not official tournament data.",
+    "Group I results and scorer standings are manually updated from public match reports as of 2026-06-17.",
+    "Full live data for all matches still requires an official or licensed external provider.",
     "No illegal stream links are included.",
     "Provider integrations should store raw responses and respect rate limits."
   ]

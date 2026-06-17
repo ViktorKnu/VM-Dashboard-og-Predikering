@@ -15,8 +15,8 @@ TEAMS = [
         "fifa_code": "NOR",
         "confederation": "UEFA",
         "flag_url": "https://flagcdn.com/no.svg",
-        "fifa_ranking": 43,
-        "fifa_ranking_points": 1472.2,
+        "fifa_ranking": 29,
+        "fifa_ranking_points": 1528.0,
         "elo_rating": 1810,
         "gdp_per_capita": 87962,
         "population": 5500000,
@@ -30,8 +30,8 @@ TEAMS = [
         "fifa_code": "FRA",
         "confederation": "UEFA",
         "flag_url": "https://flagcdn.com/fr.svg",
-        "fifa_ranking": 2,
-        "fifa_ranking_points": 1840.6,
+        "fifa_ranking": 3,
+        "fifa_ranking_points": 1838.0,
         "elo_rating": 2048,
         "gdp_per_capita": 44461,
         "population": 68000000,
@@ -45,8 +45,8 @@ TEAMS = [
         "fifa_code": "SEN",
         "confederation": "CAF",
         "flag_url": "https://flagcdn.com/sn.svg",
-        "fifa_ranking": 17,
-        "fifa_ranking_points": 1620.1,
+        "fifa_ranking": 19,
+        "fifa_ranking_points": 1609.0,
         "elo_rating": 1802,
         "gdp_per_capita": 1598,
         "population": 17700000,
@@ -142,18 +142,30 @@ PLAYERS = [
     {"id": 8, "team_id": 6, "name": "Lamine Yamal", "position": "RW", "shirt_number": 19, "age": 18, "club": "Barcelona", "caps": 28, "goals": 8, "rating": 90},
     {"id": 9, "team_id": 7, "name": "Bruno Fernandes", "position": "AM", "shirt_number": 8, "age": 31, "club": "Manchester United", "caps": 82, "goals": 25, "rating": 88},
     {"id": 10, "team_id": 8, "name": "Vinicius Junior", "position": "LW", "shirt_number": 7, "age": 25, "club": "Real Madrid", "caps": 40, "goals": 7, "rating": 93},
+    {"id": 11, "team_id": 2, "name": "Bradley Barcola", "position": "LW", "shirt_number": 20, "age": 23, "club": "Paris Saint-Germain", "caps": 28, "goals": 8, "rating": 85},
+    {"id": 12, "team_id": 1, "name": "Leo Ostigard", "position": "CB", "shirt_number": 4, "age": 26, "club": "Genoa", "caps": 31, "goals": 2, "rating": 78},
 ]
 
 MATCHES = [
-    {"id": 1, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 2, "away_team_id": 3, "kickoff_at": utc("2026-06-16T16:00:00+00:00"), "stadium": "New York New Jersey Stadium", "city": "New York/New Jersey", "status": "scheduled", "home_score": None, "away_score": None},
-    {"id": 2, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 4, "away_team_id": 1, "kickoff_at": utc("2026-06-16T19:00:00+00:00"), "stadium": "Boston Stadium", "city": "Boston", "status": "scheduled", "home_score": None, "away_score": None},
+    {"id": 1, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 2, "away_team_id": 3, "kickoff_at": utc("2026-06-16T16:00:00+00:00"), "stadium": "New York New Jersey Stadium", "city": "New York/New Jersey", "status": "finished", "home_score": 3, "away_score": 1},
+    {"id": 2, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 4, "away_team_id": 1, "kickoff_at": utc("2026-06-16T19:00:00+00:00"), "stadium": "Boston Stadium", "city": "Boston", "status": "finished", "home_score": 1, "away_score": 4},
     {"id": 3, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 1, "away_team_id": 3, "kickoff_at": utc("2026-06-22T19:00:00+00:00"), "stadium": "New York New Jersey Stadium", "city": "New York/New Jersey", "status": "scheduled", "home_score": None, "away_score": None},
     {"id": 4, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 2, "away_team_id": 4, "kickoff_at": utc("2026-06-22T22:00:00+00:00"), "stadium": "Philadelphia Stadium", "city": "Philadelphia", "status": "scheduled", "home_score": None, "away_score": None},
     {"id": 5, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 1, "away_team_id": 2, "kickoff_at": utc("2026-06-26T19:00:00+00:00"), "stadium": "Boston Stadium", "city": "Boston", "status": "scheduled", "home_score": None, "away_score": None},
     {"id": 6, "tournament_year": 2026, "stage": "Group stage", "group_name": "I", "home_team_id": 3, "away_team_id": 4, "kickoff_at": utc("2026-06-26T19:00:00+00:00"), "stadium": "Toronto Stadium", "city": "Toronto", "status": "scheduled", "home_score": None, "away_score": None},
 ]
 
-EVENTS = []
+EVENTS = [
+    {"id": 1, "match_id": 1, "team_id": 2, "player_id": 3, "event_type": "goal", "minute": 66, "extra_minute": None, "description": "Kylian Mbappe sendte Frankrike foran mot Senegal."},
+    {"id": 2, "match_id": 1, "team_id": 2, "player_id": 11, "event_type": "goal", "minute": 79, "extra_minute": None, "description": "Bradley Barcola doblet ledelsen for Frankrike."},
+    {"id": 3, "match_id": 1, "team_id": 3, "player_id": None, "event_type": "goal", "minute": 88, "extra_minute": None, "description": "Senegal reduserte sent i kampen."},
+    {"id": 4, "match_id": 1, "team_id": 2, "player_id": 3, "event_type": "goal", "minute": 90, "extra_minute": 4, "description": "Mbappe avgjorde med sitt andre mål."},
+    {"id": 5, "match_id": 2, "team_id": 1, "player_id": 1, "event_type": "goal", "minute": 18, "extra_minute": None, "description": "Erling Haaland scoret Norges første VM-mål i kampen."},
+    {"id": 6, "match_id": 2, "team_id": 4, "player_id": 6, "event_type": "goal", "minute": 39, "extra_minute": None, "description": "Aymen Hussein utlignet for Irak."},
+    {"id": 7, "match_id": 2, "team_id": 1, "player_id": 1, "event_type": "goal", "minute": 45, "extra_minute": 3, "description": "Haaland satte Norge tilbake i ledelsen før pause."},
+    {"id": 8, "match_id": 2, "team_id": 1, "player_id": 12, "event_type": "goal", "minute": 72, "extra_minute": None, "description": "Leo Ostigard økte ledelsen på dødball."},
+    {"id": 9, "match_id": 2, "team_id": 1, "player_id": None, "event_type": "goal", "minute": 90, "extra_minute": 2, "description": "Norge fikk kampens fjerde scoring på overtid."},
+]
 
 LINEUPS = []
 
