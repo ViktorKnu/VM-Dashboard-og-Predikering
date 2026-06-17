@@ -1,9 +1,11 @@
 import { API_BASE_URL } from "./config";
+import { matchStatusLabel, teamName } from "./labels";
 import { lineups, liveTimeline, matches, modelLab, players, prediction, teams, topScorerPredictions, topScorers, whatChanged } from "./seed";
 import type {
   DataStatus,
   LiveSnapshot,
   Lineup,
+  LiveTickerPayload,
   Match,
   ModelPrediction,
   Player,
@@ -76,6 +78,7 @@ export const api = {
     data_flow: [
       "Frontend bruker seed fallback fordi API-et ikke svarte.",
       "Sett NEXT_PUBLIC_API_BASE_URL for å bruke deployet API.",
+      "API-et eksponerer /data/sources for ekte datakilder og raw-cache status.",
       "Når API-et svarer, går brukerprediksjoner til POST /predictions."
     ]
   }),
@@ -105,5 +108,22 @@ export const api = {
   ),
   historical: () => getJson<Record<string, unknown>>("/historical-insights", {}),
   modelLab: () => getJson<Record<string, unknown>>("/model/lab", modelLab),
-  tournament: () => getJson<Record<string, unknown>>("/tournament/simulation", {})
+  tournament: () => getJson<Record<string, unknown>>("/tournament/simulation", {}),
+  liveTicker: () => getJson<LiveTickerPayload>("/live/ticker", {
+    mode: "scheduled",
+    timezone: "Europe/Oslo",
+    poll_interval_seconds: 30,
+    items: [
+      ...matches.slice(0, 5).map((match) => ({
+        kind: "match" as const,
+        label: `${teamName(match.home_team)} - ${teamName(match.away_team)} · ${match.status === "scheduled" ? "ikke startet" : `${match.home_score ?? 0}-${match.away_score ?? 0}`} · ${formatOsloTime(match.kickoff_at)} · ${matchStatusLabel(match.status)}`,
+        match_id: match.id,
+        status: match.status,
+        kickoff_at: match.kickoff_at
+      })),
+      { kind: "meta" as const, label: "Alle tider vises i Europe/Oslo" },
+      { kind: "meta" as const, label: "Kun offisielle norske TV-lenker: NRK, NRK TV, TV 2 og TV 2 Play" },
+      { kind: "meta" as const, label: "Prediksjoner og modellforklaringer oppdateres når live-data er koblet på" }
+    ]
+  })
 };

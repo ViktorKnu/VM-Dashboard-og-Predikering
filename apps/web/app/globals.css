@@ -48,7 +48,7 @@ a {
 
   .live-ticker-track {
     @apply flex min-w-max items-center gap-12 whitespace-nowrap pl-8;
-    animation: live-ticker-scroll 38s linear infinite;
+    animation: live-ticker-scroll 44s linear infinite;
   }
 
   .live-ticker-item {

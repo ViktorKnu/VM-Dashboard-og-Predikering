@@ -10,6 +10,10 @@ services:
         value: seeded
       - key: LIVE_POLL_INTERVAL_SECONDS
         value: 30
+      - key: EXTERNAL_DATA_CACHE_DIR
+        value: /tmp/vm-dashboard-raw
+      - key: EXTERNAL_DATA_CACHE_TTL_SECONDS
+        value: 300
       - key: MODEL_VERSION
         value: wc-v0.2-norway
       - key: ALLOWED_BROADCASTER_HOSTS
@@ -20,6 +24,16 @@ services:
         fromDatabase:
           name: vm-dashboard-db
           property: connectionString
+      - key: FIFA_SCHEDULE_URL
+        sync: false
+      - key: FIFA_RANKINGS_URL
+        sync: false
+      - key: WORLD_FOOTBALL_ELO_URL
+        sync: false
+      - key: API_FOOTBALL_BASE_URL
+        sync: false
+      - key: API_FOOTBALL_KEY
+        sync: false
 
 databases:
   - name: vm-dashboard-db

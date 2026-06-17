@@ -16,6 +16,7 @@ from app.db.session import get_db
 from app.models.domain import UserPrediction as UserPredictionModel
 from app.schemas import PredictionIn
 from app.services.broadcasts import is_official_broadcast_link
+from app.services.external_data import source_statuses
 from app.services.historical import HISTORICAL_INSIGHTS
 from app.services.live_probability import probability_events, update_live_probability
 from app.services.prediction import FEATURES, predict_match, score_prediction
@@ -28,6 +29,15 @@ USER_PREDICTIONS: list[dict] = []
 PREDICTION_STORE_LIMIT = 500
 DEFAULT_PUBLIC_PREDICTION_LIMIT = 25
 MAX_PUBLIC_PREDICTION_LIMIT = 100
+TEAM_NAMES_NO = {
+    "Norway": "Norge",
+    "France": "Frankrike",
+    "Iraq": "Irak",
+    "Netherlands": "Nederland",
+    "Spain": "Spania",
+    "Brazil": "Brasil",
+}
+STATUS_LABELS_NO = {"scheduled": "Ikke startet", "live": "Direkte", "finished": "Ferdig"}
 
 
 def usable_db(db: object) -> Session | None:
@@ -98,6 +108,20 @@ def enrich_match(match: dict, data: dict) -> dict:
     }
 
 
+def ticker_match_label(match: dict, data: dict) -> str:
+    home = next(team for team in data["teams"] if team["id"] == match["home_team_id"])
+    away = next(team for team in data["teams"] if team["id"] == match["away_team_id"])
+    score = (
+        "ikke startet"
+        if match["status"] == "scheduled"
+        else f"{match.get('home_score') or 0}-{match.get('away_score') or 0}"
+    )
+    home_name = TEAM_NAMES_NO.get(home["name"], home["name"])
+    away_name = TEAM_NAMES_NO.get(away["name"], away["name"])
+    status = STATUS_LABELS_NO.get(match["status"], match["status"])
+    return f"{home_name} - {away_name} · {score} · {status}"
+
+
 @router.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok", "timezone": "Europe/Oslo", "model_version": settings.model_version}
@@ -106,9 +130,17 @@ def health() -> dict[str, str]:
 @router.get("/data/status")
 def data_status(db: Session | None = Depends(get_db)) -> dict:
     data = seed()
+    sources = source_statuses()
+    configured_sources = sum(1 for source in sources if source["configured"])
+    cached_sources = sum(1 for source in sources if source["cached"])
+    external_match_feed_configured = any(
+        source["configured"] for source in sources if source["key"] != "world_bank"
+    )
     return {
         "source": settings.live_data_provider,
-        "mode": "seeded" if settings.live_data_provider == "seeded" else "external",
+        "mode": "external"
+        if settings.live_data_provider != "seeded" or external_match_feed_configured
+        else "seeded",
         "timezone": "Europe/Oslo",
         "model_version": settings.model_version,
         "counts": {
@@ -121,9 +153,56 @@ def data_status(db: Session | None = Depends(get_db)) -> dict:
         },
         "data_flow": [
             "API-et er primær datakilde for frontend.",
-            "Seed-data brukes som trygg demo-fallback når liveleverandør ikke er koblet på.",
+            f"{configured_sources} eksterne datakilder er konfigurert, {cached_sources} har raw-cache.",
+            "Seed-data brukes som trygg fallback når liveleverandør ikke er koblet på.",
             "Brukerprediksjoner går fra frontend til POST /predictions og poengsettes i API-et.",
         ],
+    }
+
+
+@router.get("/data/sources")
+def data_sources() -> dict:
+    return {
+        "mode": settings.live_data_provider,
+        "cache_ttl_seconds": settings.external_data_cache_ttl_seconds,
+        "raw_storage": settings.external_data_cache_dir,
+        "sources": source_statuses(),
+    }
+
+
+@router.get("/live/ticker")
+def live_ticker() -> dict:
+    data = seed()
+    live_matches = [match for match in data["matches"] if match["status"] == "live"]
+    featured = live_matches or data["matches"][:5]
+    items = [
+        {
+            "kind": "match",
+            "label": ticker_match_label(match, data),
+            "match_id": match["id"],
+            "status": match["status"],
+            "kickoff_at": match["kickoff_at"],
+        }
+        for match in featured
+    ]
+    items.extend(
+        [
+            {"kind": "meta", "label": "Alle tider vises i Europe/Oslo"},
+            {
+                "kind": "meta",
+                "label": "Kun offisielle norske TV-lenker: NRK, NRK TV, TV 2 og TV 2 Play",
+            },
+            {
+                "kind": "meta",
+                "label": "Prediksjoner og modellforklaringer oppdateres når live-data er koblet på",
+            },
+        ]
+    )
+    return {
+        "mode": "live" if live_matches else "scheduled",
+        "timezone": "Europe/Oslo",
+        "poll_interval_seconds": settings.live_poll_interval_seconds,
+        "items": items,
     }
 
 

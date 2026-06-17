@@ -23,6 +23,15 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
     rate_limit_window_seconds: int = 60
     prediction_rate_limit: int = 20
     simulation_rate_limit: int = 12
+    external_data_cache_dir: str = "data/raw"
+    external_data_cache_ttl_seconds: int = 300
+    external_request_timeout_seconds: int = 15
+    fifa_schedule_url: str = ""
+    world_football_elo_url: str = ""
+    fifa_rankings_url: str = ""
+    world_bank_base_url: str = "https://api.worldbank.org/v2"
+    api_football_base_url: str = ""
+    api_football_key: str = ""
 
     if SettingsConfigDict:
         model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -41,6 +50,15 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
                 "rate_limit_window_seconds": self.rate_limit_window_seconds,
                 "prediction_rate_limit": self.prediction_rate_limit,
                 "simulation_rate_limit": self.simulation_rate_limit,
+                "external_data_cache_dir": self.external_data_cache_dir,
+                "external_data_cache_ttl_seconds": self.external_data_cache_ttl_seconds,
+                "external_request_timeout_seconds": self.external_request_timeout_seconds,
+                "fifa_schedule_url": self.fifa_schedule_url,
+                "world_football_elo_url": self.world_football_elo_url,
+                "fifa_rankings_url": self.fifa_rankings_url,
+                "world_bank_base_url": self.world_bank_base_url,
+                "api_football_base_url": self.api_football_base_url,
+                "api_football_key": self.api_football_key,
             }.items():
                 setattr(self, key, values.get(key, os.getenv(key.upper(), default)))
         else:

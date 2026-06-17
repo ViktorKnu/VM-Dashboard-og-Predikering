@@ -173,3 +173,16 @@ export type TopScorerPrediction = {
   signals: string[];
 };
 
+export type LiveTickerPayload = {
+  mode: "live" | "scheduled";
+  timezone: "Europe/Oslo";
+  poll_interval_seconds: number;
+  items: Array<{
+    kind: "match" | "meta";
+    label: string;
+    match_id?: number;
+    status?: Match["status"];
+    kickoff_at?: string;
+  }>;
+};
+
