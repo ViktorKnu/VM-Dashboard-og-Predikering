@@ -19,7 +19,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nb" suppressHydrationWarning>
+    <html lang="nb" data-theme="light" style={{ colorScheme: "light" }} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("vm-dashboard-theme")==="dark"?"dark":"light";document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.dataset.theme="light";document.documentElement.style.colorScheme="light";}`
+          }}
+        />
+      </head>
       <body>
         <div className="min-h-screen lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
           <aside className="hidden border-r border-white/10 bg-night px-3 py-5 text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">

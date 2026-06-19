@@ -12,8 +12,8 @@ function applyTheme(theme: Theme) {
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === "undefined") return "dark";
-    return window.localStorage.getItem("vm-dashboard-theme") === "light" ? "light" : "dark";
+    if (typeof window === "undefined") return "light";
+    return window.localStorage.getItem("vm-dashboard-theme") === "dark" ? "dark" : "light";
   });
 
   useEffect(() => {
@@ -33,6 +33,7 @@ export function ThemeToggle() {
       aria-label={isLight ? "Bytt til dark mode" : "Bytt til light mode"}
       className="theme-toggle"
       onClick={toggleTheme}
+      suppressHydrationWarning
       type="button"
     >
       {isLight ? <Moon size={18} /> : <Sun size={18} />}
