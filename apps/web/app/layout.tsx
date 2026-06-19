@@ -4,6 +4,7 @@ import { Activity } from "lucide-react";
 import "./globals.css";
 import { AppLogo, AppNav } from "@/components/AppNav";
 import { LiveTicker } from "@/components/LiveTicker";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { APP_NAME } from "@/lib/labels";
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nb">
+    <html lang="nb" suppressHydrationWarning>
       <body>
         <div className="min-h-screen lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
           <aside className="hidden border-r border-white/10 bg-night px-3 py-5 text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="mx-auto max-w-[1540px] px-4 py-5 md:px-8 md:py-8 lg:px-10">{children}</main>
           </div>
         </div>
+        <ThemeToggle />
       </body>
     </html>
   );
