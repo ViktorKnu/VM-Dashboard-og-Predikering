@@ -175,7 +175,8 @@ def data_sources() -> dict:
 def live_ticker() -> dict:
     data = seed()
     live_matches = [match for match in data["matches"] if match["status"] == "live"]
-    featured = live_matches or data["matches"][:5]
+    sorted_matches = sorted(data["matches"], key=lambda match: match["kickoff_at"])
+    featured = live_matches or sorted_matches[:5]
     items = [
         {
             "kind": "match",
@@ -237,7 +238,7 @@ def player(player_id: int) -> dict:
 @router.get("/matches")
 def matches() -> list[dict]:
     data = seed()
-    return [enrich_match(match, data) for match in data["matches"]]
+    return [enrich_match(match, data) for match in sorted(data["matches"], key=lambda item: item["kickoff_at"])]
 
 
 @router.get("/matches/{match_id}")

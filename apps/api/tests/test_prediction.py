@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 from app.services.live_probability import probability_events, update_live_probability
 from app.services.prediction import predict_match, score_prediction
 from app.services.seed_data import seed
@@ -6,6 +8,7 @@ from app.api.routes import (
     create_prediction,
     data_status,
     list_predictions,
+    matches as route_matches,
     model_lab,
     match_lineups,
     top_scorer_prediction,
@@ -134,6 +137,17 @@ def test_seed_schedule_uses_verified_group_results_only():
         for match in matches
         if match["status"] == "scheduled"
     )
+
+
+def test_match_schedule_is_sorted_and_uses_correct_oslo_time():
+    ordered = route_matches()
+    norway_senegal = next(
+        match for match in ordered if match["home_team"]["name"] == "Norway" and match["away_team"]["name"] == "Senegal"
+    )
+    oslo_time = norway_senegal["kickoff_at"].astimezone(ZoneInfo("Europe/Oslo"))
+
+    assert ordered == sorted(ordered, key=lambda match: match["kickoff_at"])
+    assert oslo_time.strftime("%Y-%m-%d %H:%M") == "2026-06-23 02:00"
 
 
 def test_data_status_exposes_counts_and_prediction_flow():
