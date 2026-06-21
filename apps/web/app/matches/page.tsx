@@ -1,9 +1,10 @@
 import { CalendarDays } from "lucide-react";
+import { MatchSchedule } from "@/components/MatchSchedule";
 import { api } from "@/lib/api";
-import { MatchCard } from "@/components/MatchCard";
 
 export default async function MatchesPage() {
   const matches = await api.matches();
+
   return (
     <div className="space-y-5">
       <section className="surface p-5 md:p-6">
@@ -12,7 +13,7 @@ export default async function MatchesPage() {
             <p className="eyebrow">Terminliste</p>
             <h1 className="mt-1 text-3xl font-bold">Kamper</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
-              Gruppe I-kamper med tider i Europe/Oslo. Resultater og livehendelser vises først når ekte data finnes.
+              Finn kommende og ferdige kamper etter gruppe og dato. Alle klokkeslett vises i Europe/Oslo.
             </p>
           </div>
           <span className="inline-flex items-center gap-2 rounded-md bg-frost px-3 py-2 text-sm font-semibold text-ink/70">
@@ -20,9 +21,8 @@ export default async function MatchesPage() {
           </span>
         </div>
       </section>
-      <div className="grid gap-4 lg:grid-cols-2">
-        {matches.map((match) => <MatchCard key={match.id} match={match} />)}
-      </div>
+
+      <MatchSchedule matches={matches} />
     </div>
   );
 }
