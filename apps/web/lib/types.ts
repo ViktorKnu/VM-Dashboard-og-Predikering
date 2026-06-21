@@ -58,6 +58,22 @@ export type Match = {
   broadcasts?: Broadcast[];
 };
 
+export type MatchEvent = {
+  id: number;
+  match_id: number;
+  minute: number;
+  second?: number | null;
+  extra_minute?: number | null;
+  event_type: string;
+  team_id?: number | null;
+  player_id?: number | null;
+  assist_player_id?: number | null;
+  description: string;
+  player?: Player | null;
+  assist_player?: Player | null;
+  team?: Team | null;
+};
+
 export type ModelPrediction = {
   match_id: number;
   model_version: string;

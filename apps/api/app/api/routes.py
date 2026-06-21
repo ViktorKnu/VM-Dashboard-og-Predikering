@@ -259,7 +259,25 @@ def match(match_id: int) -> dict:
 
 @router.get("/matches/{match_id}/events")
 def match_events(match_id: int) -> list[dict]:
-    return [event for event in seed()["events"] if event["match_id"] == match_id]
+    data = seed()
+    if not any(match["id"] == match_id for match in data["matches"]):
+        raise HTTPException(404, "Match not found")
+
+    players_by_id = {player["id"]: player for player in data["players"]}
+    teams_by_id = {team["id"]: team for team in data["teams"]}
+    events = [event for event in data["events"] if event["match_id"] == match_id]
+    return [
+        event
+        | {
+            "player": players_by_id.get(event.get("player_id")),
+            "assist_player": players_by_id.get(event.get("assist_player_id")),
+            "team": teams_by_id.get(event.get("team_id")),
+        }
+        for event in sorted(
+            events,
+            key=lambda item: (item["minute"], item.get("extra_minute") or 0, item["id"]),
+        )
+    ]
 
 
 @router.get("/matches/{match_id}/lineups")

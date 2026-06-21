@@ -8,6 +8,7 @@ from app.api.routes import (
     create_prediction,
     data_status,
     list_predictions,
+    match_events,
     matches as route_matches,
     model_lab,
     match_lineups,
@@ -237,4 +238,14 @@ def test_top_scorer_prediction_returns_model_forecast():
 
 def test_seed_matches_do_not_expose_fake_lineups():
     assert match_lineups(1) == []
+
+
+def test_match_events_are_sorted_and_enriched():
+    events = match_events(2)
+
+    assert [event["minute"] for event in events] == [18, 39, 45, 72, 90]
+    assert events[0]["event_type"] == "goal"
+    assert events[0]["player"]["name"] == "Erling Haaland"
+    assert events[0]["team"]["name"] == "Norway"
+    assert events[-1]["player"] is None
 

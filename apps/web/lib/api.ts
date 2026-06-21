@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "./config";
 import { matchStatusLabel, teamName } from "./labels";
-import { lineups, liveTimeline, matches, modelLab, players, prediction, teams, topScorerPredictions, topScorers, whatChanged } from "./seed";
+import { events, lineups, liveTimeline, matches, modelLab, players, prediction, teams, topScorerPredictions, topScorers, whatChanged } from "./seed";
 import { calculateGroupStandings } from "./standings";
 import type {
   DataStatus,
@@ -9,6 +9,7 @@ import type {
   Lineup,
   LiveTickerPayload,
   Match,
+  MatchEvent,
   ModelPrediction,
   Player,
   ProbabilityEvent,
@@ -86,6 +87,7 @@ export const api = {
   }),
   matches: () => getJson<Match[]>("/matches", matches),
   match: (id: number) => getJson<Match>(`/matches/${validId(id) ? id : matches[0].id}`, matches.find((match) => match.id === id) ?? matches[0]),
+  matchEvents: (id: number) => getJson<MatchEvent[]>(`/matches/${validId(id) ? id : matches[0].id}/events`, events.filter((event) => event.match_id === id)),
   teams: () => getJson<Team[]>("/teams", teams),
   team: (id: number) => {
     const fallbackTeam = teams.find((team) => team.id === id) ?? teams[0];

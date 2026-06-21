@@ -38,7 +38,11 @@ const statusLabels: Record<Match["status"], string> = {
 
 const eventLabels: Record<string, string> = {
   goal: "Mål",
+  own_goal: "Selvmål",
+  yellow_card: "Gult kort",
   red_card: "Rødt kort",
+  penalty_missed: "Straffebom",
+  var: "VAR",
   xg_swing: "xG-sving",
   shot_momentum: "Skuddtrykk",
   substitution: "Bytte",

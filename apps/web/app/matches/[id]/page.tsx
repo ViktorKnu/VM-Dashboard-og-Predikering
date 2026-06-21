@@ -3,6 +3,7 @@ import { api, formatOsloTime } from "@/lib/api";
 import { matchStageLabel, matchStatusLabel } from "@/lib/labels";
 import { BroadcastLinksCard } from "@/components/BroadcastLinksCard";
 import { FormationPitch } from "@/components/FormationPitch";
+import { MatchEventTimeline } from "@/components/MatchEventTimeline";
 import { ModelExplanationCard } from "@/components/ModelExplanationCard";
 import { PredictionForm } from "@/components/PredictionForm";
 import { TeamBadge } from "@/components/TeamBadge";
@@ -11,8 +12,9 @@ import { WinProbabilityTimeline } from "@/components/WinProbabilityTimeline";
 export default async function MatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
   const id = Number(rawId);
-  const [match, prediction, live, lineups, players, teams] = await Promise.all([
+  const [match, events, prediction, live, lineups, players, teams] = await Promise.all([
     api.match(id),
+    api.matchEvents(id),
     api.prediction(id),
     api.live(id),
     api.lineups(id),
@@ -54,6 +56,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
 
       <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-5">
+          <MatchEventTimeline events={events} match={match} />
           <ModelExplanationCard prediction={prediction} />
           <WinProbabilityTimeline changes={live.what_changed} timeline={live.timeline} />
           <FormationPitch lineups={lineups} match={match} />

@@ -1,4 +1,4 @@
-import type { Broadcast, Lineup, LiveSnapshot, Match, ModelPrediction, Player, ProbabilityEvent, Team, TopScorerPrediction, TopScorerStanding } from "./types";
+import type { Broadcast, Lineup, LiveSnapshot, Match, MatchEvent, ModelPrediction, Player, ProbabilityEvent, Team, TopScorerPrediction, TopScorerStanding } from "./types";
 
 const mkTeam = (
   id: number,
@@ -164,6 +164,54 @@ export const matches: Match[] = [
   mkMatch(21, "L", 16, 13, "2026-06-27T21:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey"),
   mkMatch(22, "L", 14, 15, "2026-06-27T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia")
 ].sort((first, second) => new Date(first.kickoff_at).getTime() - new Date(second.kickoff_at).getTime());
+
+const mkEvent = (
+  id: number,
+  match_id: number,
+  team_id: number,
+  player_id: number | null,
+  minute: number,
+  description: string,
+  extra_minute: number | null = null
+): MatchEvent => ({
+  id,
+  match_id,
+  team_id,
+  player_id,
+  minute,
+  extra_minute,
+  event_type: "goal",
+  description,
+  player: player_id ? byPlayer(player_id) : null,
+  team: byTeam(team_id)
+});
+
+export const events: MatchEvent[] = [
+  mkEvent(1, 1, 2, 3, 66, "Kylian Mbappe sendte Frankrike foran mot Senegal."),
+  mkEvent(2, 1, 2, 7, 79, "Bradley Barcola doblet ledelsen for Frankrike."),
+  mkEvent(3, 1, 3, null, 88, "Senegal reduserte sent i kampen."),
+  mkEvent(4, 1, 2, 3, 90, "Mbappe avgjorde med sitt andre mål.", 4),
+  mkEvent(5, 2, 1, 1, 18, "Erling Haaland scoret Norges første mål mot Irak."),
+  mkEvent(6, 2, 4, 6, 39, "Aymen Hussein utlignet for Irak."),
+  mkEvent(7, 2, 1, 1, 45, "Haaland satte Norge tilbake i ledelsen før pause.", 3),
+  mkEvent(8, 2, 1, 8, 72, "Leo Ostigard økte ledelsen på dødball."),
+  mkEvent(9, 2, 1, null, 90, "Norge fikk kampens fjerde scoring på overtid.", 2),
+  mkEvent(10, 7, 5, 9, 17, "Lionel Messi åpnet scoringen mot Algerie."),
+  mkEvent(11, 7, 5, 9, 60, "Messi økte Argentinas ledelse."),
+  mkEvent(12, 7, 5, 9, 76, "Messi fullførte hattricket."),
+  mkEvent(13, 8, 7, 10, 22, "Romano Schmid sendte Østerrike foran mot Jordan."),
+  mkEvent(14, 8, 8, 11, 29, "Ali Olwan scoret Jordans første VM-mål."),
+  mkEvent(15, 8, 7, null, 77, "Østerrike tok ledelsen etter selvmål."),
+  mkEvent(16, 8, 7, 12, 90, "Marko Arnautovic avgjorde på straffe.", 3),
+  mkEvent(17, 13, 9, 13, 6, "Joao Neves ga Portugal en tidlig ledelse."),
+  mkEvent(18, 13, 10, 14, 44, "Yoane Wissa utlignet for DR Kongo."),
+  mkEvent(19, 18, 13, 15, 12, "Harry Kane scoret på straffe mot Kroatia."),
+  mkEvent(20, 18, 14, 18, 25, "Martin Baturina utlignet for Kroatia."),
+  mkEvent(21, 18, 13, 15, 40, "Kane headet inn sitt andre mål."),
+  mkEvent(22, 18, 14, 19, 44, "Petar Musa gjorde 2-2 før pause."),
+  mkEvent(23, 18, 13, 16, 52, "Jude Bellingham sendte England foran igjen."),
+  mkEvent(24, 18, 13, 17, 85, "Marcus Rashford punkterte kampen.")
+];
 
 export const prediction: ModelPrediction = {
   match_id: 1,
