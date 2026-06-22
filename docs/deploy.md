@@ -10,7 +10,7 @@ Prosjektet er klargjort for offentlig demo uten betalte live-data-API-er.
 ## 1. Deploy frontend på Vercel
 
 1. Gå til [vercel.com/new](https://vercel.com/new).
-2. Importer GitHub-repoet `h678128/VM-Dashboard-og-Predikering`.
+2. Importer GitHub-repoet `ViktorKnu/VM-Dashboard-og-Predikering`.
 3. Sett **Root Directory** til:
 
 ```text
@@ -36,7 +36,7 @@ NEXT_PUBLIC_API_BASE_URL=https://<render-api-url>
 ## 2. Deploy API på Render
 
 1. Gå til Render og velg **New Blueprint**.
-2. Koble til GitHub-repoet `h678128/VM-Dashboard-og-Predikering`.
+2. Koble til GitHub-repoet `ViktorKnu/VM-Dashboard-og-Predikering`.
 3. Render leser `render.yaml` fra rotmappen.
 4. Bruk gratis plan der det er tilgjengelig.
 5. Ikke aktiver betalte add-ons hvis Render ber om kort.
