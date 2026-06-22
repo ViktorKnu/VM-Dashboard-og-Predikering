@@ -22,6 +22,7 @@ export function MatchEventTimeline({ events, match }: { events: MatchEvent[]; ma
     result[event.event_type] = (result[event.event_type] ?? 0) + 1;
     return result;
   }, {});
+  const hasCardData = Boolean(counts.yellow_card || counts.red_card);
 
   return (
     <section className="surface p-5">
@@ -37,6 +38,9 @@ export function MatchEventTimeline({ events, match }: { events: MatchEvent[]; ma
             {counts.yellow_card ? <span className="chip bg-gold/15 text-gold">{counts.yellow_card} gule</span> : null}
             {counts.red_card ? <span className="chip bg-coral/15 text-coral">{counts.red_card} røde</span> : null}
             {counts.substitution ? <span className="chip bg-fjord/10 text-fjord">{counts.substitution} bytter</span> : null}
+            {match.status === "finished" && !hasCardData ? (
+              <span className="chip border border-white/10 bg-white/5 text-white/55">Kortdata ikke bekreftet</span>
+            ) : null}
           </div>
         ) : null}
       </div>
