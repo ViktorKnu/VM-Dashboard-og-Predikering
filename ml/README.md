@@ -1,12 +1,12 @@
 # ML Workspace
 
-This folder is reserved for production ML work:
+Denne mappen er reservert for mer produksjonsrettet ML-arbeid:
 
-- `features/`: feature extraction and normalization.
-- `training/`: model training scripts.
-- `inference/`: packaged prediction interfaces.
-- `evaluation/`: backtesting, calibration and metrics.
-- `notebooks/`: exploratory notebooks.
+- `features/`: feature extraction og normalisering.
+- `training/`: scripts for modelltrening.
+- `inference/`: pakkede prediksjonsgrensesnitt.
+- `evaluation/`: backtesting, kalibrering og metrikker.
+- `notebooks/`: utforskende notebooks.
 
-The API currently uses a deterministic baseline in `apps/api/app/services/prediction.py`.
+API-et bruker foreløpig en deterministisk baseline i `apps/api/app/services/prediction.py`.
 

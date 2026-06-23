@@ -21,7 +21,7 @@ flowchart LR
   Web --> Client["apps/web/lib/api.ts"]
   Client -->|HTTP JSON| API["FastAPI routes"]
   Client -.->|fallback når API mangler| WebSeed["apps/web/lib/seed.ts"]
-  API --> Services["Prediction, live probability, simulation, historical, broadcasts"]
+  API --> Services["Prediksjon, live-sannsynlighet, simulering, historikk og sendinger"]
   Services --> Seed["seed() / data/seed"]
   Services -.-> DB["PostgreSQL via SQLAlchemy + Alembic"]
   API -.-> Redis["Redis cache / jobber"]

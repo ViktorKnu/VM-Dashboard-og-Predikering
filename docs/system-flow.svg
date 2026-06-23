@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img" aria-labelledby="title desc">
   <title id="title">Systemflyt for VM Dashboard og Predikering</title>
-  <desc id="desc">Viser hvordan brukeren, Next.js frontend, FastAPI backend, tjenestelag, seed data, planlagt database, Redis, ML og eksterne datakilder henger sammen.</desc>
+  <desc id="desc">Viser hvordan brukeren, Next.js frontend, FastAPI backend, tjenestelag, seed-data, planlagt database, Redis, ML og eksterne datakilder henger sammen.</desc>
   <defs>
     <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
       <path d="M2,2 L10,6 L2,10 Z" fill="#2563eb" />
@@ -57,8 +57,8 @@
   <rect class="box blue" x="86" y="384" width="226" height="126" />
   <text class="box-title" x="112" y="417">Next.js app</text>
   <text class="box-text" x="112" y="443">apps/web/app/*</text>
-  <text class="box-text" x="112" y="463">Sider for matches, teams,</text>
-  <text class="box-text" x="112" y="483">players, predictions, model</text>
+  <text class="box-text" x="112" y="463">Sider for kamper, lag,</text>
+  <text class="box-text" x="112" y="483">spillere, tips og modell</text>
 
   <rect class="box blue" x="86" y="572" width="226" height="120" />
   <text class="box-title" x="112" y="605">API-klient</text>
@@ -68,16 +68,16 @@
 
   <rect class="panel" x="386" y="130" width="338" height="690" rx="16" />
   <text class="panel-title" x="414" y="170">2. Backend og kontrakter</text>
-  <text class="panel-note" x="414" y="194">FastAPI eksponerer typed views, REST og SSE.</text>
+  <text class="panel-note" x="414" y="194">FastAPI eksponerer typede visninger, REST og SSE.</text>
 
   <rect class="box green" x="424" y="232" width="262" height="112" />
   <text class="box-title" x="450" y="265">FastAPI app</text>
   <text class="box-text" x="450" y="290">apps/api/app/main.py</text>
-  <text class="box-text" x="450" y="310">CORS for localhost:3000</text>
+  <text class="box-text" x="450" y="310">CORS for lokal dev og Vercel</text>
   <text class="box-text" x="450" y="330">router registrerer alle endepunkt</text>
 
   <rect class="box green" x="424" y="400" width="262" height="152" />
-  <text class="box-title" x="450" y="433">API routes</text>
+  <text class="box-title" x="450" y="433">API-ruter</text>
   <text class="box-text" x="450" y="458">/matches, /teams, /players</text>
   <text class="box-text" x="450" y="478">/matches/{id}/prediction</text>
   <text class="box-text" x="450" y="498">/matches/{id}/live-probability</text>
@@ -98,7 +98,7 @@
   <text class="box-text" x="832" y="300">FIFA, Elo, BNP, historikk, vertskap</text>
 
   <rect class="box violet" x="806" y="364" width="254" height="104" />
-  <text class="box-title" x="832" y="397">Live probability</text>
+  <text class="box-title" x="832" y="397">Live-sannsynlighet</text>
   <text class="box-text" x="832" y="422">services/live_probability.py</text>
   <text class="box-text" x="832" y="442">Mål, kort, xG og momentum</text>
 

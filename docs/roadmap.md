@@ -1,28 +1,28 @@
 # Roadmap
 
-## GitHub Issues-Style Roadmap
+## GitHub Issues-stil
 
-### Issue 1: Persist Seeded Domain Data
+### Sak 1: Persistér domenedata
 
-Move teams, players, matches, broadcasts, snapshots and predictions from in-memory seed services into PostgreSQL-backed repositories.
+Flytt lag, spillere, kamper, sendinger, snapshots og prediksjoner fra seed-/minnetjenester til PostgreSQL-repositories.
 
-### Issue 2: Add Provider Adapters
+### Sak 2: Legg til provider-adaptere
 
-Implement adapters for FIFA schedules, Fjelstul, World Football Elo, FIFA rankings, World Bank and official Norwegian broadcaster pages.
+Implementer adaptere for FIFA-terminliste, Fjelstul, World Football Elo, FIFA-rangeringer, World Bank og offisielle norske sendesider.
 
-### Issue 3: Productionize Live Updates
+### Sak 3: Produksjonsklar liveflyt
 
-Add rate-limited polling, Redis cache, raw payload storage, replayable snapshots and WebSocket fanout.
+Legg til rate-limited polling, Redis-cache, råpayload-lagring, replaybare snapshots og WebSocket-fanout.
 
-### Issue 4: Expand Model Backtesting
+### Sak 4: Utvid modell-backtesting
 
-Train and evaluate on historical World Cup matches with accuracy, log loss, Brier score and calibration plots.
+Tren og evaluer på historiske VM-kamper med accuracy, log loss, Brier-score og kalibreringsgrafer.
 
-### Issue 5: Prediction Leagues
+### Sak 5: Prediksjonsligaer
 
-Add users, persistent predictions, group winner predictions, tournament winner predictions and leaderboard history.
+Legg til brukere, persistente prediksjoner, gruppevinner-tips, VM-vinner-tips og leaderboard-historikk.
 
-### Issue 6: Portfolio Polish
+### Sak 6: Portfolio-polish
 
-Add screenshots, GitHub Actions badges, Lighthouse pass, richer chart components and recorded demo GIFs.
+Legg til screenshots, GitHub Actions-badges, Lighthouse-pass, rikere grafkomponenter og korte visnings-GIF-er.
 

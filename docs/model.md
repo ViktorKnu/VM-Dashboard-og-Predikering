@@ -1,54 +1,54 @@
-# Model
+# Modell
 
-## Current Version
+## Nåværende versjon
 
-`wc-v0.2-norway` is a deterministic baseline for pre-match probabilities. It is intentionally simple, inspectable and safe for a portfolio first version.
+`wc-v0.2-norway` er en deterministisk baseline for sannsynlighet før kamp. Den er bevisst enkel, forklarbar og trygg som første portfolio-versjon.
 
 ## Features
 
-- FIFA ranking, inverted and normalized.
-- Elo rating, normalized.
-- GDP per capita as a proxy for sports infrastructure.
-- Population size as a proxy for talent pool.
-- Football popularity score as a proxy for cultural importance.
-- Confederation strength.
-- Host nation advantage.
-- Historical World Cup performance.
+- FIFA-rangering, invertert og normalisert.
+- Elo-rating, normalisert.
+- BNP per innbygger som proxy for sportsinfrastruktur.
+- Befolkning som proxy for talentpool.
+- Fotballpopularitet som proxy for kulturell betydning.
+- Konføderasjonsstyrke.
+- Vertsnasjonsfordel.
+- Historisk VM-prestasjon.
 
-## Limitations
+## Begrensninger
 
-GDP, population and football popularity are proxies, not direct causal variables. They can introduce bias and should be documented carefully in the UI. The seeded popularity score should be replaced by a defensible source before serious use.
+BNP, befolkning og fotballpopularitet er proxyer, ikke direkte årsaksvariabler. De kan introdusere skjevheter og skal forklares tydelig i UI-et. Seedet popularitetsscore bør erstattes av en etterprøvbar kilde før seriøs bruk.
 
-The raw model is deterministic. Randomness appears only in Monte Carlo simulation, which estimates match and tournament outcome distributions.
+Råmodellen er deterministisk. Tilfeldighet brukes bare i Monte Carlo-simuleringer som estimerer kamp- og turneringsutfall.
 
-## Live Probability
+## Live-sannsynlighet
 
-Live probability starts from the pre-match baseline and adjusts for:
+Live-sannsynlighet starter fra pre-match-baseline og justeres for:
 
-- current score,
-- match minute,
-- red cards,
-- xG swing,
-- shots on target,
-- dangerous attacks,
-- substitutions placeholder,
-- momentum last 10 minutes placeholder,
-- yellow-card risk,
-- formation changes.
+- stilling,
+- kampminutt,
+- røde kort,
+- xG-sving,
+- skudd på mål,
+- farlige angrep,
+- bytter når leverandøren har hendelsesdata,
+- momentum siste 10 minutter når statistikk finnes,
+- gulkort-risiko,
+- formasjonsendringer.
 
-Significant changes create `ProbabilityEvent` records for the “What changed?” explanation system.
+Store endringer kan lagres som `ProbabilityEvent` og vises i forklaringssystemet “Hva endret seg?”.
 
-## Model Lab
+## Modellverksted
 
-The Model Lab page includes:
+Modellverkstedet viser:
 
-- version history,
-- feature importance,
-- backtesting dataset placeholder,
+- versjonshistorikk,
+- variabelbetydning,
+- struktur for backtesting mot historiske VM-kamper,
 - accuracy,
 - log loss,
-- Brier score,
-- calibration chart placeholder,
-- confusion matrix placeholder,
-- SHAP explanation placeholder.
+- Brier-score,
+- plass for kalibreringsgraf,
+- plass for forvekslingsmatrise,
+- plass for SHAP-lignende forklaringer.
 

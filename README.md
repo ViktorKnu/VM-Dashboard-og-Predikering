@@ -24,19 +24,19 @@ Se [docs/deploy.md](docs/deploy.md) for trinnvis oppsett, miljøvariabler og kon
 ## Hva prosjektet viser
 
 - Fullstack monorepo med Next.js, FastAPI, SQLAlchemy og Alembic.
-- TypeScript-frontend med dashboardsider, kampsider, prediksjonsskjema og Model Lab.
+- TypeScript-frontend med dashboardsider, kampsider, prediksjonsskjema og Modellverksted.
 - FastAPI-backend med dokumenterte endepunkter, seed-data, simulering og live-sannsynlighet.
 - Datamodell for lag, spillere, kamper, hendelser, lagoppstillinger, sendinger, brukerprediksjoner, modellprediksjoner og sannsynlighetshendelser.
 - Modelllogikk som skiller mellom deterministiske sannsynligheter og tilfeldighet i Monte Carlo-simuleringer.
 - Norsk produktfokus: Oslo-tid, offisielle norske TV-lenker og ingen ulovlige streams.
-- Deploy-hensyn: produksjons-Dockerfile, CORS-konfigurasjon, lokale demo-secrets, rate-/input-grenser og auditert frontend-avhengighetstre.
+- Deploy-hensyn: produksjons-Dockerfile, CORS-konfigurasjon, lokale eksempelverdier, rate-/input-grenser og auditert frontend-avhengighetstre.
 
 ## Arkitektur
 
 ```text
 apps/web (Next.js)
   -> Henter data fra API-et med seedet fallback
-  -> Viser kamper, lag, spillere, prediksjoner, Model Lab og historiske innsikter
+  -> Viser kamper, lag, spillere, prediksjoner, Modellverksted og historiske innsikter
 
 apps/api (FastAPI)
   -> REST-endepunkter og SSE-endepunkt for liveoppdateringer
@@ -77,7 +77,7 @@ Se også:
 - "Hva endret seg?"-forklaringer når live-sannsynlighet flytter seg betydelig.
 - Støtte for formasjonene `4-3-3`, `4-2-3-1`, `3-4-3`, `3-5-2`, `5-3-2` og `4-4-2`.
 - Turneringssimulator for avansement, utslagsrunder, semifinale, finale og VM-seier.
-- Model Lab med versjonshistorikk, feature importance, backtesting-metrikker og plassholdere for kalibrering, confusion matrix og SHAP.
+- Modellverksted med versjonshistorikk, variabelbetydning, backtesting-metrikker og dedikerte felt for kalibrering, forvekslingsmatrise og SHAP-lignende forklaringer.
 - Seed-data for Norge, Frankrike, Senegal, Irak, Nederland, Spania, Portugal og Brasil.
 
 ## Teknologi

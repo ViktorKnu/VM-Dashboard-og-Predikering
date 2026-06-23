@@ -1,6 +1,6 @@
 # Deploy
 
-Prosjektet er klargjort for offentlig demo uten betalte live-data-API-er.
+Prosjektet er klargjort for offentlig visning uten betalte live-data-API-er.
 
 - Frontend: Vercel fra `apps/web`
 - API: Render fra `apps/api`
@@ -47,7 +47,7 @@ API-et har health check her:
 https://<render-api-url>/health
 ```
 
-API-et lager nødvendige tabeller ved oppstart. `POST /predictions` skriver til databasen når `DATABASE_URL` finnes. Hvis databasen ikke er tilgjengelig, faller API-et tilbake til minnelagring slik at demoen fortsatt virker, men da overlever ikke prediksjoner restart.
+API-et lager nødvendige tabeller ved oppstart. `POST /predictions` skriver til databasen når `DATABASE_URL` finnes. Hvis databasen ikke er tilgjengelig, faller API-et tilbake til minnelagring slik at visningen fortsatt virker, men da overlever ikke prediksjoner restart.
 
 ## 3. Koble frontend og API
 
@@ -98,6 +98,6 @@ npm audit --audit-level=moderate
 - Ikke legg ekte secrets i repoet.
 - `.env` og `.env.local` er ignorert.
 - `NEXT_PUBLIC_API_BASE_URL` er offentlig klientkonfig og kan vises i frontend.
-- Brukerprediksjoner er offentlig demo-data, ikke private brukerkontoer.
-- Demo-API-et har enkel in-memory rate limiting på prediksjoner og simuleringer.
+- Brukerprediksjoner er offentlig visningsdata, ikke private brukerkontoer.
+- API-et har enkel in-memory rate limiting på prediksjoner og simuleringer.
 - For produksjon med mer trafikk bør rate limiting flyttes til Redis, WAF eller en gateway.
