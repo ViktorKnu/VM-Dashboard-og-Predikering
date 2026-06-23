@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img" aria-labelledby="title desc">
-  <title id="title">Systemflyt for World Cup Insights</title>
+  <title id="title">Systemflyt for VM Dashboard og Predikering</title>
   <desc id="desc">Viser hvordan brukeren, Next.js frontend, FastAPI backend, tjenestelag, seed data, planlagt database, Redis, ML og eksterne datakilder henger sammen.</desc>
   <defs>
     <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
@@ -42,7 +42,7 @@
 
   <rect class="bg" x="0" y="0" width="1440" height="980" />
 
-  <text x="64" y="62" fill="#0f172a" font-family="Arial, sans-serif" font-size="34" font-weight="700">World Cup Insights: system, samkjøring og dataflyt</text>
+  <text x="64" y="62" fill="#0f172a" font-family="Arial, sans-serif" font-size="34" font-weight="700">VM Dashboard og Predikering: system, samkjøring og dataflyt</text>
   <text x="64" y="92" fill="#475569" font-family="Arial, sans-serif" font-size="16">Fra brukeropplevelse til API, prediksjonslogikk, live-sannsynlighet, seed-data og planlagt produksjonsdata.</text>
 
   <rect class="panel" x="56" y="130" width="286" height="690" rx="16" />

@@ -1,6 +1,6 @@
 # Architecture
 
-World Cup Insights is a portfolio monorepo with a clear split between user experience, API/domain logic, ML experimentation and data storage.
+VM Dashboard og Predikering er et portfolio-monorepo med tydelig skille mellom brukeropplevelse, API-/domenelogikk, ML-eksperimentering og datalagring.
 
 ```mermaid
 flowchart LR

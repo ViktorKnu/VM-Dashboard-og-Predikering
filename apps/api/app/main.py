@@ -8,8 +8,8 @@ from app.db.session import engine
 from app.models import domain  # noqa: F401
 
 app = FastAPI(
-    title="World Cup Insights API",
-    description="Portfolio-grade FIFA World Cup analytics and prediction API.",
+    title="VM Dashboard og Predikering API",
+    description="Norsk VM-dashboard for kamper, prediksjoner, modellinnsikt og offisielle TV-lenker.",
     version="0.2.0",
 )
 

@@ -1,6 +1,6 @@
 # Systemoversikt
 
-Denne oversikten viser hvordan World Cup Insights henger sammen fra bruker til frontend, API, tjenestelag og data.
+Denne oversikten viser hvordan VM Dashboard og Predikering henger sammen fra bruker til frontend, API, tjenestelag og data.
 
 ![Systemflyt](./system-flow.svg)
 

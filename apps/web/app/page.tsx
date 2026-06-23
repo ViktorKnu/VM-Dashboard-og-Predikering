@@ -91,7 +91,7 @@ export default async function HomePage() {
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard Icon={UsersRound} helper="i demo-datasettet" label="Lag" value={teams.length} />
+        <StatCard Icon={UsersRound} helper="i datasettet" label="Lag" value={teams.length} />
         <StatCard Icon={CalendarDays} helper={`${matches.filter((match) => match.status === "scheduled").length} planlagt`} label="Kamper" value={matches.length} />
         <StatCard Icon={Goal} helper={goalsScored ? "registrert i kampdata" : "venter på ekte resultater"} label="Mål" value={goalsScored} />
         <StatCard Icon={Trophy} helper={favorite ? `${percent(favorite.winner)} vinnersjanse` : "modell ikke klar"} label="Favoritt" value={favorite ? favorite.team.fifa_code : "—"} />

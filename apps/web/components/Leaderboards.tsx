@@ -9,9 +9,9 @@ export function PlayerProfileTable({ players }: { players: Player[] }) {
   return (
     <section className="surface p-5">
       <div className="mb-4">
-        <p className="eyebrow">Seed-data</p>
+        <p className="eyebrow">Spillerdata</p>
         <h2 className="text-lg font-semibold">Spillerprofiler</h2>
-        <p className="mt-1 text-sm text-ink/60">Demo-rangering, ikke ekte VM-toppscorerliste.</p>
+        <p className="mt-1 text-sm text-ink/60">Rangert etter tilgjengelig spiller-rating, ikke offisiell toppscorerliste.</p>
       </div>
       <div className="space-y-2">
         {rankedPlayers.map((player, index) => (

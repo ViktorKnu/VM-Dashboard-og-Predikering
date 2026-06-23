@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div className="min-h-screen lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
-          <aside className="hidden border-r border-white/10 bg-night px-3 py-5 text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
+          <aside className="hidden border-r border-white/10 bg-night px-3 pb-20 pt-5 text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
             <Link className="focus-ring flex items-center gap-3 rounded-md p-2 font-bold" href="/">
               <AppLogo />
             </Link>
@@ -38,9 +38,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </nav>
             <div className="mt-auto rounded-lg border border-white/10 bg-card p-4 text-sm text-white/60">
               <div className="mb-2 flex items-center gap-2 font-bold text-white">
-                <Activity className="text-mint" size={16} /> Liveklar demo
+                <Activity className="text-mint" size={16} /> Liveklar visning
               </div>
-              Norsk tid, offisielle TV-lenker og seed fallback uten betalte API-er.
+              Norsk tid, offisielle TV-lenker og gratis datagrunnlag.
             </div>
           </aside>
 

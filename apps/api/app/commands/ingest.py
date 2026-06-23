@@ -2,7 +2,7 @@ import typer
 
 from app.services.external_data import configured_sources, fetch_json
 
-app = typer.Typer(help="Data ingestion commands for World Cup Insights.")
+app = typer.Typer(help="Datainnhenting for VM Dashboard og Predikering.")
 
 
 def import_source(source_key: str, force: bool = False) -> None:

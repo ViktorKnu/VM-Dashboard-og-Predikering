@@ -9,7 +9,7 @@ except ImportError:  # Lets pure prediction tests run before optional API deps a
 
 
 class Settings(BaseSettings):  # type: ignore[misc, valid-type]
-    app_name: str = "World Cup Insights"
+    app_name: str = "VM Dashboard og Predikering"
     database_url: str = "sqlite:///./world_cup_insights.sqlite3"
     redis_url: str = "redis://localhost:6379/0"
     model_version: str = "wc-v0.2-norway"
