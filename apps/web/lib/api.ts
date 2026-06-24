@@ -71,7 +71,7 @@ export const api = {
     source: "frontend-seed",
     mode: "seed-fallback",
     timezone: "Europe/Oslo",
-    model_version: "wc-v0.2-norway",
+    model_version: "wc-v0.2-country-features",
     counts: {
       teams: teams.length,
       players: players.length,
@@ -106,7 +106,7 @@ export const api = {
   topScorerPredictions: () => getJson<TopScorerPrediction[]>("/model/top-scorer-prediction", topScorerPredictions),
   predictions: () => getJson<UserPrediction[]>("/predictions", []),
   lineups: (id: number) => getJson<Lineup[]>(`/matches/${id}/lineups`, lineups.filter((lineup) => lineup.match_id === id)),
-  prediction: (id: number) => getJson<ModelPrediction>(`/matches/${id}/prediction`, { ...prediction, match_id: id }),
+  prediction: (id: number, modelId = "country") => getJson<ModelPrediction>(`/matches/${id}/prediction?model_id=${encodeURIComponent(modelId)}`, { ...prediction, match_id: id, model_id: modelId }),
   live: (id: number) => getJson<{ current: LiveSnapshot; timeline: LiveSnapshot[]; what_changed: ProbabilityEvent[] }>(
     `/matches/${id}/live-probability`,
     liveTimeline.length

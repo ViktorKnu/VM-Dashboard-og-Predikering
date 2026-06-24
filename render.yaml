@@ -15,7 +15,7 @@ services:
       - key: EXTERNAL_DATA_CACHE_TTL_SECONDS
         value: 300
       - key: MODEL_VERSION
-        value: wc-v0.2-norway
+        value: wc-v0.2-country-features
       - key: ALLOWED_BROADCASTER_HOSTS
         value: nrk.no,tv.nrk.no,tv2.no,play.tv2.no
       - key: ALLOWED_ORIGINS

@@ -1,4 +1,5 @@
 import { Activity, MapPin } from "lucide-react";
+import Link from "next/link";
 import { api, formatOsloTime } from "@/lib/api";
 import { matchStageLabel, matchStatusLabel } from "@/lib/labels";
 import { BroadcastLinksCard } from "@/components/BroadcastLinksCard";
@@ -10,18 +11,22 @@ import { PossessionComparison } from "@/components/PossessionComparison";
 import { TeamBadge } from "@/components/TeamBadge";
 import { WinProbabilityTimeline } from "@/components/WinProbabilityTimeline";
 
-export default async function MatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function MatchDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams?: Promise<{ modell?: string }> }) {
   const { id: rawId } = await params;
+  const query = searchParams ? await searchParams : {};
   const id = Number(rawId);
-  const [match, events, prediction, live, lineups, players, teams] = await Promise.all([
+  const selectedModelId = query.modell ?? "country";
+  const [match, events, prediction, live, lineups, players, teams, lab] = await Promise.all([
     api.match(id),
     api.matchEvents(id),
-    api.prediction(id),
+    api.prediction(id, selectedModelId),
     api.live(id),
     api.lineups(id),
     api.players(),
-    api.teams()
+    api.teams(),
+    api.modelLab()
   ]);
+  const models = Array.isArray(lab.models) ? lab.models as Array<{ id: string; name: string; version: string; features: string[] }> : [];
   const hasLiveData = live.timeline.length > 0;
   const liveStat = (value: number | undefined) => hasLiveData ? value ?? 0 : "Ikke startet";
 
@@ -58,6 +63,27 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
       <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-5">
           <MatchEventTimeline events={events} match={match} />
+          <section className="surface p-4">
+            <div className="mb-3">
+              <p className="eyebrow">Modellvalg</p>
+              <h2 className="text-lg font-semibold">Velg prediksjonsmodell</h2>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+              {models.map((model) => {
+                const isSelected = prediction.model_id === model.id;
+                return (
+                  <Link
+                    key={model.id}
+                    className={`focus-ring rounded-md border px-3 py-2 text-sm font-semibold transition ${isSelected ? "border-fjord bg-fjord/10 text-fjord" : "border-ink/10 bg-frost text-ink/70 hover:border-fjord/50"}`}
+                    href={`/matches/${id}?modell=${model.id}`}
+                  >
+                    <span className="block">{model.name}</span>
+                    <span className="text-xs font-medium text-ink/50">{model.features.length} parametre</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
           <ModelExplanationCard prediction={prediction} />
           <WinProbabilityTimeline changes={live.what_changed} timeline={live.timeline} />
           <FormationPitch lineups={lineups} match={match} />

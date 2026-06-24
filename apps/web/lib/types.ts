@@ -76,6 +76,8 @@ export type MatchEvent = {
 
 export type ModelPrediction = {
   match_id: number;
+  model_id: string;
+  model_name: string;
   model_version: string;
   home_win_probability: number;
   draw_probability: number;
@@ -85,6 +87,10 @@ export type ModelPrediction = {
   predicted_score: string;
   explanation_json: {
     summary: string;
+    training_status?: string;
+    training_data?: string;
+    features_used?: string[];
+    weights?: Record<string, number>;
     limitations: string[];
     home_features?: Record<string, number>;
     away_features?: Record<string, number>;

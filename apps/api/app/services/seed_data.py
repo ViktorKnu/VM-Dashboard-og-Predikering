@@ -243,17 +243,22 @@ MODEL_VERSIONS = [
     {
         "version": "wc-v0.1-simple",
         "date": "2026-06-01",
-        "notes": "Enkel baseline med FIFA-rangering og Elo. Aktiv i demoen nå.",
+        "notes": "Enkel baseline med FIFA-rangering og Elo.",
     },
     {
         "version": "wc-v0.2-country-features",
         "date": "2026-06-14",
-        "notes": "Planlagt utvidelse med normaliserte landfeatures, økonomiske proxyer og fotballkultur.",
+        "notes": "Landmodell med normaliserte landfeatures, økonomiske proxyer og fotballkultur.",
     },
     {
-        "version": "wc-v1.0-advanced",
-        "date": "Senere",
-        "notes": "Planlagt avansert modell med historisk backtesting, kalibrering og forklarbarhet.",
+        "version": "wc-v0.3-squad-context",
+        "date": "2026-06-23",
+        "notes": "Avansert modell med spillerstyrke og kampkontekst fra tilgjengelige data.",
+    },
+    {
+        "version": "wc-v0.4-many-parameters",
+        "date": "2026-06-23",
+        "notes": "Ekspertmodell med mange parametre, klar for historisk trening og kalibrering.",
     },
 ]
 

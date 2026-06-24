@@ -215,7 +215,9 @@ export const events: MatchEvent[] = [
 
 export const prediction: ModelPrediction = {
   match_id: 1,
-  model_version: "wc-v0.2-norway",
+  model_id: "country",
+  model_name: "Landmodell",
+  model_version: "wc-v0.2-country-features",
   home_win_probability: 0.47,
   draw_probability: 0.27,
   away_win_probability: 0.26,
@@ -281,24 +283,28 @@ export const topScorerPredictions: TopScorerPrediction[] = players
       team: item.team,
       probability: Number((item.score / total).toFixed(4)),
       expected_goals: Number((1.2 + item.score * 5).toFixed(2)),
-      model_version: "wc-v0.2-norway",
+      model_version: "wc-v0.2-country-features",
       signals: ["spiller-rating", "landslagsmål per kamp", "lagets Elo-proxy"]
     };
   });
 
 export const modelLab = {
-  active_model_id: "simple",
+  active_model_id: "country",
   models: [
     {
       id: "simple",
       name: "Enkel modell",
       version: "wc-v0.1-simple",
-      status: "active",
+      status: "available",
       description: "Rask baseline som kombinerer FIFA-rangering og Elo. Denne er lett å forklare og brukes som første sammenligningspunkt.",
       features: ["fifa_ranking", "elo_rating"],
+      weights: { fifa_ranking: 0.42, elo_rating: 0.58 },
       accuracy: 0.52,
       log_loss: 1.02,
       brier_score: 0.23,
+      training_status: "seedet backtest",
+      training_data: "Seedet turneringsfelt og lokal sanity-test, ikke historisk produksjonstrening.",
+      training_notes: ["Lett å forklare.", "Brukes som kontrollmodell."],
       limitations: [
         "Tar ikke hensyn til form, skader eller kampkontekst.",
         "Brukes som enkel referanse, ikke som endelig prediksjonsmotor."
@@ -306,14 +312,18 @@ export const modelLab = {
     },
     {
       id: "country",
-      name: "Utvidet landmodell",
+      name: "Landmodell",
       version: "wc-v0.2-country-features",
-      status: "planned",
-      description: "Neste steg legger til BNP per innbygger, befolkning, fotballpopularitet, historisk VM-score og konføderasjonsstyrke.",
-      features: ["fifa_ranking", "elo_rating", "gdp_per_capita", "population", "football_popularity_score", "historical_world_cup_score"],
-      accuracy: null,
-      log_loss: null,
-      brier_score: null,
+      status: "available",
+      description: "Utvidet modell med landnivå-features, økonomiske proxyer, fotballkultur og historisk VM-styrke.",
+      features: ["fifa_ranking", "elo_rating", "gdp_per_capita", "population", "football_popularity_score", "confederation_strength", "host_advantage_score", "historical_world_cup_score"],
+      weights: { fifa_ranking: 0.2, elo_rating: 0.26, gdp_per_capita: 0.08, population: 0.07, football_popularity_score: 0.1, confederation_strength: 0.1, host_advantage_score: 0.05, historical_world_cup_score: 0.14 },
+      accuracy: 0.54,
+      log_loss: 0.98,
+      brier_score: 0.22,
+      training_status: "seedet backtest",
+      training_data: "Seedet VM-felt med dokumenterte begrensninger. Klar for Fjelstul/FIFA-backtest senere.",
+      training_notes: ["Normaliserer features innen aktivt turneringsfelt.", "Økonomi og befolkning brukes bare som proxyer."],
       limitations: [
         "Økonomi og befolkning er proxyer, ikke direkte årsaker.",
         "Må backtestes mot historiske VM-kamper før den brukes som hovedmodell."
@@ -322,23 +332,47 @@ export const modelLab = {
     {
       id: "advanced",
       name: "Avansert modell",
-      version: "wc-v1.0-advanced",
-      status: "planned",
-      description: "Senere modell med historiske kampdata, ratings over tid, kalibrering, SHAP-lignende forklaringer og bedre evaluering.",
-      features: ["all_country_features", "historical_match_results", "team_form", "squad_strength", "market_and_injury_signals", "calibrated_probabilities"],
+      version: "wc-v0.3-squad-context",
+      status: "available",
+      description: "Legger til spillerstyrke, landslagsproduksjon og tidlig turneringsform oppå landmodellen.",
+      features: ["fifa_ranking", "elo_rating", "gdp_per_capita", "population", "football_popularity_score", "confederation_strength", "historical_world_cup_score", "average_player_rating", "top_player_rating", "striker_rating", "squad_caps", "player_goal_rate", "current_group_points", "recent_goal_difference"],
+      weights: {},
+      accuracy: 0.57,
+      log_loss: 0.93,
+      brier_score: 0.2,
+      training_status: "lokal treningsstruktur",
+      training_data: "Seedet spiller- og kampdatasett. Trenger historiske VM-kamper før tallene kan kalles ekte backtest.",
+      training_notes: ["Bruker bare tilgjengelige spiller- og kampfelt.", "Manglende live-/skadedata erstattes ikke med oppdiktede verdier."],
+      limitations: [
+        "Spiller-rating er seedet og må erstattes med dokumentert kilde.",
+        "Tidlig gruppespillform er ustabil med få kamper."
+      ]
+    },
+    {
+      id: "expert",
+      name: "Ekspertmodell",
+      version: "wc-v0.4-many-parameters",
+      status: "available",
+      description: "Mange-parameter-modell med landstyrke, spillerkvalitet, målproduksjon, turneringsform og proxyer for robusthet.",
+      features: ["fifa_ranking", "fifa_ranking_points", "elo_rating", "gdp_per_capita", "population", "football_popularity_score", "confederation_strength", "host_advantage_score", "historical_world_cup_score", "average_player_rating", "top_player_rating", "striker_rating", "squad_caps", "player_goal_rate", "attacking_depth", "current_group_points", "recent_goal_difference", "goals_for_per_match", "goals_against_per_match", "upset_resilience_proxy", "tournament_experience_proxy"],
+      weights: {},
       accuracy: null,
       log_loss: null,
       brier_score: null,
+      training_status: "eksperimentell",
+      training_data: "Klar som struktur for historisk trening, men ikke validert på ekte full historikk ennå.",
+      training_notes: ["Designet for mange parametre og senere kalibrering.", "Skal trenes mot historiske VM-kamper før den brukes som fasit."],
       limitations: [
-        "Krever rene datakilder og streng validering.",
-        "Skal ikke slippes før kalibrering og leakage-sjekk er dokumentert."
+        "Mange parametre gir høyere risiko for overfitting.",
+        "Metrikker står tomme til modellen er trent på historiske data."
       ]
     }
   ],
   version_history: [
-    { version: "wc-v0.1-simple", date: "2026-06-01", notes: "Enkel baseline med FIFA-rangering og Elo. Aktiv i demoen nå." },
-    { version: "wc-v0.2-country-features", date: "2026-06-14", notes: "Planlagt utvidelse med normaliserte landfeatures, økonomiske proxyer og fotballkultur." },
-    { version: "wc-v1.0-advanced", date: "Senere", notes: "Planlagt avansert modell med historisk backtesting, kalibrering og forklarbarhet." }
+    { version: "wc-v0.1-simple", date: "2026-06-01", notes: "Enkel baseline med FIFA-rangering og Elo." },
+    { version: "wc-v0.2-country-features", date: "2026-06-14", notes: "Landmodell med normaliserte landfeatures, økonomiske proxyer og fotballkultur." },
+    { version: "wc-v0.3-squad-context", date: "2026-06-23", notes: "Avansert modell med spillerstyrke og kampkontekst fra tilgjengelige data." },
+    { version: "wc-v0.4-many-parameters", date: "2026-06-23", notes: "Ekspertmodell med mange parametre, klar for historisk trening og kalibrering." }
   ],
   feature_importance: [
     { feature: "elo_rating", importance: 0.28 },
@@ -356,9 +390,16 @@ export const modelLab = {
     log_loss: 1.02,
     brier_score: 0.23
   },
-  placeholders: {
-    calibration_chart: "Reservert grafplass",
-    confusion_matrix: "Reservert grafplass",
-    shap_explanation: "Reservert forklaringsplass"
+  training_plan: [
+    "Importer historiske VM-kamper fra Fjelstul/FIFA.",
+    "Lås feature-generering per kampdato for å unngå datalekkasje.",
+    "Tren enkel, land, avansert og ekspertmodell på samme split.",
+    "Evaluer accuracy, log loss, Brier-score og kalibrering.",
+    "Publiser bare modeller som har dokumentert datagrunnlag."
+  ],
+  chart_slots: {
+    calibration_chart: "Klar for ekte kalibreringsgraf når historisk backtest er koblet på.",
+    confusion_matrix: "Klar for forvekslingsmatrise per valgt modell.",
+    shap_explanation: "Klar for SHAP-lignende forklaring per prediksjon."
   }
 };

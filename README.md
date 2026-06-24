@@ -77,7 +77,7 @@ Se også:
 - "Hva endret seg?"-forklaringer når live-sannsynlighet flytter seg betydelig.
 - Støtte for formasjonene `4-3-3`, `4-2-3-1`, `3-4-3`, `3-5-2`, `5-3-2` og `4-4-2`.
 - Turneringssimulator for avansement, utslagsrunder, semifinale, finale og VM-seier.
-- Modellverksted med versjonshistorikk, variabelbetydning, backtesting-metrikker og dedikerte felt for kalibrering, forvekslingsmatrise og SHAP-lignende forklaringer.
+- Modellverksted og kampsider med valgbare modeller: enkel, landmodell, avansert modell og ekspertmodell med mange parametre.
 - Seed-data for Norge, Frankrike, Senegal, Irak, Nederland, Spania, Portugal og Brasil.
 
 ## Teknologi
@@ -154,7 +154,9 @@ npm audit --audit-level=moderate
 ```json
 {
   "match_id": 1,
-  "model_version": "wc-v0.2-norway",
+  "model_id": "country",
+  "model_name": "Landmodell",
+  "model_version": "wc-v0.2-country-features",
   "home_win_probability": 0.47,
   "draw_probability": 0.27,
   "away_win_probability": 0.26,
@@ -182,7 +184,7 @@ npm audit --audit-level=moderate
 
 ## Modell
 
-Modellversjon `wc-v0.2-norway` er en deterministisk baseline. Den bruker normaliserte features som FIFA-rangering, Elo-rating, BNP per innbygger, befolkning, fotballpopularitet, konføderasjonsstyrke, vertsnasjonseffekt og historisk VM-prestasjon.
+Standardmodellen `wc-v0.2-country-features` er en deterministisk landmodell. Brukeren kan også velge enkel modell, avansert modell eller ekspertmodell. Modellene bruker normaliserte features som FIFA-rangering, Elo-rating, BNP per innbygger, befolkning, fotballpopularitet, konføderasjonsstyrke, spillerstyrke, turneringsform og historisk VM-prestasjon.
 
 BNP, befolkning og fotballpopularitet er grove proxyer, ikke direkte årsaksforklaringer. Det er dokumentert som en begrensning i modellnotatene. Tilfeldighet brukes bare i Monte Carlo-simuleringer, ikke i rå modellprediksjoner.
 

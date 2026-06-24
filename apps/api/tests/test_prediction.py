@@ -12,6 +12,7 @@ from app.api.routes import (
     match_events,
     matches as route_matches,
     model_lab,
+    model_prediction,
     match_lineups,
     top_scorer_prediction,
     top_scorers,
@@ -178,10 +179,23 @@ def test_data_status_exposes_counts_and_prediction_flow():
 def test_model_lab_exposes_selectable_model_levels():
     lab = model_lab()
 
-    assert lab["active_model_id"] == "simple"
-    assert [model["id"] for model in lab["models"]] == ["simple", "country", "advanced"]
-    assert lab["models"][0]["status"] == "active"
-    assert lab["models"][-1]["name"] == "Avansert modell"
+    assert lab["active_model_id"] == "country"
+    assert [model["id"] for model in lab["models"]] == ["simple", "country", "advanced", "expert"]
+    assert all(model["status"] == "available" for model in lab["models"])
+    assert lab["models"][-1]["name"] == "Ekspertmodell"
+    assert lab["models"][-1]["features"]
+    assert lab["training_plan"]
+
+
+def test_match_prediction_can_select_different_models():
+    simple = model_prediction(3, model_id="simple")
+    expert = model_prediction(3, model_id="expert")
+
+    assert simple["model_id"] == "simple"
+    assert expert["model_id"] == "expert"
+    assert expert["model_version"] == "wc-v0.4-many-parameters"
+    assert len(expert["explanation_json"]["features_used"]) > len(simple["explanation_json"]["features_used"])
+    assert simple["home_win_probability"] != expert["home_win_probability"]
 
 
 def test_live_top_scorers_only_use_registered_goal_events():

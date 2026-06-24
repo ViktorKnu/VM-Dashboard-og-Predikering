@@ -12,7 +12,7 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
     app_name: str = "VM Dashboard og Predikering"
     database_url: str = "sqlite:///./world_cup_insights.sqlite3"
     redis_url: str = "redis://localhost:6379/0"
-    model_version: str = "wc-v0.2-norway"
+    model_version: str = "wc-v0.2-country-features"
     live_data_provider: str = "seeded"
     live_poll_interval_seconds: int = 30
     allowed_broadcaster_hosts: str = "nrk.no,tv.nrk.no,tv2.no,play.tv2.no"

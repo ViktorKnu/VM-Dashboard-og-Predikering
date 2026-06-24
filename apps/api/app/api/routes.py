@@ -19,7 +19,14 @@ from app.services.broadcasts import is_official_broadcast_link
 from app.services.external_data import source_statuses
 from app.services.historical import HISTORICAL_INSIGHTS
 from app.services.live_probability import probability_events, update_live_probability
-from app.services.prediction import FEATURES, predict_match, score_prediction
+from app.services.prediction import (
+    FEATURES,
+    available_models,
+    get_model_config,
+    model_feature_importance,
+    predict_match,
+    score_prediction,
+)
 from app.services.rate_limit import enforce_rate_limit
 from app.services.seed_data import find_one, seed
 from app.services.simulation import simulate_match, simulate_tournament
@@ -297,14 +304,25 @@ def match_lineups(match_id: int) -> list[dict]:
 
 
 @router.get("/matches/{match_id}/prediction")
-def model_prediction(match_id: int) -> dict:
+def model_prediction(match_id: int, model_id: str = "country") -> dict:
     data = seed()
     match_item = find_one("matches", match_id)
     if not match_item:
         raise HTTPException(404, "Match not found")
     home = next(team for team in data["teams"] if team["id"] == match_item["home_team_id"])
     away = next(team for team in data["teams"] if team["id"] == match_item["away_team_id"])
-    return predict_match(home, away, data["teams"], match_id)
+    try:
+        return predict_match(
+            home,
+            away,
+            data["teams"],
+            match_id,
+            model_id=model_id,
+            players=data["players"],
+            matches=data["matches"],
+        )
+    except ValueError as exc:
+        raise HTTPException(404, "Model not found") from exc
 
 
 @router.get("/matches/{match_id}/live-probability")
@@ -443,6 +461,7 @@ def top_scorers() -> list[dict]:
 @router.get("/model/top-scorer-prediction")
 def top_scorer_prediction() -> list[dict]:
     data = seed()
+    model = get_model_config("country")
     teams_by_id = {team["id"]: team for team in data["teams"]}
     raw_scores = []
 
@@ -462,7 +481,7 @@ def top_scorer_prediction() -> list[dict]:
             "team": team,
             "probability": round(score / total, 4),
             "expected_goals": round(1.2 + score * 5, 2),
-            "model_version": settings.model_version,
+            "model_version": model.version,
             "signals": ["spiller-rating", "landslagsmål per kamp", "lagets Elo-proxy"],
         }
         for player, team, score in raw_scores
@@ -485,11 +504,11 @@ def group_standings() -> list[dict]:
 def model_features() -> dict:
     return {
         "features": FEATURES,
-        "normalization": "Min-max normalization across the active tournament field; FIFA ranking is inverted.",
+        "normalization": "Min-max-normalisering innen aktivt turneringsfelt. FIFA-rangering og mål imot per kamp inverteres.",
         "limitations": [
-            "Economic and population indicators are proxies, not direct causal features.",
-            "Seeded football popularity must be replaced by documented participation or survey data.",
-            "Raw probabilities are deterministic; Monte Carlo is the only stochastic layer.",
+            "Økonomi og befolkning er proxyer, ikke direkte årsaksvariabler.",
+            "Seedet fotballpopularitet må erstattes med dokumentert deltakelses- eller surveydata.",
+            "Rå sannsynligheter er deterministiske; Monte Carlo er eneste stokastiske lag.",
         ],
     }
 
@@ -501,91 +520,30 @@ def model_versions() -> list[dict]:
 
 @router.get("/model/lab")
 def model_lab() -> dict:
-    models = [
-        {
-            "id": "simple",
-            "name": "Enkel modell",
-            "version": "wc-v0.1-simple",
-            "status": "active",
-            "description": "Rask baseline som kombinerer FIFA-rangering og Elo. Denne er lett å forklare og brukes som første sammenligningspunkt.",
-            "features": ["fifa_ranking", "elo_rating"],
-            "accuracy": 0.52,
-            "log_loss": 1.02,
-            "brier_score": 0.23,
-            "limitations": [
-                "Tar ikke hensyn til form, skader eller kampkontekst.",
-                "Brukes som enkel referanse, ikke som endelig prediksjonsmotor.",
-            ],
-        },
-        {
-            "id": "country",
-            "name": "Utvidet landmodell",
-            "version": "wc-v0.2-country-features",
-            "status": "planned",
-            "description": "Neste steg legger til BNP per innbygger, befolkning, fotballpopularitet, historisk VM-score og konføderasjonsstyrke.",
-            "features": [
-                "fifa_ranking",
-                "elo_rating",
-                "gdp_per_capita",
-                "population",
-                "football_popularity_score",
-                "historical_world_cup_score",
-            ],
-            "accuracy": None,
-            "log_loss": None,
-            "brier_score": None,
-            "limitations": [
-                "Økonomi og befolkning er proxyer, ikke direkte årsaker.",
-                "Må backtestes mot historiske VM-kamper før den brukes som hovedmodell.",
-            ],
-        },
-        {
-            "id": "advanced",
-            "name": "Avansert modell",
-            "version": "wc-v1.0-advanced",
-            "status": "planned",
-            "description": "Senere modell med historiske kampdata, ratings over tid, kalibrering, SHAP-lignende forklaringer og bedre evaluering.",
-            "features": [
-                "all_country_features",
-                "historical_match_results",
-                "team_form",
-                "squad_strength",
-                "market_and_injury_signals",
-                "calibrated_probabilities",
-            ],
-            "accuracy": None,
-            "log_loss": None,
-            "brier_score": None,
-            "limitations": [
-                "Krever rene datakilder og streng validering.",
-                "Skal ikke slippes før kalibrering og leakage-sjekk er dokumentert.",
-            ],
-        },
-    ]
+    active_model = get_model_config("country")
     return {
-        "active_model_id": "simple",
-        "models": models,
+        "active_model_id": active_model.id,
+        "models": available_models(),
         "version_history": seed()["model_versions"],
-        "feature_importance": [
-            {"feature": "elo_rating", "importance": 0.28},
-            {"feature": "fifa_ranking", "importance": 0.22},
-            {"feature": "historical_world_cup_score", "importance": 0.10},
-            {"feature": "football_popularity_score", "importance": 0.10},
-            {"feature": "confederation_strength", "importance": 0.10},
-            {"feature": "gdp_per_capita", "importance": 0.08},
-            {"feature": "population", "importance": 0.07},
-            {"feature": "host_advantage_score", "importance": 0.05},
-        ],
+        "feature_importance": model_feature_importance(active_model.id),
         "backtesting": {
-            "dataset": "Historical World Cup matches placeholder: wire Fjelstul + FIFA official results.",
-            "accuracy": 0.54,
-            "log_loss": 0.96,
-            "brier_score": 0.21,
+            "dataset": active_model.training_data,
+            "accuracy": active_model.accuracy,
+            "log_loss": active_model.log_loss,
+            "brier_score": active_model.brier_score,
+            "training_status": active_model.training_status,
         },
-        "placeholders": {
-            "calibration_chart": "Reserved chart slot",
-            "confusion_matrix": "Reserved chart slot",
-            "shap_explanation": "Reserved chart slot",
+        "training_plan": [
+            "Importer historiske VM-kamper fra Fjelstul/FIFA.",
+            "Lås feature-generering per kampdato for å unngå datalekkasje.",
+            "Tren enkel, land, avansert og ekspertmodell på samme split.",
+            "Evaluer accuracy, log loss, Brier-score og kalibrering.",
+            "Publiser bare modeller som har dokumentert datagrunnlag.",
+        ],
+        "chart_slots": {
+            "calibration_chart": "Klar for ekte kalibreringsgraf når historisk backtest er koblet på.",
+            "confusion_matrix": "Klar for forvekslingsmatrise per valgt modell.",
+            "shap_explanation": "Klar for SHAP-lignende forklaring per prediksjon.",
         },
     }
 
