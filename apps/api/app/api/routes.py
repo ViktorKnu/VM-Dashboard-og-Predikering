@@ -26,6 +26,7 @@ from app.services.prediction import (
     model_feature_importance,
     predict_match,
     score_prediction,
+    team_strength,
 )
 from app.services.processed_data import processed_status
 from app.services.rate_limit import enforce_rate_limit
@@ -526,13 +527,72 @@ def model_versions() -> list[dict]:
     return seed()["model_versions"]
 
 
+def latest_model_forecast(model_id: str, data: dict) -> dict:
+    model = get_model_config(model_id)
+    scheduled = sorted(
+        [match for match in data["matches"] if match.get("status") == "scheduled"],
+        key=lambda match: match["kickoff_at"],
+    )
+    match_item = scheduled[0] if scheduled else sorted(data["matches"], key=lambda match: match["kickoff_at"])[-1]
+    home = next(team for team in data["teams"] if team["id"] == match_item["home_team_id"])
+    away = next(team for team in data["teams"] if team["id"] == match_item["away_team_id"])
+    prediction = predict_match(
+        home,
+        away,
+        data["teams"],
+        match_item["id"],
+        model_id=model.id,
+        players=data["players"],
+        matches=data["matches"],
+    )
+    match_winner = home if prediction["home_win_probability"] >= prediction["away_win_probability"] else away
+    match_confidence = max(prediction["home_win_probability"], prediction["away_win_probability"])
+    cup_ranked = sorted(
+        (
+            {
+                "team": team,
+                "strength": team_strength(team, data["teams"], model, data["players"], data["matches"])[0],
+            }
+            for team in data["teams"]
+        ),
+        key=lambda item: item["strength"],
+        reverse=True,
+    )
+    cup_winner = cup_ranked[0]["team"]
+    cup_confidence = cup_ranked[0]["strength"] / sum(item["strength"] for item in cup_ranked[:8])
+
+    return {
+        "model_id": model.id,
+        "model_name": model.name,
+        "model_version": model.version,
+        "match": enrich_match(match_item, data),
+        "match_prediction": prediction,
+        "match_winner_team": match_winner,
+        "match_winner_probability": round(match_confidence, 4),
+        "cup_winner_team": cup_winner,
+        "cup_winner_probability": round(cup_confidence, 4),
+        "cup_top_five": [
+            {
+                "team": item["team"],
+                "score": round(item["strength"], 4),
+            }
+            for item in cup_ranked[:5]
+        ],
+    }
+
+
 @router.get("/model/lab")
 def model_lab() -> dict:
     active_model = get_model_config("country")
+    data = seed()
     return {
         "active_model_id": active_model.id,
         "models": available_models(),
-        "version_history": seed()["model_versions"],
+        "model_forecasts": [
+            latest_model_forecast(model["id"], data)
+            for model in available_models()
+        ],
+        "version_history": data["model_versions"],
         "feature_importance": model_feature_importance(active_model.id),
         "backtesting": {
             "dataset": active_model.training_data,

@@ -1,7 +1,8 @@
-import { BarChart3, BrainCircuit, CheckCircle2, FlaskConical, History, Sparkles } from "lucide-react";
+import { BarChart3, BrainCircuit, CheckCircle2, FlaskConical, History, Sparkles, Swords, Trophy } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { featureLabel, metricLabel } from "@/lib/labels";
+import { featureLabel, metricLabel, teamName } from "@/lib/labels";
+import type { Match, ModelPrediction, Team } from "@/lib/types";
 
 type LabModel = {
   id: string;
@@ -20,16 +21,36 @@ type LabModel = {
   limitations: string[];
 };
 
+type ModelForecast = {
+  model_id: string;
+  model_name: string;
+  model_version: string;
+  match: Match;
+  match_prediction: ModelPrediction;
+  match_winner_team: Team;
+  match_winner_probability: number;
+  cup_winner_team: Team;
+  cup_winner_probability: number;
+  cup_top_five: Array<{ team: Team; score: number }>;
+};
+
 function formatMetric(value: unknown): string {
   return typeof value === "number" ? value.toFixed(2) : "Ikke beregnet";
+}
+
+function percent(value: number): string {
+  return `${Math.round(value * 100)}%`;
 }
 
 export default async function ModelPage({ searchParams }: { searchParams?: Promise<{ modell?: string }> }) {
   const params = searchParams ? await searchParams : {};
   const lab = await api.modelLab();
   const models = (Array.isArray(lab.models) ? lab.models : []) as LabModel[];
+  const forecasts = (Array.isArray(lab.model_forecasts) ? lab.model_forecasts : []) as ModelForecast[];
+  const forecastByModel = new Map(forecasts.map((forecast) => [forecast.model_id, forecast]));
   const selectedId = params.modell ?? String(lab.active_model_id ?? models[0]?.id ?? "country");
   const selectedModel = models.find((model) => model.id === selectedId) ?? models[0];
+  const selectedForecast = selectedModel ? forecastByModel.get(selectedModel.id) : undefined;
   const versions = Array.isArray(lab.version_history) ? lab.version_history : [];
   const trainingPlan = Array.isArray(lab.training_plan) ? lab.training_plan : [];
   const selectedWeights = selectedModel?.weights ?? {};
@@ -84,6 +105,18 @@ export default async function ModelPage({ searchParams }: { searchParams?: Promi
                 </span>
               </div>
               <p className="mt-3 text-sm leading-6 text-ink/60">{model.description}</p>
+              {forecastByModel.get(model.id) ? (
+                <div className="mt-4 grid gap-2 text-xs">
+                  <div className="rounded-md bg-frost p-2">
+                    <span className="block font-bold uppercase tracking-[0.12em] text-ink/40">Kamp</span>
+                    <strong className="mt-1 block truncate">{teamName(forecastByModel.get(model.id)!.match_winner_team)}</strong>
+                  </div>
+                  <div className="rounded-md bg-frost p-2">
+                    <span className="block font-bold uppercase tracking-[0.12em] text-ink/40">VM</span>
+                    <strong className="mt-1 block truncate">{teamName(forecastByModel.get(model.id)!.cup_winner_team)}</strong>
+                  </div>
+                </div>
+              ) : null}
               <p className="mt-3 text-xs font-bold uppercase tracking-[0.12em] text-ink/45">{model.features.length} parametre</p>
             </Link>
           );
@@ -139,6 +172,42 @@ export default async function ModelPage({ searchParams }: { searchParams?: Promi
                 </div>
               </div>
               {selectedModel.training_data ? <p className="mb-3 text-sm leading-6 text-ink/60">{selectedModel.training_data}</p> : null}
+              {selectedForecast ? (
+                <div className="mb-4 space-y-3">
+                  <div className="rounded-lg border border-ink/10 bg-frost p-3">
+                    <div className="mb-2 flex items-center gap-2 text-sm font-bold">
+                      <Swords className="text-fjord" size={18} />
+                      Siste kampberegning
+                    </div>
+                    <p className="text-sm text-ink/60">
+                      {teamName(selectedForecast.match.home_team)} - {teamName(selectedForecast.match.away_team)}
+                    </p>
+                    <strong className="mt-1 block text-xl">{teamName(selectedForecast.match_winner_team)}</strong>
+                    <p className="text-sm text-ink/55">
+                      {percent(selectedForecast.match_winner_probability)} modelltrykk · {selectedForecast.match_prediction.predicted_score}
+                    </p>
+                    <Link className="mt-3 inline-flex text-sm font-bold text-fjord hover:underline" href={`/matches/${selectedForecast.match.id}?modell=${selectedModel.id}`}>
+                      Åpne kamp
+                    </Link>
+                  </div>
+                  <div className="rounded-lg border border-ink/10 bg-frost p-3">
+                    <div className="mb-2 flex items-center gap-2 text-sm font-bold">
+                      <Trophy className="text-pine" size={18} />
+                      VM-vinner
+                    </div>
+                    <strong className="block text-xl">{teamName(selectedForecast.cup_winner_team)}</strong>
+                    <p className="text-sm text-ink/55">{percent(selectedForecast.cup_winner_probability)} relativ modellscore blant toppfeltet</p>
+                    <div className="mt-3 space-y-1 text-xs text-ink/55">
+                      {selectedForecast.cup_top_five.slice(0, 3).map((item, index) => (
+                        <div key={item.team.id} className="flex justify-between gap-2">
+                          <span>{index + 1}. {teamName(item.team)}</span>
+                          <strong>{item.score.toFixed(3)}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               <div className="space-y-2 text-sm">
                 {selectedModel.features.map((feature) => (
                   <div key={feature} className="rounded-md bg-frost px-3 py-2 font-semibold text-ink/70">

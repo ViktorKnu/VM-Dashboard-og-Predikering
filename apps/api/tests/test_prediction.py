@@ -181,9 +181,12 @@ def test_model_lab_exposes_selectable_model_levels():
 
     assert lab["active_model_id"] == "country"
     assert [model["id"] for model in lab["models"]] == ["simple", "country", "advanced", "expert"]
+    assert [forecast["model_id"] for forecast in lab["model_forecasts"]] == ["simple", "country", "advanced", "expert"]
     assert all(model["status"] == "available" for model in lab["models"])
     assert lab["models"][-1]["name"] == "Ekspertmodell"
     assert lab["models"][-1]["features"]
+    assert all(forecast["match_winner_team"]["name"] for forecast in lab["model_forecasts"])
+    assert all(forecast["cup_winner_team"]["name"] for forecast in lab["model_forecasts"])
     assert lab["training_plan"]
 
 

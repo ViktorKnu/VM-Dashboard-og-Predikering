@@ -324,8 +324,50 @@ export const topScorerPredictions: TopScorerPrediction[] = players
     };
   });
 
+const forecastMatch = matches.find((match) => match.id === 5) ?? matches[0];
+const mkModelForecast = (
+  model_id: string,
+  model_name: string,
+  model_version: string,
+  matchWinnerTeamId: number,
+  matchWinnerProbability: number,
+  cupWinnerTeamId: number,
+  cupWinnerProbability: number,
+  predictedScore: string,
+  topFiveTeamIds: number[]
+) => ({
+  model_id,
+  model_name,
+  model_version,
+  match: forecastMatch,
+  match_prediction: {
+    ...prediction,
+    match_id: forecastMatch.id,
+    model_id,
+    model_name,
+    model_version,
+    predicted_score: predictedScore
+  },
+  match_winner_team: byTeam(matchWinnerTeamId),
+  match_winner_probability: matchWinnerProbability,
+  cup_winner_team: byTeam(cupWinnerTeamId),
+  cup_winner_probability: cupWinnerProbability,
+  cup_top_five: topFiveTeamIds.map((teamId, index) => ({
+    team: byTeam(teamId),
+    score: Number((0.76 - index * 0.035).toFixed(3))
+  }))
+});
+
+const modelForecasts = [
+  mkModelForecast("simple", "Enkel modell", "wc-v0.1-simple", 2, 0.56, 5, 0.16, "1-2", [5, 25, 2, 45, 33]),
+  mkModelForecast("country", "Landmodell", "wc-v0.2-country-features", 2, 0.58, 5, 0.15, "1-2", [5, 2, 25, 45, 33]),
+  mkModelForecast("advanced", "Avansert modell", "wc-v0.3-squad-context", 1, 0.53, 2, 0.14, "2-1", [2, 5, 25, 13, 45]),
+  mkModelForecast("expert", "Ekspertmodell", "wc-v0.4-many-parameters", 2, 0.55, 25, 0.14, "1-2", [25, 5, 2, 45, 33])
+];
+
 export const modelLab = {
   active_model_id: "country",
+  model_forecasts: modelForecasts,
   models: [
     {
       id: "simple",
