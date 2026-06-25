@@ -3,7 +3,13 @@ import type { DataStatus } from "@/lib/types";
 
 export function DataFlowStatus({ status }: { status: DataStatus }) {
   const isFallback = status.mode === "seed-fallback";
-  const label = isFallback ? "Seedet visning" : status.mode === "seeded" ? "Seedet API" : "Ekstern datakilde";
+  const label = isFallback
+    ? "Seedet visning"
+    : status.mode === "processed"
+      ? "Importert data"
+      : status.mode === "seeded"
+        ? "Seedet API"
+        : "Ekstern datakilde";
   const counts = [
     ["Lag", status.counts.teams],
     ["Spillere", status.counts.players],

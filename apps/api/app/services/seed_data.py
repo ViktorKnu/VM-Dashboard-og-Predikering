@@ -3,6 +3,8 @@ from __future__ import annotations
 from copy import deepcopy
 from datetime import datetime, timezone
 
+from app.services.processed_data import apply_processed_data
+
 
 def utc(value: str) -> datetime:
     return datetime.fromisoformat(value).replace(tzinfo=timezone.utc)
@@ -298,7 +300,7 @@ MODEL_VERSIONS = [
 
 
 def seed() -> dict[str, list[dict]]:
-    return deepcopy(
+    base = deepcopy(
         {
             "teams": TEAMS,
             "players": PLAYERS,
@@ -311,6 +313,7 @@ def seed() -> dict[str, list[dict]]:
             "model_versions": MODEL_VERSIONS,
         }
     )
+    return apply_processed_data(base)
 
 
 def find_one(collection: str, item_id: int) -> dict | None:

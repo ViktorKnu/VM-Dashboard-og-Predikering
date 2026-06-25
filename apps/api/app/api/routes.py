@@ -27,6 +27,7 @@ from app.services.prediction import (
     predict_match,
     score_prediction,
 )
+from app.services.processed_data import processed_status
 from app.services.rate_limit import enforce_rate_limit
 from app.services.seed_data import find_one, seed
 from app.services.simulation import simulate_match, simulate_tournament
@@ -138,6 +139,7 @@ def health() -> dict[str, str]:
 @router.get("/data/status")
 def data_status(db: Session | None = Depends(get_db)) -> dict:
     data = seed()
+    processed = processed_status()
     sources = source_statuses()
     configured_sources = sum(1 for source in sources if source["configured"])
     cached_sources = sum(1 for source in sources if source["cached"])
@@ -145,8 +147,12 @@ def data_status(db: Session | None = Depends(get_db)) -> dict:
         source["configured"] for source in sources if source["key"] != "world_bank"
     )
     return {
-        "source": settings.live_data_provider,
-        "mode": "external"
+        "source": processed["metadata"]["source_name"]
+        if processed["metadata"]
+        else settings.live_data_provider,
+        "mode": "processed"
+        if processed["mode"] == "processed"
+        else "external"
         if settings.live_data_provider != "seeded" or external_match_feed_configured
         else "seeded",
         "timezone": "Europe/Oslo",
@@ -161,6 +167,8 @@ def data_status(db: Session | None = Depends(get_db)) -> dict:
         },
         "data_flow": [
             "API-et er primær datakilde for frontend.",
+            f"Processed kampdata: {processed['collections'].get('matches', 0)} kamper, "
+            f"{processed['collections'].get('finished_matches', 0)} ferdige.",
             f"{configured_sources} eksterne datakilder er konfigurert, {cached_sources} har raw-cache.",
             "Seed-data brukes som trygg fallback når liveleverandør ikke er koblet på.",
             "Brukerprediksjoner går fra frontend til POST /predictions og poengsettes i API-et.",

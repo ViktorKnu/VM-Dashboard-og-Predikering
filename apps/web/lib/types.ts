@@ -147,7 +147,7 @@ export type Lineup = {
 
 export type DataStatus = {
   source: string;
-  mode: "seeded" | "external" | "seed-fallback";
+  mode: "seeded" | "processed" | "external" | "seed-fallback";
   timezone: "Europe/Oslo";
   model_version: string;
   counts: {

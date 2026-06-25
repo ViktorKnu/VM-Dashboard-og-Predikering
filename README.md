@@ -12,9 +12,9 @@ Alle kamptider vises i `Europe/Oslo`, og sendinger skal bare lenke til offisiell
 
 ## Status
 
-Frontend er deployet på Vercel og fungerer som offentlig demo. Første versjon bruker seed-data og seedede live snapshots slik at appen kan vises uten betalte API-er. Arkitekturen er samtidig klargjort for ekte datakilder og liveleverandører.
+Frontend er deployet på Vercel og fungerer som offentlig demo. Første versjon bruker et kilde-merket kamp-snapshot i `data/processed/matches.json`, med seed-data som fallback der data mangler. Arkitekturen er samtidig klargjort for ekte datakilder og liveleverandører.
 
-Det betyr at prosjektet i dag demonstrerer produkt, arkitektur og modellflyt, mens ekte full live-data krever at API-et kobles til verifiserte kilder som FIFA-resultater, Fjelstul World Cup Database, World Football Elo Ratings, FIFA-rangeringer, World Bank, StatsBomb Open Data eller API-Football.
+Det betyr at prosjektet i dag demonstrerer produkt, arkitektur og modellflyt med importert gratisdata, mens ekte full live-data krever at API-et kobles til verifiserte kilder som FIFA-resultater, Fjelstul World Cup Database, World Football Elo Ratings, FIFA-rangeringer, World Bank, StatsBomb Open Data eller API-Football.
 
 ## Hva appen kan
 

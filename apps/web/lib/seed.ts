@@ -177,26 +177,28 @@ const mkMatch = (
 export const matches: Match[] = [
   mkMatch(1, "I", 2, 3, "2026-06-16T16:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey", "finished", 3, 1),
   mkMatch(2, "I", 4, 1, "2026-06-16T19:00:00+00:00", "Boston Stadium", "Boston", "finished", 1, 4),
-  mkMatch(3, "I", 1, 3, "2026-06-23T00:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey"),
-  mkMatch(4, "I", 2, 4, "2026-06-22T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia"),
+  mkMatch(3, "I", 1, 3, "2026-06-23T00:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey", "finished", 3, 2),
+  mkMatch(4, "I", 2, 4, "2026-06-22T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia", "finished", 3, 0),
   mkMatch(5, "I", 1, 2, "2026-06-26T19:00:00+00:00", "Boston Stadium", "Boston"),
   mkMatch(6, "I", 3, 4, "2026-06-26T19:00:00+00:00", "Toronto Stadium", "Toronto"),
   mkMatch(7, "J", 5, 6, "2026-06-16T22:00:00+00:00", "Kansas City Stadium", "Kansas City", "finished", 3, 0),
   mkMatch(8, "J", 7, 8, "2026-06-17T01:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area", "finished", 3, 1),
-  mkMatch(9, "J", 5, 7, "2026-06-22T17:00:00+00:00", "Dallas Stadium", "Dallas"),
-  mkMatch(10, "J", 8, 6, "2026-06-23T03:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area"),
+  mkMatch(9, "J", 5, 7, "2026-06-22T17:00:00+00:00", "Dallas Stadium", "Dallas", "finished", 2, 0),
+  mkMatch(10, "J", 8, 6, "2026-06-23T03:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area", "finished", 1, 2),
   mkMatch(11, "J", 6, 7, "2026-06-28T02:00:00+00:00", "Kansas City Stadium", "Kansas City"),
   mkMatch(12, "J", 8, 5, "2026-06-28T02:00:00+00:00", "Dallas Stadium", "Dallas"),
   mkMatch(13, "K", 9, 10, "2026-06-17T19:00:00+00:00", "Houston Stadium", "Houston", "finished", 1, 1),
-  mkMatch(14, "K", 9, 11, "2026-06-23T17:00:00+00:00", "Houston Stadium", "Houston"),
-  mkMatch(15, "K", 12, 10, "2026-06-24T02:00:00+00:00", "Estadio Guadalajara", "Guadalajara"),
+  mkMatch(14, "K", 9, 11, "2026-06-23T17:00:00+00:00", "Houston Stadium", "Houston", "finished", 5, 0),
+  mkMatch(15, "K", 12, 10, "2026-06-24T02:00:00+00:00", "Estadio Guadalajara", "Guadalajara", "finished", 1, 0),
   mkMatch(16, "K", 12, 9, "2026-06-27T23:30:00+00:00", "Miami Stadium", "Miami"),
   mkMatch(17, "K", 10, 11, "2026-06-27T23:30:00+00:00", "Atlanta Stadium", "Atlanta"),
   mkMatch(18, "L", 13, 14, "2026-06-17T20:00:00+00:00", "Dallas Stadium", "Dallas", "finished", 4, 2),
-  mkMatch(19, "L", 13, 15, "2026-06-23T20:00:00+00:00", "Boston Stadium", "Boston"),
-  mkMatch(20, "L", 16, 14, "2026-06-23T23:00:00+00:00", "Toronto Stadium", "Toronto"),
+  mkMatch(19, "L", 13, 15, "2026-06-23T20:00:00+00:00", "Boston Stadium", "Boston", "finished", 0, 0),
+  mkMatch(20, "L", 16, 14, "2026-06-23T23:00:00+00:00", "Toronto Stadium", "Toronto", "finished", 0, 1),
   mkMatch(21, "L", 16, 13, "2026-06-27T21:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey"),
-  mkMatch(22, "L", 14, 15, "2026-06-27T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia")
+  mkMatch(22, "L", 14, 15, "2026-06-27T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia"),
+  mkMatch(23, "K", 12, 11, "2026-06-18T02:00:00+00:00", "Estadio Guadalajara", "Guadalajara", "finished", 3, 1),
+  mkMatch(24, "L", 15, 16, "2026-06-18T02:00:00+00:00", "Toronto Stadium", "Toronto", "finished", 1, 0)
 ].sort((first, second) => new Date(first.kickoff_at).getTime() - new Date(second.kickoff_at).getTime());
 
 const mkEvent = (

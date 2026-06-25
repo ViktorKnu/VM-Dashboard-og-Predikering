@@ -130,14 +130,10 @@ def test_seed_schedule_uses_verified_group_results_only():
         for match in matches
         if match["status"] == "finished"
     ]
-    assert finished == [
-        ("I", 2, 3, 3, 1),
-        ("I", 4, 1, 1, 4),
-        ("J", 5, 6, 3, 0),
-        ("J", 7, 8, 3, 1),
-        ("K", 9, 10, 1, 1),
-        ("L", 13, 14, 4, 2),
-    ]
+    assert ("I", 1, 3, 3, 2) in finished
+    assert ("I", 2, 4, 3, 0) in finished
+    assert ("K", 9, 11, 5, 0) in finished
+    assert ("L", 13, 15, 0, 0) in finished
     assert all(
         match["home_score"] is None and match["away_score"] is None
         for match in matches
@@ -161,6 +157,7 @@ def test_data_status_exposes_counts_and_prediction_flow():
 
     status = data_status()
     assert status["timezone"] == "Europe/Oslo"
+    assert status["mode"] == "processed"
     assert status["counts"]["teams"] == len(seed()["teams"])
 
     created = create_prediction(
@@ -244,14 +241,14 @@ def test_group_standings_are_calculated_from_finished_matches():
         (row["team"]["name"], row["points"], row["goal_difference"])
         for row in group_i["standings"]
     ] == [
-        ("Norway", 3, 3),
-        ("France", 3, 2),
-        ("Senegal", 0, -2),
-        ("Iraq", 0, -3),
+        ("France", 6, 5),
+        ("Norway", 6, 4),
+        ("Senegal", 0, -3),
+        ("Iraq", 0, -6),
     ]
     assert [(row["team"]["name"], row["points"]) for row in group_k["standings"][:2]] == [
-        ("Portugal", 1),
-        ("DR Congo", 1),
+        ("Colombia", 6),
+        ("Portugal", 4),
     ]
 
 

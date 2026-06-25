@@ -69,7 +69,7 @@ export function formatOsloTime(value: string): string {
 
 export const api = {
   dataStatus: () => getJson<DataStatus>("/data/status", {
-    source: "frontend-seed",
+    source: "frontend-snapshot",
     mode: "seed-fallback",
     timezone: "Europe/Oslo",
     model_version: "wc-v0.2-country-features",
@@ -82,7 +82,7 @@ export const api = {
       user_predictions: 0
     },
     data_flow: [
-      "Frontend bruker seedet visningsdata fordi NEXT_PUBLIC_API_BASE_URL ikke er satt.",
+      "Frontend bruker et kilde-merket kamp-snapshot fordi NEXT_PUBLIC_API_BASE_URL ikke er satt.",
       "Når API-et er deployet, settes NEXT_PUBLIC_API_BASE_URL i Vercel.",
       "API-et eksponerer /data/sources for ekte datakilder og raw-cache status.",
       "Når API-et svarer, går brukerprediksjoner til POST /predictions."

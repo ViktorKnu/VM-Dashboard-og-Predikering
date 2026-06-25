@@ -1,20 +1,20 @@
 # Datakilder
 
-Første versjon leveres med seed-data slik at appen fungerer uten betalte API-er.
+Første versjon leveres med `data/processed/matches.json` som kilde-merket kamp-snapshot, og seed-data som fallback der importerte data mangler.
 
 ## Klargjort for live-API
 
 Backend er strukturert for ekte dataleverandører, men krever dem ikke for offentlig visning.
 
 - `GET /data/sources` viser hvilke eksterne kilder som er konfigurert og om råcache finnes.
-- `GET /data/status` viser om frontend bruker seedet visning eller konfigurerte eksterne kilder.
+- `GET /data/status` viser om API-et bruker importert processed-data, seedet visning eller konfigurerte eksterne kilder.
 - `GET /live/ticker` gir frontend ett samlet payload til live-tickeren øverst.
 - `worldcup-ingest import-matches` kan hente `FIFA_SCHEDULE_URL` og skrive rårespons til `data/raw`.
 - `worldcup-ingest import-rankings` kan hente `FIFA_RANKINGS_URL` og `WORLD_FOOTBALL_ELO_URL`.
 - `worldcup-ingest import-country-indicators` kan bruke konfigurert World Bank-base-URL.
 - `worldcup-ingest import-players` er reservert for en liveleverandør som API-Football.
 
-Konfigurerte leverandørresponser caches før normalisering. Hvis en leverandør feiler, kan API-et fortsatt servere seedet visning eller siste cachede payload.
+Konfigurerte leverandørresponser caches før normalisering. Hvis en leverandør feiler, kan API-et fortsatt servere importert processed-data, seedet visning eller siste cachede payload.
 
 ## Miljøvariabler
 
