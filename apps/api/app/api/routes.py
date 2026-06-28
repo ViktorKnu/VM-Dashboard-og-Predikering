@@ -28,7 +28,7 @@ from app.services.prediction import (
     score_prediction,
     team_strength,
 )
-from app.services.processed_data import processed_status
+from app.services.processed_data import load_processed_player_stats, processed_status
 from app.services.rate_limit import enforce_rate_limit
 from app.services.seed_data import find_one, seed
 from app.services.simulation import simulate_match, simulate_tournament
@@ -442,7 +442,17 @@ def top_scorers() -> list[dict]:
     data = seed()
     players_by_id = {player["id"]: player for player in data["players"]}
     teams_by_id = {team["id"]: team for team in data["teams"]}
-    standings: dict[int, dict] = {}
+    standings: dict[int, dict] = {
+        player["id"]: {
+            "player_id": player["id"],
+            "player": player,
+            "team": teams_by_id.get(player["team_id"]),
+            "goals": player.get("tournament_goals", 0),
+            "last_goal_minute": None,
+        }
+        for player in data["players"]
+        if player.get("tournament_goals", 0) > 0
+    }
 
     for event in data["events"]:
         if event.get("event_type") != "goal" or not event.get("player_id"):
@@ -451,18 +461,42 @@ def top_scorers() -> list[dict]:
         if not player:
             continue
         team = teams_by_id.get(event.get("team_id") or player["team_id"])
-        standing = standings.setdefault(
-            player["id"],
-            {
-                "player_id": player["id"],
-                "player": player,
-                "team": team,
-                "goals": 0,
-                "last_goal_minute": None,
-            },
+        standing = standings.get(player["id"])
+        if standing is None:
+            continue
+        standing["team"] = team
+        standing["last_goal_minute"] = max(
+            standing["last_goal_minute"] or 0, event.get("minute") or 0
         )
-        standing["goals"] += 1
-        standing["last_goal_minute"] = event.get("minute")
+
+    provider_stats, _ = load_processed_player_stats()
+    for stats in provider_stats:
+        if stats.get("player_id") in standings or not stats.get("tournament_goals"):
+            continue
+        provider_id = int(stats.get("provider_player_id") or 0)
+        synthetic_id = 1_000_000 + provider_id
+        team = teams_by_id.get(stats.get("team_id"))
+        provider_player = {
+            "id": synthetic_id,
+            "team_id": stats.get("team_id") or 0,
+            "name": stats.get("name") or "Ukjent spiller",
+            "position": stats.get("position") or "Ukjent",
+            "shirt_number": 0,
+            "age": 0,
+            "club": team["name"] if team else "Ukjent",
+            "caps": 0,
+            "goals": 0,
+            "tournament_goals": stats["tournament_goals"],
+            "world_cup_goals": None,
+            "rating": 0,
+        }
+        standings[synthetic_id] = {
+            "player_id": synthetic_id,
+            "player": provider_player,
+            "team": team,
+            "goals": stats["tournament_goals"],
+            "last_goal_minute": None,
+        }
 
     return sorted(
         standings.values(),

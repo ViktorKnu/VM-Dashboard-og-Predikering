@@ -158,7 +158,7 @@ def test_data_status_exposes_counts_and_prediction_flow():
     status = data_status()
     assert status["timezone"] == "Europe/Oslo"
     assert status["mode"] == "processed"
-    assert status["source"] == "SB Nation World Cup schedule and scores"
+    assert status["source"] == "FIFA World Cup 2026 fixtures and results"
     assert status["source_url"].startswith("https://")
     assert status["last_updated"]
     assert status["is_live_data"] is False
@@ -184,10 +184,12 @@ def test_players_separate_international_and_tournament_goals():
     mbappe = next(item for item in seed()["players"] if item["name"] == "Kylian Mbappe")
     haaland = next(item for item in seed()["players"] if item["name"] == "Erling Haaland")
 
-    assert mbappe["goals"] == 52
-    assert mbappe["tournament_goals"] == 2
-    assert haaland["goals"] == 38
-    assert haaland["tournament_goals"] == 2
+    assert mbappe["goals"] == 60
+    assert mbappe["tournament_goals"] == 4
+    assert mbappe["world_cup_goals"] == 16
+    assert haaland["goals"] == 59
+    assert haaland["tournament_goals"] == 4
+    assert haaland["world_cup_goals"] == 4
 
 
 def test_model_lab_exposes_selectable_model_levels():
@@ -215,14 +217,15 @@ def test_match_prediction_can_select_different_models():
     assert simple["home_win_probability"] != expert["home_win_probability"]
 
 
-def test_live_top_scorers_only_use_registered_goal_events():
+def test_live_top_scorers_use_current_tournament_totals():
     standings = top_scorers()
 
     assert [(item["player"]["name"], item["goals"]) for item in standings] == [
-        ("Lionel Messi", 3),
+        ("Lionel Messi", 5),
+        ("Erling Haaland", 4),
+        ("Ousmane Dembele", 4),
+        ("Kylian Mbappe", 4),
         ("Harry Kane", 2),
-        ("Erling Haaland", 2),
-        ("Kylian Mbappe", 2),
         ("Joao Neves", 1),
         ("Romano Schmid", 1),
         ("Martin Baturina", 1),
@@ -257,11 +260,11 @@ def test_group_standings_are_calculated_from_finished_matches():
     assert [
         (row["team"]["name"], row["points"], row["goal_difference"])
         for row in group_i["standings"]
-    ] == [
-        ("France", 6, 5),
-        ("Norway", 6, 4),
-        ("Senegal", 0, -3),
-        ("Iraq", 0, -6),
+        ] == [
+        ("France", 9, 8),
+        ("Norway", 6, 1),
+        ("Senegal", 3, 2),
+        ("Iraq", 0, -11),
     ]
     assert [(row["team"]["name"], row["points"]) for row in group_k["standings"][:2]] == [
         ("Colombia", 6),

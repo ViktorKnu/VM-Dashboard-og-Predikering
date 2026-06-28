@@ -26,6 +26,7 @@ export type Player = {
   caps: number;
   goals: number;
   tournament_goals: number;
+  world_cup_goals: number | null;
   rating: number;
 };
 

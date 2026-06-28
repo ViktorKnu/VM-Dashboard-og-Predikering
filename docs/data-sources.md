@@ -12,7 +12,8 @@ Backend er strukturert for ekte dataleverandører, men krever dem ikke for offen
 - `worldcup-ingest import-matches` kan hente `FIFA_SCHEDULE_URL` og skrive rårespons til `data/raw`.
 - `worldcup-ingest import-rankings` kan hente `FIFA_RANKINGS_URL` og `WORLD_FOOTBALL_ELO_URL`.
 - `worldcup-ingest import-country-indicators` kan bruke konfigurert World Bank-base-URL.
-- `worldcup-ingest import-players` er reservert for en liveleverandør som API-Football.
+- `worldcup-ingest import-players` henter kamper og toppscorere fra API-Football.
+- `worldcup-ingest import-live` kjører samme komplette leverandørimport manuelt.
 
 Konfigurerte leverandørresponser caches før normalisering. Hvis en leverandør feiler, kan API-et fortsatt servere importert processed-data, seedet visning eller siste cachede payload.
 
@@ -27,6 +28,16 @@ worldcup-ingest import-matches --source-url https://example.com/world-cup-matche
 
 Importen skriver original payload til `data/raw/fifa_schedule/latest.json` og normalisert appdata til `data/processed/matches.json`. Frontend og API bruker deretter processed-data før seed fallback.
 
+## Oppdatere fra API-Football
+
+API-Football bruker `league=1` og `season=2026` for VM 2026. Sett `API_FOOTBALL_KEY` som en backend-secret og kjør:
+
+```bash
+worldcup-ingest import-live
+```
+
+Råresponsene caches separat. Normaliserte kamper lagres i `data/processed/matches.json`, mens turneringens spillermål lagres i `data/processed/player_tournament_stats.json`. Når API-et kjører med nøkkelen satt, gjentas importen automatisk hvert 30. minutt. Intervallet er valgt for å holde to leverandørkall per runde innenfor gratisnivåets døgnkvote.
+
 ## Miljøvariabler
 
 | Variabel | Bruk |
@@ -38,6 +49,8 @@ Importen skriver original payload til `data/raw/fifa_schedule/latest.json` og no
 | `WORLD_BANK_BASE_URL` | World Bank API-base. Standard: `https://api.worldbank.org/v2`. |
 | `API_FOOTBALL_BASE_URL` | Endepunkt for live fotball-leverandør. |
 | `API_FOOTBALL_KEY` | Valgfri leverandørnøkkel. Skal bare ligge i Render eller lokal `.env`, aldri i git. |
+| `API_FOOTBALL_LEAGUE_ID` | Turnering hos API-Football. Standard for VM: `1`. |
+| `API_FOOTBALL_SEASON` | Aktiv VM-sesong. Standard: `2026`. |
 | `EXTERNAL_DATA_CACHE_DIR` | Mappe for rårespons-cache. |
 | `EXTERNAL_DATA_CACHE_TTL_SECONDS` | Cache-TTL før import forsøker ny leverandørhenting. |
 

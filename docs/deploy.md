@@ -49,6 +49,8 @@ https://<render-api-url>/health
 
 API-et lager nødvendige tabeller ved oppstart. `POST /predictions` skriver til databasen når `DATABASE_URL` finnes. Hvis databasen ikke er tilgjengelig, faller API-et tilbake til minnelagring slik at visningen fortsatt virker, men da overlever ikke prediksjoner restart.
 
+For automatiske VM-oppdateringer legger du `API_FOOTBALL_KEY` inn som en hemmelig miljøvariabel i Render. `render.yaml` setter leverandør, VM-ID, sesong og et intervall på 30 minutter. Nøkkelen skal aldri legges i Vercel eller committes til repoet.
+
 ## 3. Koble frontend og API
 
 Sett CORS i Render:

@@ -42,7 +42,7 @@ const mkPlayer = (
   caps: number,
   goals: number,
   rating: number
-): Player => ({ id, team_id, name, position, shirt_number, age, club, caps, goals, tournament_goals: 0, rating });
+): Player => ({ id, team_id, name, position, shirt_number, age, club, caps, goals, tournament_goals: 0, world_cup_goals: null, rating });
 
 export const teams: Team[] = [
   mkTeam(1, "I", "Norway", "NOR", "UEFA", "no", 29, 1528.0, 1810, 87962, 5500000, 0.76, 0.18),
@@ -96,9 +96,9 @@ export const teams: Team[] = [
 ];
 
 export const players: Player[] = [
-  mkPlayer(1, 1, "Erling Haaland", "ST", 9, 25, "Manchester City", 39, 38, 94),
+  mkPlayer(1, 1, "Erling Haaland", "ST", 9, 25, "Manchester City", 52, 59, 94),
   mkPlayer(2, 1, "Martin Odegaard", "CM", 10, 27, "Arsenal", 70, 4, 89),
-  mkPlayer(3, 2, "Kylian Mbappe", "LW", 10, 27, "Real Madrid", 92, 52, 95),
+  mkPlayer(3, 2, "Kylian Mbappe", "LW", 10, 27, "Real Madrid", 100, 60, 95),
   mkPlayer(4, 2, "Aurelien Tchouameni", "DM", 8, 26, "Real Madrid", 44, 3, 87),
   mkPlayer(5, 3, "Sadio Mane", "LW", 10, 34, "Al Nassr", 108, 45, 86),
   mkPlayer(6, 4, "Aymen Hussein", "ST", 18, 30, "Al Khor", 80, 28, 77),
@@ -114,7 +114,8 @@ export const players: Player[] = [
   mkPlayer(16, 13, "Jude Bellingham", "AM", 10, 22, "Real Madrid", 47, 8, 93),
   mkPlayer(17, 13, "Marcus Rashford", "LW", 11, 28, "Manchester United", 69, 18, 84),
   mkPlayer(18, 14, "Martin Baturina", "AM", 10, 23, "Dinamo Zagreb", 18, 3, 80),
-  mkPlayer(19, 14, "Petar Musa", "ST", 18, 28, "Benfica", 20, 6, 80)
+  mkPlayer(19, 14, "Petar Musa", "ST", 18, 28, "Benfica", 20, 6, 80),
+  mkPlayer(20, 2, "Ousmane Dembele", "RW", 7, 29, "Paris Saint-Germain", 63, 11, 91)
 ];
 
 const byTeam = (id: number) => teams.find((team) => team.id === id)!;
@@ -179,8 +180,8 @@ export const matches: Match[] = [
   mkMatch(2, "I", 4, 1, "2026-06-16T19:00:00+00:00", "Boston Stadium", "Boston", "finished", 1, 4),
   mkMatch(3, "I", 1, 3, "2026-06-23T00:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey", "finished", 3, 2),
   mkMatch(4, "I", 2, 4, "2026-06-22T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia", "finished", 3, 0),
-  mkMatch(5, "I", 1, 2, "2026-06-26T19:00:00+00:00", "Boston Stadium", "Boston"),
-  mkMatch(6, "I", 3, 4, "2026-06-26T19:00:00+00:00", "Toronto Stadium", "Toronto"),
+  mkMatch(5, "I", 1, 2, "2026-06-26T19:00:00+00:00", "Boston Stadium", "Boston", "finished", 1, 4),
+  mkMatch(6, "I", 3, 4, "2026-06-26T19:00:00+00:00", "Toronto Stadium", "Toronto", "finished", 5, 0),
   mkMatch(7, "J", 5, 6, "2026-06-16T22:00:00+00:00", "Kansas City Stadium", "Kansas City", "finished", 3, 0),
   mkMatch(8, "J", 7, 8, "2026-06-17T01:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area", "finished", 3, 1),
   mkMatch(9, "J", 5, 7, "2026-06-22T17:00:00+00:00", "Dallas Stadium", "Dallas", "finished", 2, 0),
@@ -246,13 +247,33 @@ export const events: MatchEvent[] = [
   mkEvent(21, 18, 13, 15, 40, "Kane headet inn sitt andre mål."),
   mkEvent(22, 18, 14, 19, 44, "Petar Musa gjorde 2-2 før pause."),
   mkEvent(23, 18, 13, 16, 52, "Jude Bellingham sendte England foran igjen."),
-  mkEvent(24, 18, 13, 17, 85, "Marcus Rashford punkterte kampen.")
+  mkEvent(24, 18, 13, 17, 85, "Marcus Rashford punkterte kampen."),
+  mkEvent(25, 4, 2, 3, 14, "Kylian Mbappe scoret Frankrikes første mål mot Irak."),
+  mkEvent(26, 4, 2, 3, 54, "Mbappe scoret sitt andre mål mot Irak."),
+  mkEvent(27, 3, 1, 1, 48, "Erling Haaland scoret mot Senegal."),
+  mkEvent(28, 3, 1, 1, 58, "Haaland scoret sitt andre mål mot Senegal."),
+  mkEvent(29, 9, 5, 9, 31, "Lionel Messi scoret mot Østerrike."),
+  mkEvent(30, 9, 5, 9, 73, "Messi scoret sitt andre mål mot Østerrike."),
+  mkEvent(31, 4, 2, 20, 66, "Ousmane Dembele scoret mot Irak."),
+  mkEvent(32, 5, 2, 20, 7, "Ousmane Dembele ga Frankrike ledelsen mot Norge."),
+  mkEvent(33, 5, 2, 20, 20, "Dembele scoret sitt andre mål mot Norge."),
+  mkEvent(34, 5, 2, 20, 32, "Dembele fullførte hattricket mot Norge.")
 ];
+
+const worldCupGoalsBefore2026: Record<number, number> = {
+  1: 0, 2: 0, 3: 12, 4: 1, 5: 1, 6: 0, 7: 0, 8: 0, 9: 13, 10: 0,
+  11: 0, 12: 0, 13: 0, 14: 0, 15: 8, 16: 1, 17: 3, 18: 0, 19: 0, 20: 0
+};
 
 for (const event of events) {
   if (event.event_type !== "goal" || event.player_id === null) continue;
   const scorer = players.find((player) => player.id === event.player_id);
   if (scorer) scorer.tournament_goals += 1;
+}
+
+for (const player of players) {
+  const previousGoals = worldCupGoalsBefore2026[player.id];
+  player.world_cup_goals = previousGoals === undefined ? null : previousGoals + player.tournament_goals;
 }
 
 export const prediction: ModelPrediction = {
@@ -283,29 +304,20 @@ export const whatChanged: ProbabilityEvent[] = [];
 
 export const lineups: Lineup[] = [];
 
-const mkScorer = (player_id: number, goals: number, last_goal_minute: number): TopScorerStanding => {
-  const player = byPlayer(player_id);
-  return { player_id, player, team: byTeam(player.team_id), goals, last_goal_minute };
-};
-
-export const topScorers: TopScorerStanding[] = [
-  mkScorer(9, 3, 76),
-  mkScorer(15, 2, 40),
-  mkScorer(1, 2, 45),
-  mkScorer(3, 2, 90),
-  mkScorer(13, 1, 6),
-  mkScorer(10, 1, 22),
-  mkScorer(18, 1, 25),
-  mkScorer(11, 1, 29),
-  mkScorer(6, 1, 39),
-  mkScorer(19, 1, 44),
-  mkScorer(14, 1, 44),
-  mkScorer(16, 1, 52),
-  mkScorer(8, 1, 72),
-  mkScorer(7, 1, 79),
-  mkScorer(17, 1, 85),
-  mkScorer(12, 1, 90)
-];
+export const topScorers: TopScorerStanding[] = players
+  .filter((player) => player.tournament_goals > 0)
+  .map((player) => {
+    const playerGoals = events.filter((event) => event.event_type === "goal" && event.player_id === player.id);
+    const lastGoal = Math.max(...playerGoals.map((event) => event.minute + (event.extra_minute ?? 0) / 100));
+    return {
+      player_id: player.id,
+      player,
+      team: byTeam(player.team_id),
+      goals: player.tournament_goals,
+      last_goal_minute: lastGoal
+    };
+  })
+  .sort((first, second) => second.goals - first.goals || first.last_goal_minute - second.last_goal_minute);
 
 export const topScorerPredictions: TopScorerPrediction[] = players
   .map((player) => {

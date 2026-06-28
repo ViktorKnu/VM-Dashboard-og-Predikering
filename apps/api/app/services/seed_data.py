@@ -170,9 +170,9 @@ TEAMS = [
 ]
 
 PLAYERS = [
-    player(1, 1, "Erling Haaland", "ST", 9, 25, "Manchester City", 39, 38, 94),
+    player(1, 1, "Erling Haaland", "ST", 9, 25, "Manchester City", 52, 59, 94),
     player(2, 1, "Martin Odegaard", "CM", 10, 27, "Arsenal", 70, 4, 89),
-    player(3, 2, "Kylian Mbappe", "LW", 10, 27, "Real Madrid", 92, 52, 95),
+    player(3, 2, "Kylian Mbappe", "LW", 10, 27, "Real Madrid", 100, 60, 95),
     player(4, 2, "Aurelien Tchouameni", "DM", 8, 26, "Real Madrid", 44, 3, 87),
     player(5, 3, "Sadio Mane", "LW", 10, 34, "Al Nassr", 108, 45, 86),
     player(6, 4, "Aymen Hussein", "ST", 18, 30, "Al Khor", 80, 28, 77),
@@ -189,6 +189,7 @@ PLAYERS = [
     player(17, 13, "Marcus Rashford", "LW", 11, 28, "Manchester United", 69, 18, 84),
     player(18, 14, "Martin Baturina", "AM", 10, 23, "Dinamo Zagreb", 18, 3, 80),
     player(19, 14, "Petar Musa", "ST", 18, 28, "Benfica", 20, 6, 80),
+    player(20, 2, "Ousmane Dembele", "RW", 7, 29, "Paris Saint-Germain", 63, 11, 91),
 ]
 
 MATCHES = [
@@ -196,8 +197,8 @@ MATCHES = [
     match(2, "I", 4, 1, "2026-06-16T19:00:00+00:00", "Boston Stadium", "Boston", "finished", 1, 4),
     match(3, "I", 1, 3, "2026-06-23T00:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey"),
     match(4, "I", 2, 4, "2026-06-22T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia"),
-    match(5, "I", 1, 2, "2026-06-26T19:00:00+00:00", "Boston Stadium", "Boston"),
-    match(6, "I", 3, 4, "2026-06-26T19:00:00+00:00", "Toronto Stadium", "Toronto"),
+    match(5, "I", 1, 2, "2026-06-26T19:00:00+00:00", "Boston Stadium", "Boston", "finished", 1, 4),
+    match(6, "I", 3, 4, "2026-06-26T19:00:00+00:00", "Toronto Stadium", "Toronto", "finished", 5, 0),
     match(7, "J", 5, 6, "2026-06-16T22:00:00+00:00", "Kansas City Stadium", "Kansas City", "finished", 3, 0),
     match(8, "J", 7, 8, "2026-06-17T01:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area", "finished", 3, 1),
     match(9, "J", 5, 7, "2026-06-22T17:00:00+00:00", "Dallas Stadium", "Dallas"),
@@ -241,6 +242,16 @@ EVENTS = [
     event(22, 18, 14, 19, 44, "Petar Musa gjorde 2-2 før pause."),
     event(23, 18, 13, 16, 52, "Jude Bellingham sendte England foran igjen."),
     event(24, 18, 13, 17, 85, "Marcus Rashford punkterte kampen."),
+    event(25, 4, 2, 3, 14, "Kylian Mbappe scoret Frankrikes første mål mot Irak."),
+    event(26, 4, 2, 3, 54, "Mbappe scoret sitt andre mål mot Irak."),
+    event(27, 3, 1, 1, 48, "Erling Haaland scoret mot Senegal."),
+    event(28, 3, 1, 1, 58, "Haaland scoret sitt andre mal mot Senegal."),
+    event(29, 9, 5, 9, 31, "Lionel Messi scoret mot Østerrike."),
+    event(30, 9, 5, 9, 73, "Messi scoret sitt andre mål mot Østerrike."),
+    event(31, 4, 2, 20, 66, "Ousmane Dembele scoret mot Irak."),
+    event(32, 5, 2, 20, 7, "Ousmane Dembele ga Frankrike ledelsen mot Norge."),
+    event(33, 5, 2, 20, 20, "Dembele scoret sitt andre mål mot Norge."),
+    event(34, 5, 2, 20, 32, "Dembele fullførte hattricket mot Norge."),
 ]
 
 LINEUPS = []
@@ -298,6 +309,29 @@ MODEL_VERSIONS = [
     },
 ]
 
+WORLD_CUP_GOALS_BEFORE_2026 = {
+    1: 0,
+    2: 0,
+    3: 12,
+    4: 1,
+    5: 1,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 13,
+    10: 0,
+    11: 0,
+    12: 0,
+    13: 0,
+    14: 0,
+    15: 8,
+    16: 1,
+    17: 3,
+    18: 0,
+    19: 0,
+    20: 0,
+}
+
 
 def seed() -> dict[str, list[dict]]:
     base = deepcopy(
@@ -313,14 +347,21 @@ def seed() -> dict[str, list[dict]]:
             "model_versions": MODEL_VERSIONS,
         }
     )
-    tournament_goals: dict[int, int] = {}
-    for event_item in base["events"]:
+    merged = apply_processed_data(base)
+    event_goals: dict[int, int] = {}
+    for event_item in merged["events"]:
         player_id = event_item.get("player_id")
         if event_item.get("event_type") == "goal" and player_id is not None:
-            tournament_goals[player_id] = tournament_goals.get(player_id, 0) + 1
-    for player_item in base["players"]:
-        player_item["tournament_goals"] = tournament_goals.get(player_item["id"], 0)
-    return apply_processed_data(base)
+            event_goals[player_id] = event_goals.get(player_id, 0) + 1
+    for player_item in merged["players"]:
+        player_id = player_item["id"]
+        tournament_goals = player_item.get("tournament_goals", event_goals.get(player_id, 0))
+        player_item["tournament_goals"] = tournament_goals
+        previous_goals = WORLD_CUP_GOALS_BEFORE_2026.get(player_id)
+        player_item["world_cup_goals"] = (
+            previous_goals + tournament_goals if previous_goals is not None else None
+        )
+    return merged
 
 
 def find_one(collection: str, item_id: int) -> dict | None:

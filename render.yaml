@@ -7,9 +7,9 @@ services:
     healthCheckPath: /health
     envVars:
       - key: LIVE_DATA_PROVIDER
-        value: seeded
+        value: api-football
       - key: LIVE_POLL_INTERVAL_SECONDS
-        value: 30
+        value: 1800
       - key: EXTERNAL_DATA_CACHE_DIR
         value: /tmp/vm-dashboard-raw
       - key: EXTERNAL_DATA_CACHE_TTL_SECONDS
@@ -31,7 +31,7 @@ services:
       - key: WORLD_FOOTBALL_ELO_URL
         sync: false
       - key: API_FOOTBALL_BASE_URL
-        sync: false
+        value: https://v3.football.api-sports.io
       - key: API_FOOTBALL_KEY
         sync: false
 

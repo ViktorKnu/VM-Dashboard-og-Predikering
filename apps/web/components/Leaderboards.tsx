@@ -88,9 +88,9 @@ export function LiveTopScorerTable({ scorers }: { scorers: TopScorerStanding[] }
   return (
     <section className="surface p-5">
       <div className="mb-4">
-        <p className="eyebrow">Live data</p>
+        <p className="eyebrow">Turneringsdata</p>
         <h2 className="text-lg font-semibold">Toppscorere</h2>
-        <p className="mt-1 text-sm text-ink/60">Teller kun mål som finnes i registrerte kamphendelser.</p>
+        <p className="mt-1 text-sm text-ink/60">Bruker leverandørens toppscorerdata når API-et er koblet på, ellers registrerte kamphendelser.</p>
       </div>
       {scorers.length ? (
         <div className="space-y-2">

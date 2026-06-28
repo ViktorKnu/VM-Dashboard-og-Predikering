@@ -107,3 +107,39 @@ def test_import_matches_payload_writes_processed_json(tmp_path):
     assert saved["metadata"]["source_name"] == "Test"
     assert saved["matches"][0]["id"] == 4
     assert saved["matches"][0]["stadium"] == "Philadelphia Stadium"
+
+
+def test_normalize_api_football_fixture_payload():
+    payload = {
+        "response": [
+            {
+                "fixture": {
+                    "id": 120026,
+                    "date": "2026-06-22T21:00:00+00:00",
+                    "status": {"short": "FT"},
+                    "venue": {"name": "Philadelphia Stadium", "city": "Philadelphia"},
+                },
+                "league": {"round": "Group I - 2"},
+                "teams": {"home": {"name": "France"}, "away": {"name": "Iraq"}},
+                "goals": {"home": 3, "away": 0},
+            }
+        ]
+    }
+
+    normalized = normalize_match_payload(
+        payload,
+        TEAMS,
+        MATCHES,
+        source_name="API-Football kamper",
+        source_url="https://v3.football.api-sports.io/fixtures",
+        processed_at="2026-06-23T00:00:00+00:00",
+    )
+    match = normalized["matches"][0]
+
+    assert normalized["metadata"]["is_live_data"] is True
+    assert normalized["metadata"]["source_updated_at"] == "2026-06-23T00:00:00+00:00"
+    assert match["id"] == 4
+    assert match["group_name"] == "I"
+    assert match["status"] == "finished"
+    assert match["home_score"] == 3
+    assert match["away_score"] == 0

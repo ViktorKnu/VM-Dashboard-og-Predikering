@@ -3,6 +3,7 @@ from pathlib import Path
 
 import typer
 
+from app.services.api_football import refresh_api_football_data
 from app.services.external_data import ExternalSource, configured_sources, fetch_json, write_cache
 from app.services.match_import import import_matches_payload
 from app.services.seed_data import MATCHES, TEAMS
@@ -29,7 +30,20 @@ def import_teams(force: bool = typer.Option(False, help="Ignorer fersk cache og 
 
 @app.command()
 def import_players(force: bool = typer.Option(False, help="Ignorer fersk cache og hent på nytt.")) -> None:
-    import_source("api_football_live", force)
+    result = refresh_api_football_data(force=force)
+    typer.echo(f"API-Football: {result['status']}")
+    for path in result["updated"]:
+        typer.echo(f"Processed: {path}")
+
+
+@app.command()
+def import_live(force: bool = typer.Option(False, help="Ignorer fersk cache og hent på nytt.")) -> None:
+    result = refresh_api_football_data(force=force)
+    typer.echo(f"API-Football: {result['status']}")
+    for path in result["updated"]:
+        typer.echo(f"Processed: {path}")
+    if not result["updated"]:
+        raise typer.Exit(1)
 
 
 @app.command()

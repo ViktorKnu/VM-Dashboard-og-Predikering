@@ -1,13 +1,27 @@
 from __future__ import annotations
 
+import re
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from app.services.processed_data import write_processed_matches
 
-FINISHED_STATUSES = {"FINISHED", "finished", "FT", "full_time"}
-LIVE_STATUSES = {"LIVE", "IN_PLAY", "PAUSED", "live", "in_play", "paused"}
+FINISHED_STATUSES = {"FINISHED", "finished", "FT", "AET", "PEN", "full_time"}
+LIVE_STATUSES = {
+    "LIVE", "IN_PLAY", "PAUSED", "live", "in_play", "paused",
+    "1H", "HT", "2H", "ET", "BT", "P",
+}
+
+TEAM_ALIASES = {
+    "congo dr": "dr congo",
+    "congo democratic republic": "dr congo",
+    "cape verde islands": "cape verde",
+    "iran": "ir iran",
+    "south korea": "korea republic",
+    "usa": "united states",
+}
 
 
 def utc_now_iso() -> str:
@@ -30,6 +44,9 @@ def normalize_group(value: Any) -> str | None:
     text = str(value).strip()
     if not text:
         return None
+    group_match = re.search(r"group(?: stage)?[ _-]+([A-L])(?:\b|_)", text, re.IGNORECASE)
+    if group_match:
+        return group_match.group(1).upper()
     if "_" in text:
         text = text.split("_")[-1]
     if " " in text:
@@ -37,12 +54,18 @@ def normalize_group(value: Any) -> str | None:
     return text[-1].upper()
 
 
+def normalized_team_key(value: Any) -> str:
+    text = unicodedata.normalize("NFKD", str(value)).encode("ascii", "ignore").decode()
+    key = " ".join(text.lower().replace(".", "").split())
+    return TEAM_ALIASES.get(key, key)
+
+
 def team_lookup(teams: list[dict[str, Any]]) -> dict[str, int]:
     lookup: dict[str, int] = {}
     for team in teams:
         lookup[str(team["id"])] = team["id"]
-        lookup[team["name"].lower()] = team["id"]
-        lookup[team["fifa_code"].lower()] = team["id"]
+        lookup[normalized_team_key(team["name"])] = team["id"]
+        lookup[normalized_team_key(team["fifa_code"])] = team["id"]
     return lookup
 
 
@@ -55,7 +78,7 @@ def find_team_id(value: Any, lookup: dict[str, int]) -> int | None:
             if found is not None:
                 return found
         return None
-    return lookup.get(str(value).lower())
+    return lookup.get(normalized_team_key(value))
 
 
 def score_from_row(row: dict[str, Any]) -> tuple[int | None, int | None]:
@@ -87,6 +110,38 @@ def seed_match_index(seed_matches: list[dict[str, Any]]) -> dict[tuple[int | Non
     return {match_key(match): match for match in seed_matches}
 
 
+def api_football_rows(payload: dict[str, Any]) -> list[dict[str, Any]] | None:
+    response = payload.get("response")
+    if not isinstance(response, list):
+        return None
+
+    rows = []
+    for item in response:
+        if not isinstance(item, dict):
+            continue
+        fixture = item.get("fixture") or {}
+        league = item.get("league") or {}
+        venue = fixture.get("venue") or {}
+        status = fixture.get("status") or {}
+        teams = item.get("teams") or {}
+        rows.append(
+            {
+                "id": fixture.get("id"),
+                "home_team": teams.get("home"),
+                "away_team": teams.get("away"),
+                "kickoff_at": fixture.get("date"),
+                "stadium": venue.get("name"),
+                "city": venue.get("city"),
+                "status": status.get("short") or status.get("long"),
+                "home_score": (item.get("goals") or {}).get("home"),
+                "away_score": (item.get("goals") or {}).get("away"),
+                "group": league.get("round"),
+                "stage": league.get("round"),
+            }
+        )
+    return rows
+
+
 def normalize_match_row(
     row: dict[str, Any],
     teams: list[dict[str, Any]],
@@ -101,12 +156,23 @@ def normalize_match_row(
     group_name = row.get("group_name") or normalize_group(row.get("group") or row.get("stage"))
     home_score, away_score = score_from_row(row)
     seed_by_key = seed_match_index(seed_matches)
-    seed_match = seed_by_key.get((home_team_id, away_team_id, group_name)) or {}
+    seed_match = seed_by_key.get((home_team_id, away_team_id, group_name)) or next(
+        (
+            match
+            for match in seed_matches
+            if match.get("home_team_id") == home_team_id
+            and match.get("away_team_id") == away_team_id
+        ),
+        {},
+    )
+    group_name = group_name or seed_match.get("group_name")
+    provider_stage = str(row.get("stage") or "")
+    stage = "Group stage" if group_name else provider_stage or "Ukjent fase"
 
     return {
         "id": int(seed_match.get("id") or row.get("id")),
         "tournament_year": int(row.get("tournament_year", 2026)),
-        "stage": row.get("stage") if row.get("stage") == "Group stage" else "Group stage",
+        "stage": stage,
         "group_name": group_name,
         "home_team_id": home_team_id,
         "away_team_id": away_team_id,
@@ -127,7 +193,10 @@ def normalize_match_payload(
     source_url: str,
     processed_at: str | None = None,
 ) -> dict[str, Any]:
+    timestamp = processed_at or utc_now_iso()
     raw_matches = payload.get("matches")
+    if not isinstance(raw_matches, list):
+        raw_matches = api_football_rows(payload)
     if not isinstance(raw_matches, list):
         raise ValueError("Kilden må inneholde en matches-liste.")
 
@@ -139,19 +208,25 @@ def normalize_match_payload(
     matches.sort(key=lambda match: match["kickoff_at"])
 
     source_metadata = payload.get("metadata") if isinstance(payload.get("metadata"), dict) else {}
+    is_live_data = bool(source_metadata.get("is_live_data")) or source_name.startswith(
+        "API-Football"
+    )
     return {
         "metadata": {
             "dataset": source_metadata.get("dataset", "world_cup_2026_group_stage_snapshot"),
             "source_name": source_metadata.get("source_name", source_name),
             "source_url": source_metadata.get("source_url", source_url),
-            "source_updated_at": source_metadata.get("source_updated_at"),
-            "processed_at": processed_at or utc_now_iso(),
+            "source_updated_at": source_metadata.get("source_updated_at")
+            or (timestamp if is_live_data else None),
+            "processed_at": timestamp,
             "timezone": "Europe/Oslo",
-            "is_live_data": bool(source_metadata.get("is_live_data", False)),
+            "is_live_data": is_live_data,
             "notes": source_metadata.get(
                 "notes",
-                [
-                    "Gratis, kilde-merket resultat-snapshot for visning.",
+                ["Kilde-merket leverandørimport med cache og fallback."]
+                if is_live_data
+                else [
+                    "Kilde-merket resultat-snapshot for visning.",
                     "Ikke sekund-for-sekund live-feed.",
                 ],
             ),

@@ -72,6 +72,14 @@ worldcup-ingest import-matches --source-file ../../data/processed/matches.json
 
 Kommandoen kan også bruke en JSON-URL via `--source-url` eller `FIFA_SCHEDULE_URL`, skriver raw-cache til `data/raw` og oppdaterer `data/processed/matches.json`.
 
+Med `API_FOOTBALL_KEY` satt kan kamper og toppscorerdata hentes samlet:
+
+```bash
+worldcup-ingest import-live
+```
+
+Når FastAPI kjører med nøkkelen satt, oppdateres disse dataene automatisk hvert 30. minutt. Nøkkelen skal bare ligge i lokal `.env` eller som secret hos backend-leverandøren.
+
 Mer detaljert dokumentasjon ligger her:
 
 - [docs/architecture.md](docs/architecture.md)

@@ -69,12 +69,12 @@ export function formatOsloTime(value: string): string {
 
 export const api = {
   dataStatus: () => getJson<DataStatus>("/data/status", {
-    source: "SB Nation World Cup schedule and scores",
-    source_url: "https://www.sbnation.com/soccer/1117513/world-cup-schedule-2026-how-to-watch-every-match-scores-and-more",
+    source: "FIFA World Cup 2026 fixtures and results",
+    source_url: "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/match-schedule-fixtures-results-teams-stadiums",
     mode: "seed-fallback",
     is_live_data: false,
-    last_updated: "2026-06-25T02:58:00+00:00",
-    processed_at: "2026-06-25T21:16:52.502587+00:00",
+    last_updated: "2026-06-27T12:00:00+00:00",
+    processed_at: "2026-06-28T10:00:00+00:00",
     timezone: "Europe/Oslo",
     model_version: "wc-v0.2-country-features",
     counts: {

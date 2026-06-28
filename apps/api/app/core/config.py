@@ -30,8 +30,10 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
     world_football_elo_url: str = ""
     fifa_rankings_url: str = ""
     world_bank_base_url: str = "https://api.worldbank.org/v2"
-    api_football_base_url: str = ""
+    api_football_base_url: str = "https://v3.football.api-sports.io"
     api_football_key: str = ""
+    api_football_league_id: int = 1
+    api_football_season: int = 2026
 
     if SettingsConfigDict:
         model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -59,6 +61,8 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
                 "world_bank_base_url": self.world_bank_base_url,
                 "api_football_base_url": self.api_football_base_url,
                 "api_football_key": self.api_football_key,
+                "api_football_league_id": self.api_football_league_id,
+                "api_football_season": self.api_football_season,
             }.items():
                 setattr(self, key, values.get(key, os.getenv(key.upper(), default)))
         else:
