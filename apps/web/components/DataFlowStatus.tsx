@@ -1,15 +1,8 @@
 import { CheckCircle2, DatabaseZap } from "lucide-react";
+import { DataProvenance } from "@/components/DataProvenance";
 import type { DataStatus } from "@/lib/types";
 
 export function DataFlowStatus({ status }: { status: DataStatus }) {
-  const isFallback = status.mode === "seed-fallback";
-  const label = isFallback
-    ? "Seedet visning"
-    : status.mode === "processed"
-      ? "Importert data"
-      : status.mode === "seeded"
-        ? "Seedet API"
-        : "Ekstern datakilde";
   const counts = [
     ["Lag", status.counts.teams],
     ["Spillere", status.counts.players],
@@ -30,14 +23,16 @@ export function DataFlowStatus({ status }: { status: DataStatus }) {
             <p className="eyebrow">Datastatus</p>
             <h2 className="mt-1 text-xl font-bold">Dataflyt</h2>
             <p className="mt-2 text-sm leading-6 text-ink/60">
-              API først, seedet visning når eksterne datakilder ikke er koblet på.
+              API først, med et kilde-merket snapshot når en sanntidsleverandør ikke er koblet på.
             </p>
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <span className={`chip ${isFallback ? "bg-gold/20 text-white" : "bg-mint/10 text-mint"}`}>{label}</span>
               <span className="chip bg-white/10 text-white/70">Modell {status.model_version}</span>
-              <span className="chip bg-white/10 text-white/70">{status.timezone}</span>
             </div>
           </div>
+        </div>
+
+        <div className="mt-4 border-t border-white/10 pt-4">
+          <DataProvenance status={status} />
         </div>
 
         <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">

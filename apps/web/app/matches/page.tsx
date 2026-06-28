@@ -1,9 +1,10 @@
 import { CalendarDays } from "lucide-react";
+import { DataProvenance } from "@/components/DataProvenance";
 import { MatchSchedule } from "@/components/MatchSchedule";
 import { api } from "@/lib/api";
 
 export default async function MatchesPage() {
-  const matches = await api.matches();
+  const [matches, dataStatus] = await Promise.all([api.matches(), api.dataStatus()]);
 
   return (
     <div className="space-y-5">
@@ -19,6 +20,9 @@ export default async function MatchesPage() {
           <span className="inline-flex items-center gap-2 rounded-md bg-frost px-3 py-2 text-sm font-semibold text-ink/70">
             <CalendarDays size={17} /> {matches.length} kamper
           </span>
+        </div>
+        <div className="mt-5 border-t border-white/10 pt-4">
+          <DataProvenance compact status={dataStatus} />
         </div>
       </section>
 

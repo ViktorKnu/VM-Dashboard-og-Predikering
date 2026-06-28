@@ -1,12 +1,14 @@
 import { GroupStandingsTable, LiveTopScorerTable, PlayerProfileTable, TopScorerPredictionTable } from "@/components/Leaderboards";
+import { DataProvenance } from "@/components/DataProvenance";
 import { api } from "@/lib/api";
 
 export default async function LeaderboardsPage() {
-  const [players, topScorers, topScorerPredictions, groupStandings] = await Promise.all([
+  const [players, topScorers, topScorerPredictions, groupStandings, dataStatus] = await Promise.all([
     api.players(),
     api.topScorers(),
     api.topScorerPredictions(),
-    api.groupStandings()
+    api.groupStandings(),
+    api.dataStatus()
   ]);
 
   return (
@@ -17,6 +19,9 @@ export default async function LeaderboardsPage() {
         <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
           Alle grupper vises. Poeng beregnes bare fra registrerte, bekreftede kampdata.
         </p>
+        <div className="mt-5 border-t border-white/10 pt-4">
+          <DataProvenance compact status={dataStatus} />
+        </div>
       </section>
 
       <GroupStandingsTable groups={groupStandings} />

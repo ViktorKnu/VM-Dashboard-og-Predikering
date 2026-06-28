@@ -141,6 +141,7 @@ def health() -> dict[str, str]:
 def data_status(db: Session | None = Depends(get_db)) -> dict:
     data = seed()
     processed = processed_status()
+    metadata = processed["metadata"] or {}
     sources = source_statuses()
     configured_sources = sum(1 for source in sources if source["configured"])
     cached_sources = sum(1 for source in sources if source["cached"])
@@ -148,14 +149,16 @@ def data_status(db: Session | None = Depends(get_db)) -> dict:
         source["configured"] for source in sources if source["key"] != "world_bank"
     )
     return {
-        "source": processed["metadata"]["source_name"]
-        if processed["metadata"]
-        else settings.live_data_provider,
+        "source": metadata.get("source_name", settings.live_data_provider),
+        "source_url": metadata.get("source_url"),
         "mode": "processed"
         if processed["mode"] == "processed"
         else "external"
         if settings.live_data_provider != "seeded" or external_match_feed_configured
         else "seeded",
+        "is_live_data": bool(metadata.get("is_live_data", False)),
+        "last_updated": metadata.get("source_updated_at"),
+        "processed_at": metadata.get("processed_at"),
         "timezone": "Europe/Oslo",
         "model_version": settings.model_version,
         "counts": {

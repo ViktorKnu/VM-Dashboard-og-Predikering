@@ -158,6 +158,10 @@ def test_data_status_exposes_counts_and_prediction_flow():
     status = data_status()
     assert status["timezone"] == "Europe/Oslo"
     assert status["mode"] == "processed"
+    assert status["source"] == "SB Nation World Cup schedule and scores"
+    assert status["source_url"].startswith("https://")
+    assert status["last_updated"]
+    assert status["is_live_data"] is False
     assert status["counts"]["teams"] == len(seed()["teams"])
 
     created = create_prediction(
