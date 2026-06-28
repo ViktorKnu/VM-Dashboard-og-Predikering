@@ -14,7 +14,7 @@ export default async function PlayersPage() {
         <p className="eyebrow">Spillerbase</p>
         <h1 className="mt-1 text-3xl font-black uppercase tracking-[0.05em]">Spillere</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
-          Landslagsstatistikk, samlede VM-mål og mål i VM 2026 vises separat. Turneringstall oppdateres fra registrerte kamphendelser eller den konfigurerte dataleverandøren.
+          Landslagsmål og mål i VM 2026 vises separat. Turneringstall oppdateres fra registrerte kamphendelser eller den konfigurerte dataleverandøren.
         </p>
       </section>
 
@@ -41,10 +41,9 @@ export default async function PlayersPage() {
                 <ArrowRight className="text-white/35 transition group-hover:translate-x-1 group-hover:text-mint" size={18} />
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+              <div className="mt-4 grid grid-cols-3 gap-2 text-sm">
                 <div className="rounded-md bg-white/10 p-3"><span className="block text-white/50">Landskamper</span><strong>{player.caps}</strong></div>
                 <div className="rounded-md bg-white/10 p-3"><span className="block text-white/50">Landslagsmål</span><strong>{player.goals}</strong></div>
-                <div className="rounded-md bg-white/10 p-3"><span className="block text-white/50">VM-mål totalt</span><strong>{player.world_cup_goals ?? "–"}</strong></div>
                 <div className="rounded-md bg-white/10 p-3"><span className="block text-white/50">VM 2026-mål</span><strong>{player.tournament_goals}</strong></div>
               </div>
             </Link>

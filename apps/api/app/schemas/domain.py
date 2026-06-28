@@ -32,7 +32,6 @@ class PlayerOut(BaseModel):
     caps: int | None = None
     goals: int | None = None
     tournament_goals: int = 0
-    world_cup_goals: int | None = None
     rating: float | None = None
 
 

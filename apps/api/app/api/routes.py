@@ -487,7 +487,6 @@ def top_scorers() -> list[dict]:
             "caps": 0,
             "goals": 0,
             "tournament_goals": stats["tournament_goals"],
-            "world_cup_goals": None,
             "rating": 0,
         }
         standings[synthetic_id] = {

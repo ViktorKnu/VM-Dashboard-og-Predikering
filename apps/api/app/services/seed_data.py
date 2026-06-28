@@ -309,30 +309,6 @@ MODEL_VERSIONS = [
     },
 ]
 
-WORLD_CUP_GOALS_BEFORE_2026 = {
-    1: 0,
-    2: 0,
-    3: 12,
-    4: 1,
-    5: 1,
-    6: 0,
-    7: 0,
-    8: 0,
-    9: 13,
-    10: 0,
-    11: 0,
-    12: 0,
-    13: 0,
-    14: 0,
-    15: 8,
-    16: 1,
-    17: 3,
-    18: 0,
-    19: 0,
-    20: 0,
-}
-
-
 def seed() -> dict[str, list[dict]]:
     base = deepcopy(
         {
@@ -357,10 +333,6 @@ def seed() -> dict[str, list[dict]]:
         player_id = player_item["id"]
         tournament_goals = player_item.get("tournament_goals", event_goals.get(player_id, 0))
         player_item["tournament_goals"] = tournament_goals
-        previous_goals = WORLD_CUP_GOALS_BEFORE_2026.get(player_id)
-        player_item["world_cup_goals"] = (
-            previous_goals + tournament_goals if previous_goals is not None else None
-        )
     return merged
 
 

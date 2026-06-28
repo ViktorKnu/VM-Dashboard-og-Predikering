@@ -42,7 +42,7 @@ const mkPlayer = (
   caps: number,
   goals: number,
   rating: number
-): Player => ({ id, team_id, name, position, shirt_number, age, club, caps, goals, tournament_goals: 0, world_cup_goals: null, rating });
+): Player => ({ id, team_id, name, position, shirt_number, age, club, caps, goals, tournament_goals: 0, rating });
 
 export const teams: Team[] = [
   mkTeam(1, "I", "Norway", "NOR", "UEFA", "no", 29, 1528.0, 1810, 87962, 5500000, 0.76, 0.18),
@@ -260,20 +260,10 @@ export const events: MatchEvent[] = [
   mkEvent(34, 5, 2, 20, 32, "Dembele fullførte hattricket mot Norge.")
 ];
 
-const worldCupGoalsBefore2026: Record<number, number> = {
-  1: 0, 2: 0, 3: 12, 4: 1, 5: 1, 6: 0, 7: 0, 8: 0, 9: 13, 10: 0,
-  11: 0, 12: 0, 13: 0, 14: 0, 15: 8, 16: 1, 17: 3, 18: 0, 19: 0, 20: 0
-};
-
 for (const event of events) {
   if (event.event_type !== "goal" || event.player_id === null) continue;
   const scorer = players.find((player) => player.id === event.player_id);
   if (scorer) scorer.tournament_goals += 1;
-}
-
-for (const player of players) {
-  const previousGoals = worldCupGoalsBefore2026[player.id];
-  player.world_cup_goals = previousGoals === undefined ? null : previousGoals + player.tournament_goals;
 }
 
 export const prediction: ModelPrediction = {

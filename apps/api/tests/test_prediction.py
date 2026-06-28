@@ -186,10 +186,8 @@ def test_players_separate_international_and_tournament_goals():
 
     assert mbappe["goals"] == 60
     assert mbappe["tournament_goals"] == 4
-    assert mbappe["world_cup_goals"] == 16
     assert haaland["goals"] == 59
     assert haaland["tournament_goals"] == 4
-    assert haaland["world_cup_goals"] == 4
 
 
 def test_model_lab_exposes_selectable_model_levels():
