@@ -121,6 +121,11 @@ def test_tournament_simulation_follows_2026_stage_sizes():
         for team in (match["home_team"], match["away_team"])
     ]
     assert len(round_of_32_teams) == len(set(round_of_32_teams)) == 32
+    match_74 = next(
+        match for match in result["example_bracket"]["round_of_32"] if match["match_number"] == 74
+    )
+    assert match_74["winner_team"]["name"] == "Paraguay"
+    assert (match_74["home_penalty_score"], match_74["away_penalty_score"]) == (3, 4)
 
 
 def test_live_probability_explains_significant_change():
@@ -175,24 +180,22 @@ def test_live_probability_explains_significant_change():
     assert events[0]["event_type"] == "goal"
 
 
-def test_seed_schedule_uses_verified_group_results_only():
+def test_processed_schedule_covers_all_groups_and_round_of_32():
     data = seed()
     matches = data["matches"]
+    group_matches = [match for match in matches if match["group_name"]]
+    round_of_32 = [match for match in matches if match["stage"] == "Round of 32"]
 
     assert matches
     assert len(data["teams"]) == 48
     assert {team["group_name"] for team in data["teams"]} == set("ABCDEFGHIJKL")
-    assert {match["group_name"] for match in matches} == {"I", "J", "K", "L"}
-    assert all(match["stage"] == "Group stage" for match in matches)
-    finished = [
-        (match["group_name"], match["home_team_id"], match["away_team_id"], match["home_score"], match["away_score"])
-        for match in matches
-        if match["status"] == "finished"
-    ]
-    assert ("I", 1, 3, 3, 2) in finished
-    assert ("I", 2, 4, 3, 0) in finished
-    assert ("K", 9, 11, 5, 0) in finished
-    assert ("L", 13, 15, 0, 0) in finished
+    assert len(group_matches) == 72
+    assert len(round_of_32) == 16
+    assert all(sum(match["group_name"] == group for match in group_matches) == 6 for group in "ABCDEFGHIJKL")
+    assert all(
+        any(team["id"] in (match["home_team_id"], match["away_team_id"]) for match in matches)
+        for team in data["teams"]
+    )
     assert all(
         match["home_score"] is None and match["away_score"] is None
         for match in matches
@@ -217,7 +220,7 @@ def test_data_status_exposes_counts_and_prediction_flow():
     status = data_status()
     assert status["timezone"] == "Europe/Oslo"
     assert status["mode"] == "processed"
-    assert status["source"] == "FIFA World Cup 2026 fixtures and results"
+    assert status["source"] == "OpenFootball World Cup 2026 (CC0)"
     assert status["source_url"].startswith("https://")
     assert status["last_updated"]
     assert status["is_live_data"] is False
@@ -228,7 +231,7 @@ def test_data_status_exposes_counts_and_prediction_flow():
 
 def future_prediction_data() -> tuple[dict, dict]:
     data = seed()
-    match = data["matches"][0]
+    match = next(match for match in data["matches"] if match["id"] == 1)
     match["status"] = "scheduled"
     match["home_score"] = None
     match["away_score"] = None
@@ -382,13 +385,8 @@ def test_group_standings_are_calculated_from_finished_matches():
     group_k = next(group for group in groups if group["group_name"] == "K")
 
     assert group_names == list("ABCDEFGHIJKL")
-    assert [row["team"]["name"] for row in group_a["standings"]] == [
-        "Mexico",
-        "South Korea",
-        "Czech Republic",
-        "South Africa",
-    ]
-    assert all(row["played"] == 0 for row in group_a["standings"])
+    assert group_a["standings"][0]["team"]["name"] == "Mexico"
+    assert all(row["played"] == 3 for row in group_a["standings"])
     assert [
         (row["team"]["name"], row["points"], row["goal_difference"])
         for row in group_i["standings"]
@@ -399,8 +397,8 @@ def test_group_standings_are_calculated_from_finished_matches():
         ("Iraq", 0, -11),
     ]
     assert [(row["team"]["name"], row["points"]) for row in group_k["standings"][:2]] == [
-        ("Colombia", 6),
-        ("Portugal", 4),
+        ("Colombia", 7),
+        ("Portugal", 5),
     ]
 
 

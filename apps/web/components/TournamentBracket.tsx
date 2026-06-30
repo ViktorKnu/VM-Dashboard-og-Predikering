@@ -25,11 +25,15 @@ function BracketMatch({ match }: { match: TournamentKnockoutMatch }) {
       </div>
       <div className={`flex items-center justify-between gap-3 ${homeWon ? "text-pine" : "text-ink/65"}`}>
         <TeamBadge compact linked={false} team={match.home_team} />
-        <strong>{match.home_score}</strong>
+        <strong>
+          {match.home_score}{match.home_penalty_score != null ? ` (${match.home_penalty_score})` : ""}
+        </strong>
       </div>
       <div className={`mt-2 flex items-center justify-between gap-3 ${awayWon ? "text-pine" : "text-ink/65"}`}>
         <TeamBadge compact linked={false} team={match.away_team} />
-        <strong>{match.away_score}</strong>
+        <strong>
+          {match.away_score}{match.away_penalty_score != null ? ` (${match.away_penalty_score})` : ""}
+        </strong>
       </div>
     </div>
   );

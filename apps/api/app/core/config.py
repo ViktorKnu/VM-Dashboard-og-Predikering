@@ -15,6 +15,7 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
     model_version: str = "wc-v0.2-country-features"
     live_data_provider: str = "seeded"
     live_poll_interval_seconds: int = 30
+    schedule_poll_interval_seconds: int = 21600
     allowed_broadcaster_hosts: str = "nrk.no,tv.nrk.no,tv2.no,play.tv2.no"
     allowed_origins: str = (
         "http://localhost:3000,http://127.0.0.1:3000,"
@@ -26,7 +27,10 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
     external_data_cache_dir: str = "data/raw"
     external_data_cache_ttl_seconds: int = 300
     external_request_timeout_seconds: int = 15
-    fifa_schedule_url: str = ""
+    fifa_schedule_url: str = (
+        "https://raw.githubusercontent.com/openfootball/worldcup.json/"
+        "master/2026/worldcup.json"
+    )
     world_football_elo_url: str = ""
     fifa_rankings_url: str = ""
     world_bank_base_url: str = "https://api.worldbank.org/v2"
@@ -47,6 +51,7 @@ class Settings(BaseSettings):  # type: ignore[misc, valid-type]
                 "model_version": self.model_version,
                 "live_data_provider": self.live_data_provider,
                 "live_poll_interval_seconds": self.live_poll_interval_seconds,
+                "schedule_poll_interval_seconds": self.schedule_poll_interval_seconds,
                 "allowed_broadcaster_hosts": self.allowed_broadcaster_hosts,
                 "allowed_origins": self.allowed_origins,
                 "rate_limit_window_seconds": self.rate_limit_window_seconds,

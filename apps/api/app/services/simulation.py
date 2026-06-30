@@ -295,17 +295,34 @@ def knockout_match(
     away: dict[str, Any],
     powers: dict[int, float],
     rng: random.Random,
+    fixed_match: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    home_xg, away_xg = expected_goals(powers[home["id"]], powers[away["id"]])
-    home_score = poisson_sample(home_xg, rng)
-    away_score = poisson_sample(away_xg, rng)
-    decided_by = "regular_time"
-    if home_score == away_score:
-        decided_by = "penalties"
-        home_probability = 1 / (1 + exp(-4 * (powers[home["id"]] - powers[away["id"]])))
-        winner = home if rng.random() < home_probability else away
+    home_penalty_score = None
+    away_penalty_score = None
+    if fixed_match and fixed_match.get("status") == "finished":
+        home_score = int(fixed_match["home_score"])
+        away_score = int(fixed_match["away_score"])
+        home_penalty_score = fixed_match.get("home_penalty_score")
+        away_penalty_score = fixed_match.get("away_penalty_score")
+        if home_score == away_score and home_penalty_score is not None and away_penalty_score is not None:
+            decided_by = "penalties"
+            winner = home if home_penalty_score > away_penalty_score else away
+        elif home_score != away_score:
+            decided_by = "regular_time"
+            winner = home if home_score > away_score else away
+        else:
+            raise ValueError(f"Ferdig utslagskamp {match_number} mangler avgjørende resultat.")
     else:
-        winner = home if home_score > away_score else away
+        home_xg, away_xg = expected_goals(powers[home["id"]], powers[away["id"]])
+        home_score = poisson_sample(home_xg, rng)
+        away_score = poisson_sample(away_xg, rng)
+        decided_by = "regular_time"
+        if home_score == away_score:
+            decided_by = "penalties"
+            home_probability = 1 / (1 + exp(-4 * (powers[home["id"]] - powers[away["id"]])))
+            winner = home if rng.random() < home_probability else away
+        else:
+            winner = home if home_score > away_score else away
     return {
         "match_number": match_number,
         "stage": stage,
@@ -313,6 +330,8 @@ def knockout_match(
         "away_team": away,
         "home_score": home_score,
         "away_score": away_score,
+        "home_penalty_score": home_penalty_score,
+        "away_penalty_score": away_penalty_score,
         "decided_by": decided_by,
         "winner_team": winner,
     }
@@ -324,17 +343,31 @@ def play_followup_round(
     stage: str,
     powers: dict[int, float],
     rng: random.Random,
+    known_matches: dict[int, dict[str, Any]],
+    teams_by_id: dict[int, dict[str, Any]],
 ) -> tuple[list[dict[str, Any]], dict[int, dict[str, Any]]]:
     matches = []
     winners = {}
     for match_number, home_source, away_source in slots:
+        fixed_match = known_matches.get(match_number)
+        home = (
+            teams_by_id[fixed_match["home_team_id"]]
+            if fixed_match
+            else previous_winners[home_source]
+        )
+        away = (
+            teams_by_id[fixed_match["away_team_id"]]
+            if fixed_match
+            else previous_winners[away_source]
+        )
         result = knockout_match(
             match_number,
             stage,
-            previous_winners[home_source],
-            previous_winners[away_source],
+            home,
+            away,
             powers,
             rng,
+            fixed_match,
         )
         matches.append(result)
         winners[match_number] = result["winner_team"]
@@ -346,27 +379,60 @@ def simulate_knockout_bracket(
     third_placed: list[dict[str, Any]],
     powers: dict[int, float],
     rng: random.Random,
+    known_matches: dict[int, dict[str, Any]],
+    teams_by_id: dict[int, dict[str, Any]],
 ) -> dict[str, list[dict[str, Any]]]:
     third_assignments = assign_third_placed(third_placed)
     round_of_32 = []
     round_of_32_winners = {}
     for match_number, home_slot, away_slot in ROUND_OF_32_SLOTS:
-        home = resolve_group_slot(home_slot, group_standings, third_assignments, match_number)
-        away = resolve_group_slot(away_slot, group_standings, third_assignments, match_number)
-        result = knockout_match(match_number, "round_of_32", home, away, powers, rng)
+        fixed_match = known_matches.get(match_number)
+        home = (
+            teams_by_id[fixed_match["home_team_id"]]
+            if fixed_match
+            else resolve_group_slot(home_slot, group_standings, third_assignments, match_number)
+        )
+        away = (
+            teams_by_id[fixed_match["away_team_id"]]
+            if fixed_match
+            else resolve_group_slot(away_slot, group_standings, third_assignments, match_number)
+        )
+        result = knockout_match(
+            match_number, "round_of_32", home, away, powers, rng, fixed_match
+        )
         round_of_32.append(result)
         round_of_32_winners[match_number] = result["winner_team"]
 
     round_of_16, round_of_16_winners = play_followup_round(
-        ROUND_OF_16_SLOTS, round_of_32_winners, "round_of_16", powers, rng
+        ROUND_OF_16_SLOTS,
+        round_of_32_winners,
+        "round_of_16",
+        powers,
+        rng,
+        known_matches,
+        teams_by_id,
     )
     quarterfinals, quarterfinal_winners = play_followup_round(
-        QUARTERFINAL_SLOTS, round_of_16_winners, "quarterfinal", powers, rng
+        QUARTERFINAL_SLOTS,
+        round_of_16_winners,
+        "quarterfinal",
+        powers,
+        rng,
+        known_matches,
+        teams_by_id,
     )
     semifinals, semifinal_winners = play_followup_round(
-        SEMIFINAL_SLOTS, quarterfinal_winners, "semifinal", powers, rng
+        SEMIFINAL_SLOTS,
+        quarterfinal_winners,
+        "semifinal",
+        powers,
+        rng,
+        known_matches,
+        teams_by_id,
     )
-    final, _ = play_followup_round(FINAL_SLOTS, semifinal_winners, "final", powers, rng)
+    final, _ = play_followup_round(
+        FINAL_SLOTS, semifinal_winners, "final", powers, rng, known_matches, teams_by_id
+    )
     return {
         "round_of_32": round_of_32,
         "round_of_16": round_of_16,
@@ -386,6 +452,14 @@ def validate_tournament_groups(groups: dict[str, list[dict[str, Any]]]) -> None:
         raise ValueError("VM-simulatoren krever 12 grupper med fire lag i hver gruppe.")
 
 
+def known_knockout_matches(matches: list[dict[str, Any]]) -> dict[int, dict[str, Any]]:
+    return {
+        int(match["match_number"]): match
+        for match in matches
+        if match.get("match_number") and not match.get("group_name")
+    }
+
+
 def simulate_tournament(
     teams: list[dict[str, Any]],
     matches: list[dict[str, Any]] | None = None,
@@ -401,6 +475,8 @@ def simulate_tournament(
 
     powers = {team["id"]: team_power(team) for team in teams}
     known_results = finished_group_results(matches or [])
+    known_knockouts = known_knockout_matches(matches or [])
+    teams_by_id = {team["id"]: team for team in teams}
     example_groups: dict[str, list[dict[str, Any]]] = {}
     example_bracket: dict[str, list[dict[str, Any]]] = {}
 
@@ -413,7 +489,14 @@ def simulate_tournament(
             counters[team["id"]]["advance_group"] += 1
             counters[team["id"]]["round_of_32"] += 1
 
-        bracket = simulate_knockout_bracket(group_standings, third_placed, powers, rng)
+        bracket = simulate_knockout_bracket(
+            group_standings,
+            third_placed,
+            powers,
+            rng,
+            known_knockouts,
+            teams_by_id,
+        )
         for team_id in stage_participants(bracket, "round_of_32"):
             counters[team_id]["round_of_16"] += 1
         for team_id in stage_participants(bracket, "round_of_16"):

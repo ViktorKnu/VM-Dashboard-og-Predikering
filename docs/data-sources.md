@@ -1,6 +1,6 @@
 # Datakilder
 
-Første versjon leveres med `data/processed/matches.json` som kilde-merket kamp-snapshot, og seed-data som fallback der importerte data mangler.
+Prosjektet bruker OpenFootball World Cup 2026 som nøkkelfri CC0-snapshot for komplett terminliste og periodiske resultater. Normalisert data lagres i `data/processed/matches.json`, og samme snapshot følger frontend som fallback.
 
 ## Klargjort for live-API
 
@@ -17,16 +17,16 @@ Backend er strukturert for ekte dataleverandører, men krever dem ikke for offen
 
 Konfigurerte leverandørresponser caches før normalisering. Hvis en leverandør feiler, kan API-et fortsatt servere importert processed-data, seedet visning eller siste cachede payload.
 
-## Oppdatere kampdata gratis
+## Oppdatere kampdata
 
-Kampimporten kan bruke en URL fra `FIFA_SCHEDULE_URL`, en midlertidig `--source-url`, eller en lokal JSON-fil med gratis/manuelt verifiserte resultater.
+`FIFA_SCHEDULE_URL` peker som standard til OpenFootballs offentlige 2026-fil. Importen kan også bruke en midlertidig `--source-url` eller en lokal JSON-fil.
 
 ```bash
-worldcup-ingest import-matches --source-file data/processed/matches.json
+worldcup-ingest import-matches --force
 worldcup-ingest import-matches --source-url https://example.com/world-cup-matches.json
 ```
 
-Importen skriver original payload til `data/raw/fifa_schedule/latest.json` og normalisert appdata til `data/processed/matches.json`. Frontend og API bruker deretter processed-data før seed fallback.
+Importen skriver original payload til `data/raw/fifa_schedule/latest.json` og normalisert appdata til `data/processed/matches.json`. Backend oppdaterer snapshoten automatisk hver sjette time. Dette er periodiske data, ikke sekund-for-sekund-live.
 
 ## Oppdatere fra API-Football
 
@@ -43,7 +43,8 @@ Råresponsene caches separat. Normaliserte kamper lagres i `data/processed/match
 | Variabel | Bruk |
 | --- | --- |
 | `LIVE_DATA_PROVIDER` | `seeded` for seedet visning, eller leverandørnavn som `api-football`. |
-| `FIFA_SCHEDULE_URL` | JSON-endepunkt for offisiell terminliste/resultatimport. |
+| `FIFA_SCHEDULE_URL` | JSON-endepunkt for terminliste/resultatimport. Standard: OpenFootball 2026. |
+| `SCHEDULE_POLL_INTERVAL_SECONDS` | Intervall for periodisk kampimport. Standard: seks timer. |
 | `FIFA_RANKINGS_URL` | JSON-endepunkt for FIFA-ranking. |
 | `WORLD_FOOTBALL_ELO_URL` | JSON-endepunkt eller fil-URL for Elo-import. |
 | `WORLD_BANK_BASE_URL` | World Bank API-base. Standard: `https://api.worldbank.org/v2`. |
@@ -59,6 +60,7 @@ Råresponsene caches separat. Normaliserte kamper lagres i `data/processed/match
 | Kilde | Bruk | Notater |
 | --- | --- | --- |
 | FIFA offisiell terminliste/resultater | Kamper, arenaer og resultater | Bruk offisielle ID-er når de finnes. |
+| OpenFootball World Cup 2026 | Komplett terminliste og periodiske resultater | CC0-snapshot; FIFA er autoritativ ved avvik. |
 | Fjelstul World Cup Database | Historiske VM-data | Nyttig for backtesting og historiske innsikter. |
 | international_results | Bredere landslagshistorikk | Nyttig for form og kalibrering. |
 | World Football Elo Ratings | Lagstyrke | Importer snapshots per dato. |

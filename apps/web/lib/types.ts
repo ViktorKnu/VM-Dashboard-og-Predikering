@@ -43,6 +43,7 @@ export type Broadcast = {
 
 export type Match = {
   id: number;
+  match_number?: number | null;
   tournament_year: number;
   stage: string;
   group_name?: string | null;
@@ -55,6 +56,8 @@ export type Match = {
   status: "scheduled" | "live" | "finished";
   home_score?: number | null;
   away_score?: number | null;
+  home_penalty_score?: number | null;
+  away_penalty_score?: number | null;
   home_team: Team;
   away_team: Team;
   broadcasts?: Broadcast[];
@@ -253,6 +256,8 @@ export type TournamentKnockoutMatch = {
   away_team: Team;
   home_score: number;
   away_score: number;
+  home_penalty_score?: number | null;
+  away_penalty_score?: number | null;
   decided_by: "regular_time" | "penalties";
   winner_team: Team;
 };

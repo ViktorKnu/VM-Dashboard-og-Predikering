@@ -24,11 +24,17 @@ export function MatchCard({ match }: { match: Match }) {
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-3 rounded-md bg-night/30 px-3 py-2">
           <TeamBadge inverted linked={false} team={match.home_team} />
-          <strong className="text-lg">{match.home_score ?? "-"}</strong>
+          <strong className="text-lg">
+            {match.home_score ?? "-"}
+            {match.home_penalty_score != null ? ` (${match.home_penalty_score})` : ""}
+          </strong>
         </div>
         <div className="flex items-center justify-between gap-3 rounded-md bg-night/30 px-3 py-2">
           <TeamBadge inverted linked={false} team={match.away_team} />
-          <strong className="text-lg">{match.away_score ?? "-"}</strong>
+          <strong className="text-lg">
+            {match.away_score ?? "-"}
+            {match.away_penalty_score != null ? ` (${match.away_penalty_score})` : ""}
+          </strong>
         </div>
       </div>
 

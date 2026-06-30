@@ -1,4 +1,5 @@
 import type { Broadcast, Lineup, LiveSnapshot, Match, MatchEvent, ModelPrediction, Player, ProbabilityEvent, Team, TopScorerPrediction, TopScorerStanding } from "./types";
+import matchSnapshot from "./data/matches.json";
 
 const mkTeam = (
   id: number,
@@ -145,62 +146,19 @@ export const broadcasts: Broadcast[] = [
   mkBroadcast(9, 18, "NRK", "NRK TV", false)
 ];
 
-const mkMatch = (
-  id: number,
-  group_name: string,
-  home_team_id: number,
-  away_team_id: number,
-  kickoff_at: string,
-  stadium: string,
-  city: string,
-  status: Match["status"] = "scheduled",
-  home_score: number | null = null,
-  away_score: number | null = null
-): Match => ({
-  id,
-  tournament_year: 2026,
-  stage: "Group stage",
-  group_name,
-  home_team_id,
-  away_team_id,
-  kickoff_at,
-  kickoff_timezone: "Europe/Oslo",
-  stadium,
-  city,
-  status,
-  home_score,
-  away_score,
-  home_team: byTeam(home_team_id),
-  away_team: byTeam(away_team_id),
-  broadcasts: broadcasts.filter((item) => item.match_id === id)
-});
+type SnapshotMatch = Omit<Match, "kickoff_timezone" | "home_team" | "away_team" | "broadcasts">;
 
-export const matches: Match[] = [
-  mkMatch(1, "I", 2, 3, "2026-06-16T16:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey", "finished", 3, 1),
-  mkMatch(2, "I", 4, 1, "2026-06-16T19:00:00+00:00", "Boston Stadium", "Boston", "finished", 1, 4),
-  mkMatch(3, "I", 1, 3, "2026-06-23T00:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey", "finished", 3, 2),
-  mkMatch(4, "I", 2, 4, "2026-06-22T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia", "finished", 3, 0),
-  mkMatch(5, "I", 1, 2, "2026-06-26T19:00:00+00:00", "Boston Stadium", "Boston", "finished", 1, 4),
-  mkMatch(6, "I", 3, 4, "2026-06-26T19:00:00+00:00", "Toronto Stadium", "Toronto", "finished", 5, 0),
-  mkMatch(7, "J", 5, 6, "2026-06-16T22:00:00+00:00", "Kansas City Stadium", "Kansas City", "finished", 3, 0),
-  mkMatch(8, "J", 7, 8, "2026-06-17T01:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area", "finished", 3, 1),
-  mkMatch(9, "J", 5, 7, "2026-06-22T17:00:00+00:00", "Dallas Stadium", "Dallas", "finished", 2, 0),
-  mkMatch(10, "J", 8, 6, "2026-06-23T03:00:00+00:00", "San Francisco Bay Area Stadium", "San Francisco Bay Area", "finished", 1, 2),
-  mkMatch(11, "J", 6, 7, "2026-06-28T02:00:00+00:00", "Kansas City Stadium", "Kansas City"),
-  mkMatch(12, "J", 8, 5, "2026-06-28T02:00:00+00:00", "Dallas Stadium", "Dallas"),
-  mkMatch(13, "K", 9, 10, "2026-06-17T19:00:00+00:00", "Houston Stadium", "Houston", "finished", 1, 1),
-  mkMatch(14, "K", 9, 11, "2026-06-23T17:00:00+00:00", "Houston Stadium", "Houston", "finished", 5, 0),
-  mkMatch(15, "K", 12, 10, "2026-06-24T02:00:00+00:00", "Estadio Guadalajara", "Guadalajara", "finished", 1, 0),
-  mkMatch(16, "K", 12, 9, "2026-06-27T23:30:00+00:00", "Miami Stadium", "Miami"),
-  mkMatch(17, "K", 10, 11, "2026-06-27T23:30:00+00:00", "Atlanta Stadium", "Atlanta"),
-  mkMatch(18, "L", 13, 14, "2026-06-17T20:00:00+00:00", "Dallas Stadium", "Dallas", "finished", 4, 2),
-  mkMatch(19, "L", 13, 15, "2026-06-23T20:00:00+00:00", "Boston Stadium", "Boston", "finished", 0, 0),
-  mkMatch(20, "L", 16, 14, "2026-06-23T23:00:00+00:00", "Toronto Stadium", "Toronto", "finished", 0, 1),
-  mkMatch(21, "L", 16, 13, "2026-06-27T21:00:00+00:00", "New York New Jersey Stadium", "New York/New Jersey"),
-  mkMatch(22, "L", 14, 15, "2026-06-27T21:00:00+00:00", "Philadelphia Stadium", "Philadelphia"),
-  mkMatch(23, "K", 12, 11, "2026-06-18T02:00:00+00:00", "Estadio Guadalajara", "Guadalajara", "finished", 3, 1),
-  mkMatch(24, "L", 15, 16, "2026-06-18T02:00:00+00:00", "Toronto Stadium", "Toronto", "finished", 1, 0)
-].sort((first, second) => new Date(first.kickoff_at).getTime() - new Date(second.kickoff_at).getTime());
+export const matchDataMetadata = matchSnapshot.metadata;
+export const matches: Match[] = (matchSnapshot.matches as SnapshotMatch[])
+  .map((match) => ({
+    ...match,
+    status: match.status as Match["status"],
+    kickoff_timezone: "Europe/Oslo" as const,
+    home_team: byTeam(match.home_team_id),
+    away_team: byTeam(match.away_team_id),
+    broadcasts: broadcasts.filter((item) => item.match_id === match.id)
+  }))
+  .sort((first, second) => new Date(first.kickoff_at).getTime() - new Date(second.kickoff_at).getTime());
 
 const mkEvent = (
   id: number,

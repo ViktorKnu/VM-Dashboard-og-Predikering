@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +15,10 @@ LIVE_STATUSES = {
 }
 
 TEAM_ALIASES = {
+    "bosnia & herzegovina": "bosnia and herzegovina",
+    "bosnia-herzegovina": "bosnia and herzegovina",
+    "cote d'ivoire": "ivory coast",
+    "cote divoire": "ivory coast",
     "congo dr": "dr congo",
     "congo democratic republic": "dr congo",
     "cape verde islands": "cape verde",
@@ -89,17 +93,48 @@ def score_from_row(row: dict[str, Any]) -> tuple[int | None, int | None]:
     if not isinstance(score, dict):
         return None, None
 
-    full_time = score.get("fullTime") or score.get("full_time") or {}
+    full_time = score.get("fullTime") or score.get("full_time") or score.get("ft") or {}
     if isinstance(full_time, dict):
         return full_time.get("home"), full_time.get("away")
+    if isinstance(full_time, list) and len(full_time) >= 2:
+        return full_time[0], full_time[1]
+    return None, None
+
+
+def penalty_score_from_row(row: dict[str, Any]) -> tuple[int | None, int | None]:
+    score = row.get("score")
+    if not isinstance(score, dict):
+        return None, None
+    penalties = score.get("penalties") or score.get("p")
+    if isinstance(penalties, dict):
+        return penalties.get("home"), penalties.get("away")
+    if isinstance(penalties, list) and len(penalties) >= 2:
+        return penalties[0], penalties[1]
     return None, None
 
 
 def kickoff_from_row(row: dict[str, Any]) -> str:
-    value = row.get("kickoff_at") or row.get("utcDate") or row.get("date")
-    if not value:
+    value = row.get("kickoff_at") or row.get("utcDate")
+    if value:
+        return str(value).replace("Z", "+00:00")
+
+    date_value = row.get("date")
+    time_value = row.get("time")
+    if date_value and time_value:
+        match = re.fullmatch(r"(\d{1,2}):(\d{2}) UTC([+-]\d{1,2})", str(time_value).strip())
+        if not match:
+            raise ValueError(f"Ukjent tidsformat: {time_value}")
+        hour, minute, offset = (int(part) for part in match.groups())
+        local_time = datetime.fromisoformat(str(date_value)).replace(
+            hour=hour,
+            minute=minute,
+            tzinfo=timezone(timedelta(hours=offset)),
+        )
+        return local_time.astimezone(timezone.utc).isoformat()
+
+    if not date_value:
         raise ValueError("Kamp mangler kickoff_at/utcDate/date.")
-    return str(value).replace("Z", "+00:00")
+    return f"{date_value}T00:00:00+00:00"
 
 
 def match_key(match: dict[str, Any]) -> tuple[int | None, int | None, str | None]:
@@ -148,13 +183,18 @@ def normalize_match_row(
     seed_matches: list[dict[str, Any]],
 ) -> dict[str, Any]:
     lookup = team_lookup(teams)
-    home_team_id = row.get("home_team_id") or find_team_id(row.get("homeTeam") or row.get("home_team"), lookup)
-    away_team_id = row.get("away_team_id") or find_team_id(row.get("awayTeam") or row.get("away_team"), lookup)
+    home_team_id = row.get("home_team_id") or find_team_id(
+        row.get("homeTeam") or row.get("home_team") or row.get("team1"), lookup
+    )
+    away_team_id = row.get("away_team_id") or find_team_id(
+        row.get("awayTeam") or row.get("away_team") or row.get("team2"), lookup
+    )
     if home_team_id is None or away_team_id is None:
         raise ValueError(f"Klarte ikke mappe lag for kamp: {row}")
 
     group_name = row.get("group_name") or normalize_group(row.get("group") or row.get("stage"))
     home_score, away_score = score_from_row(row)
+    home_penalty_score, away_penalty_score = penalty_score_from_row(row)
     seed_by_key = seed_match_index(seed_matches)
     seed_match = seed_by_key.get((home_team_id, away_team_id, group_name)) or next(
         (
@@ -166,22 +206,25 @@ def normalize_match_row(
         {},
     )
     group_name = group_name or seed_match.get("group_name")
-    provider_stage = str(row.get("stage") or "")
+    provider_stage = str(row.get("stage") or row.get("round") or "")
     stage = "Group stage" if group_name else provider_stage or "Ukjent fase"
 
     return {
         "id": int(seed_match.get("id") or row.get("id")),
+        "match_number": int(row.get("match_number") or row.get("matchNumber") or row.get("num") or 0) or None,
         "tournament_year": int(row.get("tournament_year", 2026)),
         "stage": stage,
         "group_name": group_name,
         "home_team_id": home_team_id,
         "away_team_id": away_team_id,
         "kickoff_at": kickoff_from_row(row),
-        "stadium": row.get("stadium") or seed_match.get("stadium") or "Ukjent stadion",
-        "city": row.get("city") or seed_match.get("city") or "Ukjent by",
+        "stadium": row.get("stadium") or row.get("ground") or seed_match.get("stadium") or "Ukjent stadion",
+        "city": row.get("city") or row.get("hostCity") or row.get("ground") or seed_match.get("city") or "Ukjent by",
         "status": normalize_status(row.get("status"), home_score, away_score),
         "home_score": home_score,
         "away_score": away_score,
+        "home_penalty_score": home_penalty_score,
+        "away_penalty_score": away_penalty_score,
     }
 
 
@@ -200,11 +243,18 @@ def normalize_match_payload(
     if not isinstance(raw_matches, list):
         raise ValueError("Kilden må inneholde en matches-liste.")
 
-    matches = [
-        normalize_match_row(row, teams, seed_matches)
-        for row in raw_matches
-        if isinstance(row, dict)
-    ]
+    matches = []
+    skipped_unresolved_matches = 0
+    for index, row in enumerate(raw_matches, start=1):
+        if not isinstance(row, dict):
+            continue
+        candidate = {"id": 10_000 + index, **row} if row.get("id") is None else row
+        try:
+            matches.append(normalize_match_row(candidate, teams, seed_matches))
+        except ValueError:
+            if row.get("group") or row.get("group_name"):
+                raise
+            skipped_unresolved_matches += 1
     matches.sort(key=lambda match: match["kickoff_at"])
 
     source_metadata = payload.get("metadata") if isinstance(payload.get("metadata"), dict) else {}
@@ -213,21 +263,22 @@ def normalize_match_payload(
     )
     return {
         "metadata": {
-            "dataset": source_metadata.get("dataset", "world_cup_2026_group_stage_snapshot"),
+            "dataset": source_metadata.get("dataset", "openfootball_world_cup_2026"),
             "source_name": source_metadata.get("source_name", source_name),
             "source_url": source_metadata.get("source_url", source_url),
-            "source_updated_at": source_metadata.get("source_updated_at")
-            or (timestamp if is_live_data else None),
+            "source_updated_at": source_metadata.get("source_updated_at") or timestamp,
             "processed_at": timestamp,
             "timezone": "Europe/Oslo",
             "is_live_data": is_live_data,
+            "skipped_unresolved_matches": skipped_unresolved_matches,
             "notes": source_metadata.get(
                 "notes",
                 ["Kilde-merket leverandørimport med cache og fallback."]
                 if is_live_data
                 else [
-                    "Kilde-merket resultat-snapshot for visning.",
-                    "Ikke sekund-for-sekund live-feed.",
+                    "OpenFootball CC0-snapshot med komplett terminliste.",
+                    "Resultater oppdateres periodisk og er ikke sekund-for-sekund live.",
+                    "FIFA er autoritativ kilde ved eventuelle avvik.",
                 ],
             ),
         },

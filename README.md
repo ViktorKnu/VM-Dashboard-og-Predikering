@@ -12,9 +12,9 @@ Alle kamptider vises i `Europe/Oslo`, og sendinger skal bare lenke til offisiell
 
 ## Status
 
-Frontend er deployet på Vercel og fungerer som offentlig demo. Første versjon bruker et kilde-merket kamp-snapshot i `data/processed/matches.json`, med seed-data som fallback der data mangler. Arkitekturen er samtidig klargjort for ekte datakilder og liveleverandører.
+Frontend er deployet på Vercel og fungerer som offentlig demo. Kampgrunnlaget er et kilde-merket OpenFootball-snapshot med alle 72 gruppekamper og kampene i runde 32. Snapshoten ligger både i `data/processed/matches.json` og som frontend-fallback, slik at terminlisten fungerer selv om API-et er nede.
 
-Det betyr at prosjektet i dag demonstrerer produkt, arkitektur og modellflyt med importert gratisdata, mens ekte full live-data krever at API-et kobles til verifiserte kilder som FIFA-resultater, Fjelstul World Cup Database, World Football Elo Ratings, FIFA-rangeringer, World Bank, StatsBomb Open Data eller API-Football.
+OpenFootball oppdateres periodisk og er ikke en sekund-for-sekund-livefeed. Backend henter nye snapshots automatisk og kan suppleres med API-Football for livehendelser, kampstatistikk og spillerdata. FIFA er autoritativ kilde ved eventuelle avvik.
 
 ## Hva appen kan
 
@@ -63,11 +63,11 @@ PostgreSQL + Redis
   Klargjort for lokal utvikling og Render-deploy.
 ```
 
-Kampdata kan oppdateres gratis med:
+Kampdata kan oppdateres med:
 
 ```bash
 cd apps/api
-worldcup-ingest import-matches --source-file ../../data/processed/matches.json
+worldcup-ingest import-matches --force
 ```
 
 Kommandoen kan også bruke en JSON-URL via `--source-url` eller `FIFA_SCHEDULE_URL`, skriver raw-cache til `data/raw` og oppdaterer `data/processed/matches.json`.

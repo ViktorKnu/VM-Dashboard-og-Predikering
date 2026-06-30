@@ -143,3 +143,61 @@ def test_normalize_api_football_fixture_payload():
     assert match["status"] == "finished"
     assert match["home_score"] == 3
     assert match["away_score"] == 0
+
+
+def test_normalize_openfootball_snapshot_and_skip_unresolved_knockout_slots():
+    payload = {
+        "matches": [
+            {
+                "round": "Matchday 1",
+                "date": "2026-06-11",
+                "time": "13:00 UTC-6",
+                "team1": "Mexico",
+                "team2": "South Africa",
+                "score": {"ft": [2, 0]},
+                "group": "Group A",
+                "ground": "Mexico City",
+            },
+            {
+                "round": "Round of 32",
+                "num": 74,
+                "date": "2026-06-29",
+                "time": "16:30 UTC-4",
+                "team1": "Germany",
+                "team2": "Paraguay",
+                "score": {"ft": [1, 1], "p": [3, 4]},
+                "ground": "Boston",
+            },
+            {
+                "round": "Round of 16",
+                "date": "2026-07-04",
+                "time": "12:00 UTC-4",
+                "team1": "W74",
+                "team2": "W77",
+                "ground": "Philadelphia",
+            },
+        ]
+    }
+
+    normalized = normalize_match_payload(
+        payload,
+        TEAMS,
+        MATCHES,
+        source_name="OpenFootball World Cup 2026 (CC0)",
+        source_url="https://example.test/worldcup.json",
+        processed_at="2026-06-30T12:00:00+00:00",
+    )
+    match = normalized["matches"][0]
+
+    assert match["home_team_id"] == 17
+    assert match["away_team_id"] == 18
+    assert match["id"] == 10_001
+    assert match["kickoff_at"] == "2026-06-11T19:00:00+00:00"
+    assert match["home_score"] == 2
+    assert match["status"] == "finished"
+    knockout = normalized["matches"][1]
+    assert knockout["match_number"] == 74
+    assert knockout["home_penalty_score"] == 3
+    assert knockout["away_penalty_score"] == 4
+    assert normalized["metadata"]["skipped_unresolved_matches"] == 1
+    assert normalized["metadata"]["is_live_data"] is False

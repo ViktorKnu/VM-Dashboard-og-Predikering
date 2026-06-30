@@ -25,8 +25,8 @@ def configured_sources() -> list[ExternalSource]:
     return [
         ExternalSource(
             "fifa_schedule",
-            "FIFA offisiell terminliste/resultater",
-            "Kamper, arenaer, status og resultater",
+            "OpenFootball World Cup 2026 (CC0)",
+            "Komplett terminliste og daglig oppdaterte resultater",
             settings.fifa_schedule_url,
         ),
         ExternalSource(

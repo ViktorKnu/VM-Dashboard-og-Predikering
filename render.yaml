@@ -10,6 +10,8 @@ services:
         value: api-football
       - key: LIVE_POLL_INTERVAL_SECONDS
         value: 1800
+      - key: SCHEDULE_POLL_INTERVAL_SECONDS
+        value: 21600
       - key: EXTERNAL_DATA_CACHE_DIR
         value: /tmp/vm-dashboard-raw
       - key: EXTERNAL_DATA_CACHE_TTL_SECONDS
@@ -25,7 +27,7 @@ services:
           name: vm-dashboard-db
           property: connectionString
       - key: FIFA_SCHEDULE_URL
-        sync: false
+        value: https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json
       - key: FIFA_RANKINGS_URL
         sync: false
       - key: WORLD_FOOTBALL_ELO_URL

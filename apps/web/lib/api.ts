@@ -1,6 +1,7 @@
 import { API_BASE_URL, HAS_API_BASE_URL } from "./config";
+import tournamentSnapshot from "./data/tournament.json";
 import { matchStatusLabel, teamName } from "./labels";
-import { events, lineups, liveTimeline, matches, modelLab, players, prediction, teams, topScorerPredictions, topScorers, whatChanged } from "./seed";
+import { events, lineups, liveTimeline, matchDataMetadata, matches, modelLab, players, prediction, teams, topScorerPredictions, topScorers, whatChanged } from "./seed";
 import { calculateGroupStandings } from "./standings";
 import type {
   DataStatus,
@@ -30,6 +31,8 @@ async function getJson<T>(path: string, fallback: T): Promise<T> {
     return fallback;
   }
 }
+
+const tournamentFallback = tournamentSnapshot as unknown as TournamentSimulation;
 
 function validId(id: number): boolean {
   return Number.isInteger(id) && id > 0;
@@ -70,12 +73,12 @@ export function formatOsloTime(value: string): string {
 
 export const api = {
   dataStatus: () => getJson<DataStatus>("/data/status", {
-    source: "FIFA World Cup 2026 fixtures and results",
-    source_url: "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/match-schedule-fixtures-results-teams-stadiums",
+    source: matchDataMetadata.source_name,
+    source_url: matchDataMetadata.source_url,
     mode: "seed-fallback",
     is_live_data: false,
-    last_updated: "2026-06-27T12:00:00+00:00",
-    processed_at: "2026-06-28T10:00:00+00:00",
+    last_updated: matchDataMetadata.source_updated_at,
+    processed_at: matchDataMetadata.processed_at,
     timezone: "Europe/Oslo",
     model_version: "wc-v0.2-country-features",
     counts: {
@@ -87,7 +90,7 @@ export const api = {
       user_predictions: 0
     },
     data_flow: [
-      "Frontend bruker et kilde-merket kamp-snapshot fordi NEXT_PUBLIC_API_BASE_URL ikke er satt.",
+      "Frontend bruker et kilde-merket OpenFootball-snapshot fordi NEXT_PUBLIC_API_BASE_URL ikke er satt.",
       "Når API-et er deployet, settes NEXT_PUBLIC_API_BASE_URL i Vercel.",
       "API-et eksponerer /data/sources for ekte datakilder og raw-cache status.",
       "Når API-et svarer, går brukerprediksjoner til POST /predictions."
@@ -121,27 +124,7 @@ export const api = {
   ),
   historical: () => getJson<Record<string, unknown>>("/historical-insights", {}),
   modelLab: () => getJson<Record<string, unknown>>("/model/lab", modelLab),
-  tournament: () => getJson<TournamentSimulation>("/tournament/simulation", {
-    iterations: 0,
-    format: {
-      groups: 12,
-      teams_per_group: 4,
-      group_matches: 72,
-      automatic_qualifiers: 24,
-      best_third_placed_qualifiers: 8,
-      round_of_32_teams: 32
-    },
-    teams: [],
-    example_groups: {},
-    example_bracket: {
-      round_of_32: [],
-      round_of_16: [],
-      quarterfinal: [],
-      semifinal: [],
-      final: []
-    },
-    model_notes: []
-  }),
+  tournament: () => getJson<TournamentSimulation>("/tournament/simulation", tournamentFallback),
   liveTicker: () => getJson<LiveTickerPayload>("/live/ticker", {
     mode: "scheduled",
     timezone: "Europe/Oslo",

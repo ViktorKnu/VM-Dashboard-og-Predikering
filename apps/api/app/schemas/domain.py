@@ -37,6 +37,7 @@ class PlayerOut(BaseModel):
 
 class MatchOut(BaseModel):
     id: int
+    match_number: int | None = None
     tournament_year: int
     stage: str
     group_name: str | None = None
@@ -49,6 +50,8 @@ class MatchOut(BaseModel):
     status: str
     home_score: int | None = None
     away_score: int | None = None
+    home_penalty_score: int | None = None
+    away_penalty_score: int | None = None
     home_team: TeamOut | None = None
     away_team: TeamOut | None = None
 
