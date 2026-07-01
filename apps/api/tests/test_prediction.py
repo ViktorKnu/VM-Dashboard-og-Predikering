@@ -180,17 +180,21 @@ def test_live_probability_explains_significant_change():
     assert events[0]["event_type"] == "goal"
 
 
-def test_processed_schedule_covers_all_groups_and_round_of_32():
+def test_processed_schedule_covers_complete_world_cup_program():
     data = seed()
     matches = data["matches"]
     group_matches = [match for match in matches if match["group_name"]]
     round_of_32 = [match for match in matches if match["stage"] == "Round of 32"]
+    later_knockout = [match for match in matches if (match.get("match_number") or 0) >= 89]
 
     assert matches
     assert len(data["teams"]) == 48
     assert {team["group_name"] for team in data["teams"]} == set("ABCDEFGHIJKL")
     assert len(group_matches) == 72
     assert len(round_of_32) == 16
+    assert len(matches) == 104
+    assert len(later_knockout) == 16
+    assert {match["match_number"] for match in later_knockout} == set(range(89, 105))
     assert all(sum(match["group_name"] == group for match in group_matches) == 6 for group in "ABCDEFGHIJKL")
     assert all(
         any(team["id"] in (match["home_team_id"], match["away_team_id"]) for match in matches)
@@ -212,6 +216,19 @@ def test_match_schedule_is_sorted_and_uses_correct_oslo_time():
 
     assert ordered == sorted(ordered, key=lambda match: match["kickoff_at"])
     assert oslo_time.strftime("%Y-%m-%d %H:%M") == "2026-06-23 02:00"
+
+
+def test_unresolved_final_keeps_match_references_and_blocks_prediction():
+    ordered = route_matches()
+    final = next(match for match in ordered if match.get("match_number") == 104)
+
+    assert final["home_team"] is None
+    assert final["away_team"] is None
+    assert final["home_team_label"] == "Vinner kamp 101"
+    assert final["away_team_label"] == "Vinner kamp 102"
+    with pytest.raises(HTTPException) as error:
+        model_prediction(final["id"])
+    assert error.value.status_code == 409
 
 
 def test_data_status_exposes_counts_and_prediction_flow():

@@ -1,10 +1,11 @@
-import { Activity, MapPin } from "lucide-react";
+import { Activity, ArrowLeft, MapPin } from "lucide-react";
 import Link from "next/link";
 import { api, formatOsloTime } from "@/lib/api";
 import { matchStageLabel, matchStatusLabel } from "@/lib/labels";
 import { BroadcastLinksCard } from "@/components/BroadcastLinksCard";
 import { FormationPitch } from "@/components/FormationPitch";
 import { MatchEventTimeline } from "@/components/MatchEventTimeline";
+import { MatchParticipant } from "@/components/MatchParticipant";
 import { ModelExplanationCard } from "@/components/ModelExplanationCard";
 import { PredictionForm } from "@/components/PredictionForm";
 import { PossessionComparison } from "@/components/PossessionComparison";
@@ -16,8 +17,45 @@ export default async function MatchDetailPage({ params, searchParams }: { params
   const query = searchParams ? await searchParams : {};
   const id = Number(rawId);
   const selectedModelId = query.modell ?? "country";
-  const [match, events, prediction, live, lineups, players, teams, lab] = await Promise.all([
-    api.match(id),
+  const match = await api.match(id);
+
+  if (!match.home_team || !match.away_team) {
+    return (
+      <div className="space-y-5">
+        <Link className="focus-ring inline-flex items-center gap-2 text-sm font-semibold text-ink/60 hover:text-pine" href="/matches">
+          <ArrowLeft size={16} /> Tilbake til alle kamper
+        </Link>
+        <section className="surface overflow-hidden">
+          <div className="border-b border-ink/10 bg-ink px-5 py-4 text-white md:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/60">
+                  {matchStageLabel(match.stage)}{match.match_number ? ` · Kamp ${match.match_number}` : ""}
+                </p>
+                <div className="mt-2 flex items-center gap-2 text-sm text-white/70">
+                  <MapPin size={16} /> {match.stadium}, {match.city}
+                </div>
+              </div>
+              <span className="rounded-md bg-white/10 px-3 py-2 text-sm font-bold">{matchStatusLabel(match.status)}</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 p-5 md:p-8">
+            <MatchParticipant label={match.home_team_label} team={match.home_team} />
+            <span className="rounded-md bg-ink px-4 py-3 text-sm font-black uppercase text-white">mot</span>
+            <div className="justify-self-end">
+              <MatchParticipant align="right" label={match.away_team_label} team={match.away_team} />
+            </div>
+          </div>
+          <div className="border-t border-ink/10 bg-frost px-5 py-4 text-sm text-ink/65 md:px-6">
+            <strong className="block text-ink">{formatOsloTime(match.kickoff_at)} · Europe/Oslo</strong>
+            <span>Lagene fylles inn automatisk når de tidligere utslagskampene er avgjort.</span>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const [events, prediction, live, lineups, players, teams, lab] = await Promise.all([
     api.matchEvents(id),
     api.prediction(id, selectedModelId),
     api.live(id),

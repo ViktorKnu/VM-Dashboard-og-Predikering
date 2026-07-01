@@ -26,7 +26,10 @@ const stageLabels: Record<string, string> = {
   "Round of 32": "32-delsfinale",
   "Round of 16": "Åttedelsfinale",
   Quarterfinal: "Kvartfinale",
+  "Quarter-final": "Kvartfinale",
   Semifinal: "Semifinale",
+  "Semi-final": "Semifinale",
+  "Match for third place": "Bronsefinale",
   Final: "Finale"
 };
 
@@ -81,9 +84,16 @@ const metricLabels: Record<string, string> = {
   brier_score: "Brier-score"
 };
 
-export function teamName(team: Team | string): string {
+export function teamName(team: Team | string | null | undefined): string {
+  if (!team) return "Ikke avgjort";
   const name = typeof team === "string" ? team : team.name;
   return teamNames[name] ?? name;
+}
+
+export function matchParticipantName(match: Match, side: "home" | "away"): string {
+  const team = side === "home" ? match.home_team : match.away_team;
+  const label = side === "home" ? match.home_team_label : match.away_team_label;
+  return team ? teamName(team) : label ?? "Ikke avgjort";
 }
 
 export function matchStageLabel(stage: string): string {

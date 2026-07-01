@@ -1,6 +1,6 @@
 import { API_BASE_URL, HAS_API_BASE_URL } from "./config";
 import tournamentSnapshot from "./data/tournament.json";
-import { matchStatusLabel, teamName } from "./labels";
+import { matchParticipantName, matchStatusLabel, teamName } from "./labels";
 import { events, lineups, liveTimeline, matchDataMetadata, matches, modelLab, players, prediction, teams, topScorerPredictions, topScorers, whatChanged } from "./seed";
 import { calculateGroupStandings } from "./standings";
 import type {
@@ -132,7 +132,7 @@ export const api = {
     items: [
       ...matches.slice(0, 5).map((match) => ({
         kind: "match" as const,
-        label: `${teamName(match.home_team)} - ${teamName(match.away_team)} · ${match.status === "scheduled" ? "ikke startet" : `${match.home_score ?? 0}-${match.away_score ?? 0}`} · ${formatOsloTime(match.kickoff_at)} · ${matchStatusLabel(match.status)}`,
+        label: `${matchParticipantName(match, "home")} - ${matchParticipantName(match, "away")} · ${match.status === "scheduled" ? "ikke startet" : `${match.home_score ?? 0}-${match.away_score ?? 0}`} · ${formatOsloTime(match.kickoff_at)} · ${matchStatusLabel(match.status)}`,
         match_id: match.id,
         status: match.status,
         kickoff_at: match.kickoff_at

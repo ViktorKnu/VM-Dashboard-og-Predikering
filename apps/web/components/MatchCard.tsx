@@ -3,7 +3,7 @@ import Link from "next/link";
 import { formatOsloTime } from "@/lib/api";
 import { matchStageLabel, matchStatusLabel } from "@/lib/labels";
 import type { Match } from "@/lib/types";
-import { TeamBadge } from "./TeamBadge";
+import { MatchParticipant } from "./MatchParticipant";
 
 export function MatchCard({ match }: { match: Match }) {
   const isLive = match.status === "live";
@@ -23,14 +23,14 @@ export function MatchCard({ match }: { match: Match }) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-3 rounded-md bg-night/30 px-3 py-2">
-          <TeamBadge inverted linked={false} team={match.home_team} />
+          <MatchParticipant inverted label={match.home_team_label} team={match.home_team} />
           <strong className="text-lg">
             {match.home_score ?? "-"}
             {match.home_penalty_score != null ? ` (${match.home_penalty_score})` : ""}
           </strong>
         </div>
         <div className="flex items-center justify-between gap-3 rounded-md bg-night/30 px-3 py-2">
-          <TeamBadge inverted linked={false} team={match.away_team} />
+          <MatchParticipant inverted label={match.away_team_label} team={match.away_team} />
           <strong className="text-lg">
             {match.away_score ?? "-"}
             {match.away_penalty_score != null ? ` (${match.away_penalty_score})` : ""}

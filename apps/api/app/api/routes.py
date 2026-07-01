@@ -177,24 +177,34 @@ def simulation_rate_limit(request: Request) -> None:
 
 
 def enrich_match(match: dict, data: dict) -> dict:
+    teams_by_id = {team["id"]: team for team in data["teams"]}
     return {
         **match,
         "kickoff_timezone": "Europe/Oslo",
-        "home_team": next(team for team in data["teams"] if team["id"] == match["home_team_id"]),
-        "away_team": next(team for team in data["teams"] if team["id"] == match["away_team_id"]),
+        "home_team": teams_by_id.get(match.get("home_team_id")),
+        "away_team": teams_by_id.get(match.get("away_team_id")),
     }
 
 
 def ticker_match_label(match: dict, data: dict) -> str:
-    home = next(team for team in data["teams"] if team["id"] == match["home_team_id"])
-    away = next(team for team in data["teams"] if team["id"] == match["away_team_id"])
+    teams_by_id = {team["id"]: team for team in data["teams"]}
+    home = teams_by_id.get(match.get("home_team_id"))
+    away = teams_by_id.get(match.get("away_team_id"))
     score = (
         "ikke startet"
         if match["status"] == "scheduled"
         else f"{match.get('home_score') or 0}-{match.get('away_score') or 0}"
     )
-    home_name = TEAM_NAMES_NO.get(home["name"], home["name"])
-    away_name = TEAM_NAMES_NO.get(away["name"], away["name"])
+    home_name = (
+        TEAM_NAMES_NO.get(home["name"], home["name"])
+        if home
+        else match.get("home_team_label", "Ikke avgjort")
+    )
+    away_name = (
+        TEAM_NAMES_NO.get(away["name"], away["name"])
+        if away
+        else match.get("away_team_label", "Ikke avgjort")
+    )
     status = STATUS_LABELS_NO.get(match["status"], match["status"])
     return f"{home_name} - {away_name} · {score} · {status}"
 
@@ -388,6 +398,8 @@ def model_prediction(match_id: int, model_id: str = "country") -> dict:
     match_item = find_one("matches", match_id)
     if not match_item:
         raise HTTPException(404, "Match not found")
+    if match_item.get("home_team_id") is None or match_item.get("away_team_id") is None:
+        raise HTTPException(409, "Lagene i kampen er ikke avgjort ennå")
     home = next(team for team in data["teams"] if team["id"] == match_item["home_team_id"])
     away = next(team for team in data["teams"] if team["id"] == match_item["away_team_id"])
     try:
@@ -630,11 +642,26 @@ def model_versions() -> list[dict]:
 
 def latest_model_forecast(model_id: str, data: dict) -> dict:
     model = get_model_config(model_id)
+    concrete_matches = [
+        match
+        for match in data["matches"]
+        if match.get("home_team_id") is not None and match.get("away_team_id") is not None
+    ]
     scheduled = sorted(
-        [match for match in data["matches"] if match.get("status") == "scheduled"],
+        [
+            match
+            for match in data["matches"]
+            if match.get("status") == "scheduled"
+            and match.get("home_team_id") is not None
+            and match.get("away_team_id") is not None
+        ],
         key=lambda match: match["kickoff_at"],
     )
-    match_item = scheduled[0] if scheduled else sorted(data["matches"], key=lambda match: match["kickoff_at"])[-1]
+    match_item = (
+        scheduled[0]
+        if scheduled
+        else sorted(concrete_matches, key=lambda match: match["kickoff_at"])[-1]
+    )
     home = next(team for team in data["teams"] if team["id"] == match_item["home_team_id"])
     away = next(team for team in data["teams"] if team["id"] == match_item["away_team_id"])
     prediction = predict_match(

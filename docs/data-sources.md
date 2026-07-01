@@ -1,6 +1,6 @@
 # Datakilder
 
-Prosjektet bruker OpenFootball World Cup 2026 som nøkkelfri CC0-snapshot for komplett terminliste og periodiske resultater. Normalisert data lagres i `data/processed/matches.json`, og samme snapshot følger frontend som fallback.
+Prosjektet bruker OpenFootball World Cup 2026 som nøkkelfri CC0-snapshot for alle turneringens 104 kampplasser og periodiske resultater. Normalisert data lagres i `data/processed/matches.json`, og samme snapshot følger frontend som fallback. Når et sluttspillag ikke er avgjort, bevares kildens kampreferanse som «Vinner kamp X» eller «Taper kamp X».
 
 ## Klargjort for live-API
 
@@ -36,7 +36,7 @@ API-Football bruker `league=1` og `season=2026` for VM 2026. Sett `API_FOOTBALL_
 worldcup-ingest import-live
 ```
 
-Råresponsene caches separat. Normaliserte kamper lagres i `data/processed/matches.json`, mens turneringens spillermål lagres i `data/processed/player_tournament_stats.json`. Når API-et kjører med nøkkelen satt, gjentas importen automatisk hvert 30. minutt. Intervallet er valgt for å holde to leverandørkall per runde innenfor gratisnivåets døgnkvote.
+Råresponsene caches separat. Normaliserte kampoppdateringer flettes inn i den komplette terminlisten i `data/processed/matches.json`, slik at uavklarte fremtidige kampplasser ikke forsvinner når en liveleverandør bare returnerer et delsett. Turneringens spillermål lagres i `data/processed/player_tournament_stats.json`. Når API-et kjører med nøkkelen satt, gjentas importen automatisk hvert 30. minutt.
 
 ## Miljøvariabler
 

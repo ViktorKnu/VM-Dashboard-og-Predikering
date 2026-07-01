@@ -41,6 +41,7 @@ def refresh_api_football_data(force: bool = False) -> dict[str, Any]:
             MATCHES,
             source_name=fixtures_source.label,
             source_url=fixtures_source.url,
+            preserve_existing=True,
         )
         updated.append(str(path))
 

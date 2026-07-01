@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DataFlowStatus } from "@/components/DataFlowStatus";
 import { GroupStandingsTable, LiveTopScorerTable, TopScorerPredictionTable } from "@/components/Leaderboards";
 import { MatchCard } from "@/components/MatchCard";
+import { MatchParticipant } from "@/components/MatchParticipant";
 import { TeamBadge } from "@/components/TeamBadge";
 import { api, formatOsloTime } from "@/lib/api";
 import { APP_NAME, matchStageLabel, matchStatusLabel, teamName } from "@/lib/labels";
@@ -211,11 +212,11 @@ export default async function HomePage() {
           </div>
           <div className="space-y-3 p-5">
             <div className="soft-card flex items-center justify-between gap-3 p-3">
-              <TeamBadge inverted linked={false} team={featuredMatch.home_team} />
+              <MatchParticipant inverted label={featuredMatch.home_team_label} team={featuredMatch.home_team} />
               <strong className="text-2xl">{featuredMatch.home_score ?? "-"}</strong>
             </div>
             <div className="soft-card flex items-center justify-between gap-3 p-3">
-              <TeamBadge inverted linked={false} team={featuredMatch.away_team} />
+              <MatchParticipant inverted label={featuredMatch.away_team_label} team={featuredMatch.away_team} />
               <strong className="text-2xl">{featuredMatch.away_score ?? "-"}</strong>
             </div>
             <div className="soft-card p-3 text-sm text-white/60">

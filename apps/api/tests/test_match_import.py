@@ -109,6 +109,39 @@ def test_import_matches_payload_writes_processed_json(tmp_path):
     assert saved["matches"][0]["stadium"] == "Philadelphia Stadium"
 
 
+def test_live_import_preserves_unresolved_schedule_slots(tmp_path):
+    output_path = tmp_path / "matches.json"
+    payload = {
+        "matches": [
+            {
+                "id": 3,
+                "group_name": "I",
+                "home_team_id": 1,
+                "away_team_id": 3,
+                "kickoff_at": "2026-06-23T00:00:00+00:00",
+                "status": "finished",
+                "home_score": 3,
+                "away_score": 2,
+            }
+        ]
+    }
+
+    written = import_matches_payload(
+        payload,
+        TEAMS,
+        MATCHES,
+        source_name="Liveleverandør",
+        source_url="https://example.test/live",
+        output_path=output_path,
+        preserve_existing=True,
+    )
+    saved = json.loads(written.read_text(encoding="utf-8"))
+
+    assert len(saved["matches"]) == 104
+    assert any(match.get("match_number") == 104 for match in saved["matches"])
+    assert "komplette terminlisten" in saved["metadata"]["notes"][0]
+
+
 def test_normalize_api_football_fixture_payload():
     payload = {
         "response": [
@@ -145,7 +178,7 @@ def test_normalize_api_football_fixture_payload():
     assert match["away_score"] == 0
 
 
-def test_normalize_openfootball_snapshot_and_skip_unresolved_knockout_slots():
+def test_normalize_openfootball_snapshot_and_keep_unresolved_knockout_slots():
     payload = {
         "matches": [
             {
@@ -170,6 +203,7 @@ def test_normalize_openfootball_snapshot_and_skip_unresolved_knockout_slots():
             },
             {
                 "round": "Round of 16",
+                "num": 89,
                 "date": "2026-07-04",
                 "time": "12:00 UTC-4",
                 "team1": "W74",
@@ -199,5 +233,13 @@ def test_normalize_openfootball_snapshot_and_skip_unresolved_knockout_slots():
     assert knockout["match_number"] == 74
     assert knockout["home_penalty_score"] == 3
     assert knockout["away_penalty_score"] == 4
-    assert normalized["metadata"]["skipped_unresolved_matches"] == 1
+    unresolved = normalized["matches"][2]
+    assert unresolved["match_number"] == 89
+    assert unresolved["home_team_id"] is None
+    assert unresolved["away_team_id"] is None
+    assert unresolved["home_team_label"] == "Vinner kamp 74"
+    assert unresolved["away_team_label"] == "Vinner kamp 77"
+    assert unresolved["status"] == "scheduled"
+    assert normalized["metadata"]["skipped_unresolved_matches"] == 0
+    assert normalized["metadata"]["unresolved_participants"] == 2
     assert normalized["metadata"]["is_live_data"] is False

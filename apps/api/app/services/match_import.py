@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from app.services.processed_data import write_processed_matches
+from app.services.processed_data import load_processed_matches, write_processed_matches
 
 FINISHED_STATUSES = {"FINISHED", "finished", "FT", "AET", "PEN", "full_time"}
 LIVE_STATUSES = {
@@ -183,13 +183,25 @@ def normalize_match_row(
     seed_matches: list[dict[str, Any]],
 ) -> dict[str, Any]:
     lookup = team_lookup(teams)
-    home_team_id = row.get("home_team_id") or find_team_id(
-        row.get("homeTeam") or row.get("home_team") or row.get("team1"), lookup
-    )
-    away_team_id = row.get("away_team_id") or find_team_id(
-        row.get("awayTeam") or row.get("away_team") or row.get("team2"), lookup
-    )
-    if home_team_id is None or away_team_id is None:
+    home_value = row.get("homeTeam") or row.get("home_team") or row.get("team1")
+    away_value = row.get("awayTeam") or row.get("away_team") or row.get("team2")
+    home_team_id = row.get("home_team_id") or find_team_id(home_value, lookup)
+    away_team_id = row.get("away_team_id") or find_team_id(away_value, lookup)
+
+    def participant_label(value: Any) -> str | None:
+        if not isinstance(value, str):
+            return None
+        reference = re.fullmatch(r"([WL])(\d+)", value.strip(), flags=re.IGNORECASE)
+        if not reference:
+            return None
+        prefix, match_number = reference.groups()
+        return f"{'Vinner' if prefix.upper() == 'W' else 'Taper'} kamp {match_number}"
+
+    home_team_label = participant_label(home_value) if home_team_id is None else None
+    away_team_label = participant_label(away_value) if away_team_id is None else None
+    if (home_team_id is None and home_team_label is None) or (
+        away_team_id is None and away_team_label is None
+    ):
         raise ValueError(f"Klarte ikke mappe lag for kamp: {row}")
 
     group_name = row.get("group_name") or normalize_group(row.get("group") or row.get("stage"))
@@ -217,6 +229,8 @@ def normalize_match_row(
         "group_name": group_name,
         "home_team_id": home_team_id,
         "away_team_id": away_team_id,
+        "home_team_label": home_team_label,
+        "away_team_label": away_team_label,
         "kickoff_at": kickoff_from_row(row),
         "stadium": row.get("stadium") or row.get("ground") or seed_match.get("stadium") or "Ukjent stadion",
         "city": row.get("city") or row.get("hostCity") or row.get("ground") or seed_match.get("city") or "Ukjent by",
@@ -271,6 +285,10 @@ def normalize_match_payload(
             "timezone": "Europe/Oslo",
             "is_live_data": is_live_data,
             "skipped_unresolved_matches": skipped_unresolved_matches,
+            "unresolved_participants": sum(
+                int(match.get("home_team_id") is None) + int(match.get("away_team_id") is None)
+                for match in matches
+            ),
             "notes": source_metadata.get(
                 "notes",
                 ["Kilde-merket leverandørimport med cache og fallback."]
@@ -293,6 +311,39 @@ def import_matches_payload(
     source_name: str,
     source_url: str,
     output_path: Path | None = None,
+    preserve_existing: bool = False,
 ) -> Path:
     normalized = normalize_match_payload(payload, teams, seed_matches, source_name, source_url)
+    if preserve_existing:
+        existing, _ = load_processed_matches()
+        merged = list(existing)
+
+        def same_fixture(first: dict[str, Any], second: dict[str, Any]) -> bool:
+            first_number = first.get("match_number")
+            second_number = second.get("match_number")
+            if first_number and second_number:
+                return first_number == second_number
+            return (
+                first.get("home_team_id") is not None
+                and first.get("away_team_id") is not None
+                and first.get("home_team_id") == second.get("home_team_id")
+                and first.get("away_team_id") == second.get("away_team_id")
+                and first.get("stage") == second.get("stage")
+            )
+
+        for update in normalized["matches"]:
+            existing_index = next(
+                (index for index, match in enumerate(merged) if same_fixture(match, update)),
+                None,
+            )
+            if existing_index is None:
+                merged.append(update)
+            else:
+                merged[existing_index] = {**merged[existing_index], **update}
+
+        normalized["matches"] = sorted(merged, key=lambda match: str(match["kickoff_at"]))
+        normalized["metadata"]["notes"] = [
+            "Leverandøroppdateringer er flettet inn i den komplette terminlisten.",
+            "Uavklarte sluttspillplasser beholdes til deltakende lag er kjent.",
+        ]
     return write_processed_matches(normalized, path=output_path) if output_path else write_processed_matches(normalized)

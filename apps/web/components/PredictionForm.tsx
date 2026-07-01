@@ -23,7 +23,12 @@ function formatKickoff(value: string): string {
 }
 
 function predictionIsOpen(match: Match, currentTime: number): boolean {
-  return match.status === "scheduled" && new Date(match.kickoff_at).getTime() > currentTime;
+  return Boolean(
+    match.status === "scheduled" &&
+    match.home_team &&
+    match.away_team &&
+    new Date(match.kickoff_at).getTime() > currentTime
+  );
 }
 
 export function PredictionForm({ match: initialMatch, matches, players, teams }: PredictionFormProps) {

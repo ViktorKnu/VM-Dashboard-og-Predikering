@@ -13,7 +13,9 @@ export default async function PredictionsPage() {
 
   const teamsById = new Map(teams.map((team) => [team.id, team]));
   const latestPredictions = predictions.slice(-5).reverse();
-  const scheduledMatches = matches.filter((match) => match.status === "scheduled");
+  const scheduledMatches = matches.filter(
+    (match) => match.status === "scheduled" && match.home_team != null && match.away_team != null
+  );
 
   return (
     <div className="space-y-5">

@@ -456,7 +456,10 @@ def known_knockout_matches(matches: list[dict[str, Any]]) -> dict[int, dict[str,
     return {
         int(match["match_number"]): match
         for match in matches
-        if match.get("match_number") and not match.get("group_name")
+        if match.get("match_number")
+        and not match.get("group_name")
+        and match.get("home_team_id") is not None
+        and match.get("away_team_id") is not None
     }
 
 

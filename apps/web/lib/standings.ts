@@ -12,7 +12,7 @@ export function calculateGroupStandings(teams: Team[], matches: Match[]): GroupS
   }
 
   for (const match of matches) {
-    if (!match.group_name) continue;
+    if (!match.group_name || match.home_team_id == null || match.away_team_id == null) continue;
     const ids = groupTeams.get(match.group_name) ?? new Set<number>();
     ids.add(match.home_team_id);
     ids.add(match.away_team_id);
@@ -45,6 +45,8 @@ export function calculateGroupStandings(teams: Team[], matches: Match[]): GroupS
         if (
           match.group_name !== group_name ||
           match.status !== "finished" ||
+          match.home_team_id == null ||
+          match.away_team_id == null ||
           match.home_score == null ||
           match.away_score == null
         ) {

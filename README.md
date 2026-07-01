@@ -12,13 +12,13 @@ Alle kamptider vises i `Europe/Oslo`, og sendinger skal bare lenke til offisiell
 
 ## Status
 
-Frontend er deployet på Vercel og fungerer som offentlig demo. Kampgrunnlaget er et kilde-merket OpenFootball-snapshot med alle 72 gruppekamper og kampene i runde 32. Snapshoten ligger både i `data/processed/matches.json` og som frontend-fallback, slik at terminlisten fungerer selv om API-et er nede.
+Frontend er deployet på Vercel og fungerer som offentlig demo. Kampgrunnlaget er et kilde-merket OpenFootball-snapshot med alle VMs 104 kampplasser: 72 gruppekamper og 32 sluttspillkamper. Uavklarte sluttspilldeltakere vises som for eksempel «Vinner kamp 89» eller «Taper kamp 101» frem til laget er kjent. Snapshoten ligger både i `data/processed/matches.json` og som frontend-fallback, slik at terminlisten fungerer selv om API-et er nede.
 
 OpenFootball oppdateres periodisk og er ikke en sekund-for-sekund-livefeed. Backend henter nye snapshots automatisk og kan suppleres med API-Football for livehendelser, kampstatistikk og spillerdata. FIFA er autoritativ kilde ved eventuelle avvik.
 
 ## Hva appen kan
 
-- Vise terminliste, resultater og gruppetabeller med norsk tid.
+- Vise komplett terminliste, resultater og gruppetabeller med norsk tid.
 - Vise kampdetaljer med score, arena, hendelser, kort, xG, ballbesittelse, formasjon og live vinnsannsynlighet.
 - Lenke til offisielle norske broadcaster-sider.
 - La brukere tippe resultat, vinner, første målscorer, gruppevinnere, VM-vinner og toppscorer.

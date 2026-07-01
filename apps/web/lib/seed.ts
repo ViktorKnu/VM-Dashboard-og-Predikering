@@ -119,7 +119,12 @@ export const players: Player[] = [
   mkPlayer(20, 2, "Ousmane Dembele", "RW", 7, 29, "Paris Saint-Germain", 63, 11, 91)
 ];
 
-const byTeam = (id: number) => teams.find((team) => team.id === id)!;
+function byTeam(id: number): Team;
+function byTeam(id: null): null;
+function byTeam(id: number | null): Team | null;
+function byTeam(id: number | null): Team | null {
+  return id == null ? null : teams.find((team) => team.id === id)!;
+}
 const byPlayer = (id: number) => players.find((player) => player.id === id)!;
 
 const mkBroadcast = (id: number, match_id: number, broadcaster: string, channel: string, requires_login: boolean): Broadcast => ({

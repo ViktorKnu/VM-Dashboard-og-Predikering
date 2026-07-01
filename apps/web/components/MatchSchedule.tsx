@@ -6,7 +6,7 @@ import { useState } from "react";
 import { formatOsloTime } from "@/lib/api";
 import type { Match } from "@/lib/types";
 import { MatchCard } from "./MatchCard";
-import { TeamBadge } from "./TeamBadge";
+import { MatchParticipant } from "./MatchParticipant";
 
 type StatusFilter = "upcoming" | "finished" | "all";
 
@@ -46,7 +46,7 @@ export function MatchSchedule({ matches }: { matches: Match[] }) {
   const nextNorwayMatch = matches.find(
     (match) =>
       match.status !== "finished" &&
-      (match.home_team.fifa_code === "NOR" || match.away_team.fifa_code === "NOR")
+      (match.home_team?.fifa_code === "NOR" || match.away_team?.fifa_code === "NOR")
   );
 
   const filteredMatches = matches.filter((match) => {
@@ -79,11 +79,11 @@ export function MatchSchedule({ matches }: { matches: Match[] }) {
             </div>
             <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-5 py-4">
               <div className="min-w-0 justify-self-end">
-                <TeamBadge inverted linked={false} team={nextNorwayMatch.home_team} />
+                <MatchParticipant inverted label={nextNorwayMatch.home_team_label} team={nextNorwayMatch.home_team} />
               </div>
               <span className="text-xs font-black uppercase text-white/45">mot</span>
               <div className="min-w-0">
-                <TeamBadge inverted linked={false} team={nextNorwayMatch.away_team} />
+                <MatchParticipant inverted label={nextNorwayMatch.away_team_label} team={nextNorwayMatch.away_team} />
               </div>
             </div>
             <Link className="primary-action m-4 self-center" href={`/matches/${nextNorwayMatch.id}`}>

@@ -41,8 +41,10 @@ class MatchOut(BaseModel):
     tournament_year: int
     stage: str
     group_name: str | None = None
-    home_team_id: int
-    away_team_id: int
+    home_team_id: int | None = None
+    away_team_id: int | None = None
+    home_team_label: str | None = None
+    away_team_label: str | None = None
     kickoff_at: datetime
     kickoff_timezone: str = "Europe/Oslo"
     stadium: str
